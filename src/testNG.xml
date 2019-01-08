@@ -1,0 +1,10 @@
+<suite thread-count="1" verbose="5" name="Medicine Suite" annotations="JDK" parallel="tests" >
+
+    <test name="creation">
+        <classes>
+            <class name="bandarovich.xmlparsing.parsing.building.SAXMedicineBuilderTest"/>
+            <class name="bandarovich.xmlparsing.parsing.building.DOMMedicineBuilderTest"/>
+            <class name="bandarovich.xmlparsing.parsing.building.StAXMedicineBuilderTest"/>
+        </classes>
+    </test>
+</suite>
