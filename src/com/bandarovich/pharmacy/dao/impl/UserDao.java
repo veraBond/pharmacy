@@ -26,20 +26,21 @@ public class UserDao extends PharmacyDao<String, PharmacyUser> {
         return null;
     }
 
+    //TODO: rewrite method with object PharmacyUser return. NULL if not found.
     @Override
-    public List<PharmacyUser> findEntity(String mail) throws DaoException{
+    public PharmacyUser findEntity(String mail) throws DaoException{
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_USER)){
             preparedStatement.setString(1, mail);
             ResultSet resultSet = preparedStatement.executeQuery();
-            List<PharmacyUser> userList = new LinkedList<>();
-            while(resultSet.next()){
+            PharmacyUser user = null;
+            if(resultSet.next()){
                 PharmacyPosition position = PharmacyPosition.valueOf(resultSet.getString(POSITION).toUpperCase());
                 String userName = resultSet.getString(USER_NAME);
                 String password = resultSet.getString(PASSWORD);
-                PharmacyUser user = new PharmacyUser(position, userName, mail, password);
-                userList.add(user);
+                user = new PharmacyUser(position, userName, mail, password);
+
             }
-            return userList;
+            return user;
         } catch (SQLException e){
             logger.error("Error in findEntity method: " + e.getMessage());
             throw new DaoException(e);

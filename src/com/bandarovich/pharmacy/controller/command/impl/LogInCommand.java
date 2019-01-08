@@ -11,14 +11,17 @@ import com.bandarovich.pharmacy.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 public class LogInCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
 
     @Override
-    public String execute(HttpServletRequest request) {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PharmacyPosition position = PharmacyPosition.valueOf(request.getParameter(JspAttribute.POSITION).toUpperCase());
         String mail = request.getParameter(JspAttribute.MAIL);
         String password = request.getParameter(JspAttribute.PASSWORD);
@@ -52,6 +55,7 @@ public class LogInCommand implements PharmacyCommand {
             request.setAttribute(JspAttribute.ERROR_MESSAGE, "Log in error.");
             nextPage = JspPath.LOGIN_PAGE;
         }
-        return  nextPage;
+        request.getRequestDispatcher(nextPage).forward(request, response);
+
     }
 }

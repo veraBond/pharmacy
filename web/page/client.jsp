@@ -72,13 +72,14 @@
                 <td><c:out value="${medicines.packageType}"></c:out></td>
                 <td><c:out value="${medicines.packageAmount}"></c:out></td>
                 <td><c:out value="${medicines.price}"></c:out></td>
-                <td><input type="hidden" name="command" value="add-order-medicine">
-                    <input type="hidden" name="addedMedicine" value="${medicines.medicineNumber}">
-                    <button type="submit">Order.${orderMedicineStatus}</button>
+                <td><input type="hidden" name="addedMedicine" value="${medicines.medicineNumber}">
+                    <input type="number" min="0" max="${medicines.storageAmount > 5 ? 5 : medicines.storageAmount}"
+                           step="1" name="addedMedicineAmount" value="0">
                 </td>
             </tr>
         </c:forEach>
     </table>
+<button type="submit">Order</button>
 
     <div>
         <button onclick="location.href='/'">Log out</button>

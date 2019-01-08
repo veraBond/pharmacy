@@ -44,7 +44,7 @@ public class MedicineDao extends PharmacyDao <String, Medicine> {
     }
 
     @Override
-    public List<Medicine> findEntity(String id) throws DaoException {
+    public Medicine findEntity(String id) throws DaoException {
         return null;
     }
 

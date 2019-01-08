@@ -9,14 +9,17 @@ import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Set;
 
 public class AllClientMedicineListCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
 
     @Override
-    public String execute(HttpServletRequest request) {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("AllClientMedicineListCommand started.");
         try{
             Set<Medicine> medicineList = new MedicineServiceImpl().findAllClientMedicines();
@@ -25,6 +28,7 @@ public class AllClientMedicineListCommand implements PharmacyCommand {
         } catch (ServiceException e){
             logger.error(e.getMessage(), e);
         }
-        return JspPath.START_PAGE;
+        request.getRequestDispatcher(JspPath.START_PAGE).forward(request, response);
+
     }
 }

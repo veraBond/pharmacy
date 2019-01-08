@@ -24,7 +24,7 @@
             <input type="text" name="mail" value="${mail}" pattern="[\w]{2,}[@][\p{Alpha}]{2,}[.][\p{Alpha}]{2,}">
         </label>
         <label>Enter your password:
-            <input type="text" name="password" pattern="[\w]{5,}">
+            <input type="password" name="password" pattern="[\w]{5,}">
         </label>
         <div>
             <button type="submit">register</button>

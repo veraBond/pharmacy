@@ -22,9 +22,9 @@ public class PharmacyServlet extends HttpServlet {
         String commandName = request.getParameter("command");
         logger.info("Command name: " + commandName);
         PharmacyCommand command = CommandMap.getInstance().get(commandName);
-        String path;
-        path = command.execute(request);
-        request.getRequestDispatcher(path).forward(request, response);
+
+        command.execute(request,response);
+
     }
 
     @Override

@@ -15,7 +15,7 @@ public abstract class PharmacyDao <K, T extends Pharmacy> {
     protected Connection connection;
 
     protected abstract List<Pharmacy> findAll() throws DaoException;
-    protected abstract List<T> findEntity(K id) throws DaoException;
+    protected abstract T findEntity(K id) throws DaoException;
     protected abstract boolean delete(K id) throws DaoException;
     protected abstract int create(T entity) throws DaoException;
 

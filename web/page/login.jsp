@@ -20,7 +20,7 @@
         <input type="text" name="mail">
     </label>
     <label>Enter your password:
-        <input type="text" name="password">
+        <input type="password" name="password">
     </label>
     <div>
         <button type="submit">log in</button>

@@ -10,14 +10,17 @@ import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Set;
 
 public class ClientMedicineListCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
 
     @Override
-    public String execute(HttpServletRequest request) {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String mail = (String)request.getSession().getAttribute(JspAttribute.MAIL);
         String nextPage;
         try{
@@ -32,6 +35,7 @@ public class ClientMedicineListCommand implements PharmacyCommand {
             request.setAttribute(JspAttribute.ERROR_MESSAGE, "Error while loading medicine list.");
             nextPage = JspPath.COMMAND_ERROR_PAGE;
         }
-        return nextPage;
+        request.getRequestDispatcher(nextPage).forward(request, response);
+
     }
 }

@@ -11,14 +11,17 @@ import com.bandarovich.pharmacy.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Set;
 
 public class RegistrationCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
 
     @Override
-    public String execute(HttpServletRequest request){
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PharmacyPosition position = PharmacyPosition.valueOf(request.getParameter(JspAttribute.POSITION).toUpperCase());
         PharmacyUser user = new PharmacyUser(position,
                 request.getParameter(JspAttribute.USER_NAME),
@@ -35,7 +38,8 @@ public class RegistrationCommand implements PharmacyCommand {
                 request.getSession().setAttribute(JspAttribute.MAIL, user.getMail());
                 switch (position) {
                     case CLIENT:
-                        nextPage = new ClientMedicineListCommand().execute(request);
+
+                        nextPage = JspPath.CLIENT_PAGE;// new ClientMedicineListCommand().execute(request);
                         break;
                     case DOCTOR:
                         nextPage = JspPath.DOCTOR_PAGE;
@@ -60,6 +64,8 @@ public class RegistrationCommand implements PharmacyCommand {
             request.setAttribute(JspAttribute.ERROR_MESSAGE, "Registration error.");
             nextPage = JspPath.COMMAND_ERROR_PAGE;
         }
-        return nextPage;
+        response.sendRedirect(nextPage);
+        //request.getRequestDispatcher(nextPage).forward(request, response);
+
     }
 }

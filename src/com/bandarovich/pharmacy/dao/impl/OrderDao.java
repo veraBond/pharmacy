@@ -14,7 +14,7 @@ public class OrderDao extends PharmacyDao<Integer, PharmacyOrder> {
     }
 
     @Override
-    protected List<PharmacyOrder> findEntity(Integer id) throws DaoException {
+    protected PharmacyOrder findEntity(Integer id) throws DaoException {
         return null;
     }
 
