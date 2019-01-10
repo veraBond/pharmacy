@@ -16,16 +16,16 @@ public class MedicineDao extends PharmacyDao <String, Medicine> {
             "SELECT medicineNumber, medicineName, dosage, medicine_group.groupName, package_type.typeName, " +
                     "packageAmount, price, prescriptionNeed, storageAmount " +
                     "FROM medicines JOIN medicine_group ON medicines.groupType = medicine_group.groupId " +
-                    "JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
+                    "INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
                     "WHERE prescriptionNeed = 0";
 
     private final static String FIND_CLIENT_MEDICINES =
             "SELECT medicineNumber, medicineName, dosage, medicine_group.groupName, package_type.typeName, " +
                     "packageAmount, price, prescriptionNeed, storageAmount " +
                     "FROM medicines JOIN medicine_group ON medicines.groupType = medicine_group.groupId " +
-                    "JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
-                    "JOIN prescriptions ON medicineId = prescriptions.medicine " +
-                    "JOIN users ON prescriptions.client = users.userId " +
+                    "INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
+                    "INNER JOIN prescriptions ON medicineId = prescriptions.medicine " +
+                    "INNER JOIN users ON prescriptions.client = users.userId " +
                     "WHERE users.mail = ?";
 
     private final static String MEDICINE_NUMBER = "medicineNumber";
@@ -39,12 +39,12 @@ public class MedicineDao extends PharmacyDao <String, Medicine> {
     private final static String STORAGE_AMOUNT = "storageAmount";
 
     @Override
-    public List<Pharmacy> findAll() throws DaoException {
+    public List<Medicine> findAll() throws DaoException {
         return null;
     }
 
     @Override
-    public Medicine findEntity(String id) throws DaoException {
+    public Optional<Medicine> findEntity(String id) throws DaoException {
         return null;
     }
 
@@ -58,23 +58,23 @@ public class MedicineDao extends PharmacyDao <String, Medicine> {
         return 0;
     }
 
-    public Set<Medicine> findAllClientMedicines() throws DaoException{
+    public List<Medicine> findAllClientMedicines() throws DaoException{
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_CLIENT_MEDICINES)){
             ResultSet resultSet = preparedStatement.executeQuery();
             Map<Integer, Medicine> medicineMap = buildMedicines(resultSet);
-            return medicineMap.values().stream().collect(Collectors.toSet());
+            return medicineMap.values().stream().collect(Collectors.toList());
         } catch (SQLException e){
             logger.error("Error in find medicine list");
             throw new DaoException(e);
         }
     }
 
-    public Set<Medicine> findClientMedicines(String mail) throws DaoException{
+    public List<Medicine> findClientMedicines(String mail) throws DaoException{
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_CLIENT_MEDICINES)){
             preparedStatement.setString(1, mail);
             ResultSet resultSet = preparedStatement.executeQuery();
             Map<Integer, Medicine> medicineMap = buildMedicines(resultSet);
-            return medicineMap.values().stream().collect(Collectors.toSet());
+            return medicineMap.values().stream().collect(Collectors.toList());
         } catch (SQLException e){
             logger.error("Error in find client medicine list");
             throw new DaoException(e);

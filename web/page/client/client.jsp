@@ -43,7 +43,7 @@
         </div>
     </form>
     <form method="get" action="/pharmacy">
-        <input type="hidden" name="command" value="client-recipes">
+        <input type="hidden" name="command" value="client-prescription">
         <div>
             <button type="submit">Written prescriptions</button>
         </div>
@@ -79,10 +79,18 @@
             </tr>
         </c:forEach>
     </table>
-<button type="submit">Order</button>
-
-    <div>
-        <button onclick="location.href='/'">Log out</button>
-    </div>
+    <form method="post" action="/pharmacy">
+        <input type="hidden" name="command" value="try-order-medicine">
+        <button type="submit">Order</button>
+    </form>
+    <c:forEach var="error" items="${inputErrors}">
+        <c:out value="${error}"></c:out>
+    </c:forEach>
+    <form method="post" action="/pharmacy">
+        <input type="hidden" name="command" value="log-out">
+        <div>
+            <button type="submit">Log out</button>
+        </div>
+    </form>
 </body>
 </html>

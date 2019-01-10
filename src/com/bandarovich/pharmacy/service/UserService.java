@@ -4,9 +4,9 @@ import com.bandarovich.pharmacy.entity.PharmacyPosition;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 public interface UserService {
-    Set<String> register(PharmacyUser user) throws ServiceException;
-    List<PharmacyUser> logIn(PharmacyPosition position, String mail, String password) throws ServiceException;
+    List<String> register(PharmacyUser user) throws ServiceException;
+    Optional<String> findUserName(PharmacyPosition position, String mail, String password) throws ServiceException;
 }

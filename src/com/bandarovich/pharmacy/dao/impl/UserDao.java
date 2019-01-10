@@ -2,34 +2,33 @@ package com.bandarovich.pharmacy.dao.impl;
 
 import com.bandarovich.pharmacy.dao.DaoException;
 import com.bandarovich.pharmacy.dao.PharmacyDao;
-import com.bandarovich.pharmacy.entity.Pharmacy;
 import com.bandarovich.pharmacy.entity.PharmacyPosition;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
 import com.bandarovich.pharmacy.util.Coder;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.sql.*;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserDao extends PharmacyDao<String, PharmacyUser> {
     private final static String CREATE =
             "INSERT INTO users(position, userName, mail, password) VALUES (?, ?, ?, ?)";
-    private final static String FIND_USER =
+    private final static String FIND_ENTITY =
             "SELECT position, userName, password FROM users WHERE mail = ?";
+    private final static String FIND_NAME =
+            "SELECT userName FROM users WHERE position = ? AND mail = ? AND password = ?";
     private final static String POSITION = "position";
     private final static String USER_NAME = "userName";
     private final static String PASSWORD = "password";
 
     @Override
-    public List<Pharmacy> findAll() {
+    public List<PharmacyUser> findAll() {
         return null;
     }
 
-    //TODO: rewrite method with object PharmacyUser return. NULL if not found.
     @Override
-    public PharmacyUser findEntity(String mail) throws DaoException{
-        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_USER)){
+    public Optional<PharmacyUser> findEntity(String mail) throws DaoException{
+        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_ENTITY)){
             preparedStatement.setString(1, mail);
             ResultSet resultSet = preparedStatement.executeQuery();
             PharmacyUser user = null;
@@ -38,9 +37,10 @@ public class UserDao extends PharmacyDao<String, PharmacyUser> {
                 String userName = resultSet.getString(USER_NAME);
                 String password = resultSet.getString(PASSWORD);
                 user = new PharmacyUser(position, userName, mail, password);
-
+                return Optional.of(user);
+            } else {
+                return Optional.empty();
             }
-            return user;
         } catch (SQLException e){
             logger.error("Error in findEntity method: " + e.getMessage());
             throw new DaoException(e);
@@ -51,8 +51,7 @@ public class UserDao extends PharmacyDao<String, PharmacyUser> {
     public boolean delete(String mail) {
         return false;
     }
-
-//TODO try with resource
+//TODO coding in dao or in service
     @Override
     public int create(PharmacyUser user)throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(CREATE)){
@@ -66,5 +65,20 @@ public class UserDao extends PharmacyDao<String, PharmacyUser> {
         }
     }
 
-
+    public Optional<String> findUserName(PharmacyPosition position, String mail, String password) throws DaoException{
+        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_NAME)){
+            preparedStatement.setString(1, position.name());
+            preparedStatement.setString(2, mail);
+            preparedStatement.setString(3, Coder.codePassword(password));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()){
+                return Optional.of(resultSet.getString(USER_NAME));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException e){
+            logger.error("Error in findUser method: " + e.getMessage());
+            throw new DaoException(e);
+        }
+    }
 }

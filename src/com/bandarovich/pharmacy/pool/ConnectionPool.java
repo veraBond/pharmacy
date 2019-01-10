@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -44,7 +45,7 @@ public class ConnectionPool {
     }
 
     private void init() {
-        availableConnections = new ArrayBlockingQueue<>(size);
+        availableConnections = new LinkedBlockingQueue<>(size);
         usedConnections = new LinkedBlockingQueue<>();
         for(int i = 0; i < size; i++) {
             try{

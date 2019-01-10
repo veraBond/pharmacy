@@ -1,6 +1,8 @@
 package com.bandarovich.pharmacy.controller;
 
 import com.bandarovich.pharmacy.controller.command.CommandMap;
+import com.bandarovich.pharmacy.controller.command.JspAttribute;
+import com.bandarovich.pharmacy.controller.command.JspPath;
 import com.bandarovich.pharmacy.controller.command.PharmacyCommand;
 import com.bandarovich.pharmacy.pool.ConnectionPool;
 import org.apache.logging.log4j.LogManager;
@@ -14,17 +16,19 @@ import java.io.IOException;
 
 public class PharmacyServlet extends HttpServlet {
     private final static Logger logger = LogManager.getLogger();
-//TODO read about HTTP methods get, post, put, delete, head, options
-    //TODO идентпотентность
-    //TODO f5 after post execute get
+    private final static String COMMAND_PARAMETER = "command";
+    //TODO exception handle correct?
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String commandName = request.getParameter("command");
-        logger.info("Command name: " + commandName);
+        String commandName = request.getParameter(COMMAND_PARAMETER);
         PharmacyCommand command = CommandMap.getInstance().get(commandName);
-
-        command.execute(request,response);
-
+        try{
+            command.execute(request,response);
+        } catch (Exception e){
+            e.printStackTrace();
+            request.setAttribute(JspAttribute.ERROR_MESSAGE, e);
+            request.getRequestDispatcher(JspPath.COMMAND_ERROR_PAGE).forward(request, response);
+        }
     }
 
     @Override
