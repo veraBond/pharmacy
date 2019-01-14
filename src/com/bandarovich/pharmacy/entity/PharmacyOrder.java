@@ -3,26 +3,18 @@ package com.bandarovich.pharmacy.entity;
 import java.util.Objects;
 
 public class PharmacyOrder extends Pharmacy{
-    private int orderNumber;
+    private int orderId;
     private String clientMail;
-    private int medicineNumber;
+    private int medicineId;
     private int orderAmount;
-    private OrderStatus status;
+    private double totalCost; //TODO is it ok to have a such calculated field?
 
-    public PharmacyOrder(int orderNumber, String clientMail, int medicineNumber, int orderAmount, OrderStatus status) {
-        this.orderNumber = orderNumber;
+    public PharmacyOrder(int orderId, String clientMail, int medicineId, int orderAmount, double totalCost) {
+        this.orderId = orderId;
         this.clientMail = clientMail;
-        this.medicineNumber = medicineNumber;
+        this.medicineId = medicineId;
         this.orderAmount = orderAmount;
-        this.status = status;
-    }
-
-    public int getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
+        this.totalCost = totalCost;
     }
 
     public String getClientMail() {
@@ -33,12 +25,12 @@ public class PharmacyOrder extends Pharmacy{
         this.clientMail = clientMail;
     }
 
-    public int getMedicineNumber() {
-        return medicineNumber;
+    public int getMedicineId() {
+        return medicineId;
     }
 
-    public void setMedicineNumber(int medicineNumber) {
-        this.medicineNumber = medicineNumber;
+    public void setMedicineId(int medicineId) {
+        this.medicineId = medicineId;
     }
 
     public int getOrderAmount() {
@@ -49,28 +41,46 @@ public class PharmacyOrder extends Pharmacy{
         this.orderAmount = orderAmount;
     }
 
-    public OrderStatus getStatus() {
-        return status;
+    public double getTotalCost() {
+        return totalCost;
     }
 
-    public void setStatus(OrderStatus status) {
-        this.status = status;
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         PharmacyOrder that = (PharmacyOrder) o;
-        return orderNumber == that.orderNumber &&
-                medicineNumber == that.medicineNumber &&
-                orderAmount == that.orderAmount &&
-                clientMail.equals(that.clientMail) &&
-                status == that.status;
+
+        if (orderId != that.orderId) return false;
+        if (medicineId != that.medicineId) return false;
+        if (orderAmount != that.orderAmount) return false;
+        if (Double.compare(that.totalCost, totalCost) != 0) return false;
+        return clientMail.equals(that.clientMail);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderNumber, clientMail, medicineNumber, orderAmount, status);
+        int result;
+        long temp;
+        result = orderId;
+        result = 31 * result + clientMail.hashCode();
+        result = 31 * result + medicineId;
+        result = 31 * result + orderAmount;
+        temp = Double.doubleToLongBits(totalCost);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 }

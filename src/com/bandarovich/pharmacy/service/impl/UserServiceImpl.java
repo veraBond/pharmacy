@@ -2,11 +2,11 @@ package com.bandarovich.pharmacy.service.impl;
 
 import com.bandarovich.pharmacy.dao.DaoException;
 import com.bandarovich.pharmacy.dao.TransactionHelper;
-import com.bandarovich.pharmacy.dao.impl.UserDao;
-import com.bandarovich.pharmacy.entity.PharmacyPosition;
+import com.bandarovich.pharmacy.dao.impl.UserDaoImpl;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
 import com.bandarovich.pharmacy.service.ServiceException;
 import com.bandarovich.pharmacy.service.UserService;
+import com.bandarovich.pharmacy.util.InputDataService;
 import com.bandarovich.pharmacy.util.PharmacyValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,25 +15,23 @@ import java.util.*;
 
 public class UserServiceImpl implements UserService {
     private final static Logger logger = LogManager.getLogger();
-    public final static UserServiceImpl INSTANCE = new UserServiceImpl();
-
+    public final static UserService INSTANCE = new UserServiceImpl();
     private UserServiceImpl(){}
-
+//TODO return in try block ok?
     @Override
-    public Optional<String> findUserName(PharmacyPosition position, String mail, String password) throws ServiceException{
-        UserDao userDao = new UserDao();
+    public Optional<PharmacyUser> findUser(String mail, String password) throws ServiceException{
+        UserDaoImpl userDao = new UserDaoImpl();
         try{
-           TransactionHelper.beginTransaction(userDao);
-           Optional<String> userName = userDao.findUserName(position, mail, password);
-           return userName.isPresent() ? userName : Optional.empty();
+            TransactionHelper.beginTransaction(userDao);
+            Optional<PharmacyUser> userOptional = userDao.findUser(mail, InputDataService.codePassword(password));
+            return userOptional;
         } catch (DaoException e){
-            logger.error("Error in logIn method: " + e.getMessage());
             throw new ServiceException(e);
         } finally {
             TransactionHelper.endTransaction(userDao);
         }
     }
-
+    //TODO roll back catch block: log message is enough?
     @Override
     public List<String> register(PharmacyUser user) throws ServiceException{
         List<String> errors = new LinkedList<>();
@@ -41,11 +39,12 @@ public class UserServiceImpl implements UserService {
         if(existUser){
             errors.add("User with this e-mail already exists.");
         }
-        errors.addAll(formErrorSet(user));
+        errors.addAll(formErrorList(user));
         if(errors.isEmpty()){
-            UserDao userDao = new UserDao();
+            UserDaoImpl userDao = new UserDaoImpl();
             try{
                 TransactionHelper.beginTransaction(userDao);
+                user.setPassword(InputDataService.codePassword(user.getPassword()));
                 int result = userDao.create(user);
                 if(result != 1){
                     throw new ServiceException("Could not register user.");
@@ -53,35 +52,32 @@ public class UserServiceImpl implements UserService {
                 TransactionHelper.commit(userDao);
             } catch (DaoException e){
                 try{
-                    logger.error("Could not register user. Roll back", e);
                     TransactionHelper.rollBack(userDao);
                 } catch (DaoException daoExc){
-                    logger.error("Could not roll back.", daoExc);
+                    logger.error("Could not roll back in register command", daoExc);
                 }
-                throw new ServiceException();
+                throw new ServiceException(e);
             } finally {
                 TransactionHelper.endTransaction(userDao);
-                logger.info("End Transaction with user " + user.toString());
             }
         }
         return errors;
     }
 
     private boolean findUser(String mail) throws ServiceException{
-        UserDao userDao = new UserDao();
+        UserDaoImpl userDao = new UserDaoImpl();
         try{
             TransactionHelper.beginTransaction(userDao);
             Optional<PharmacyUser> user = userDao.findEntity(mail);
             return user.isPresent();
         } catch (DaoException e){
-            logger.error("Error in logIn method: " + e.getMessage());
             throw new ServiceException(e);
         } finally {
             TransactionHelper.endTransaction(userDao);
         }
     }
 
-    private List<String> formErrorSet(PharmacyUser user){
+    private List<String> formErrorList(PharmacyUser user){
         List<String> errors = new LinkedList<>();
         boolean nameIsCorrect = PharmacyValidator.userNameIsCorrect(user.getName());
         boolean mailIsCorrect = PharmacyValidator.mailIsCorrect(user.getMail());

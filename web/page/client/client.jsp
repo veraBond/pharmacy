@@ -34,21 +34,20 @@
     }
 </style>
 
-    <h2 align="right">${userName}, ${position}</h2>
+<h3 align="right">${userName}, ${position}</h3>
 
-    <form method="get" action="/pharmacy">
-        <input type="hidden" name="command" value="client-medicine-list">
-        <div>
-            <button type="submit">Available medicines</button>
-        </div>
-    </form>
-    <form method="get" action="/pharmacy">
-        <input type="hidden" name="command" value="client-prescription">
-        <div>
-            <button type="submit">Written prescriptions</button>
-        </div>
-    </form>
-
+<form method="get" action="/pharmacy">
+    <input type="hidden" name="command" value="client-medicine-list">
+    <div>
+        <button type="submit">Available medicines</button>
+    </div>
+</form>
+<form method="get" action="/pharmacy">
+    <input type="hidden" name="command" value="client-prescription-list">
+    <div>
+        <button type="submit">Written prescriptions</button>
+    </div>
+</form>
     <table>
         <caption>Available medicines</caption>
         <tr>
@@ -58,39 +57,34 @@
             <th>Package type</th>
             <th>Amount</th>
             <th>Price</th>
+            <th>Book</th>
         </tr>
-
         <c:forEach var="medicines" items="${medicineList}">
             <tr>
                 <td><c:out value="${medicines.name}"></c:out></td>
                 <td><c:out value="${medicines.dosage}"></c:out></td>
                 <td>
-                    <c:forEach var="group" items="${medicines.groupType}">
+                    <c:forEach var="group" items="${medicines.medicineGroup}">
                         <c:out value="${group}"></c:out>
                     </c:forEach>
                 </td>
                 <td><c:out value="${medicines.packageType}"></c:out></td>
                 <td><c:out value="${medicines.packageAmount}"></c:out></td>
                 <td><c:out value="${medicines.price}"></c:out></td>
-                <td><input type="hidden" name="addedMedicine" value="${medicines.medicineNumber}">
-                    <input type="number" min="0" max="${medicines.storageAmount > 5 ? 5 : medicines.storageAmount}"
-                           step="1" name="addedMedicineAmount" value="0">
-                </td>
+                <form method="get" action="/pharmacy">
+                    <input type="hidden" name="command" value="book-medicine">
+                    <td><input type="hidden" name="medicineId" value="${medicines.medicineId}">
+                        <button type="submit">book</button>
+                    </td>
+                </form>
             </tr>
         </c:forEach>
     </table>
-    <form method="post" action="/pharmacy">
-        <input type="hidden" name="command" value="try-order-medicine">
-        <button type="submit">Order</button>
-    </form>
-    <c:forEach var="error" items="${inputErrors}">
-        <c:out value="${error}"></c:out>
-    </c:forEach>
-    <form method="post" action="/pharmacy">
-        <input type="hidden" name="command" value="log-out">
-        <div>
-            <button type="submit">Log out</button>
-        </div>
-    </form>
+<form method="post" action="/pharmacy">
+    <input type="hidden" name="command" value="log-out">
+    <div>
+        <button type="submit">Log out</button>
+    </div>
+</form>
 </body>
 </html>

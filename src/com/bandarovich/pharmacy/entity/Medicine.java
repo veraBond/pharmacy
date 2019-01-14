@@ -1,37 +1,36 @@
 package com.bandarovich.pharmacy.entity;
 
-import java.util.List;
 import java.util.Objects;
 
 public class Medicine extends Pharmacy{
-    private int medicineNumber;
+    private int medicineId;
     private String name;
     private int dosage;
-    private List<String> groupType;
+    private String medicineGroup;
     private String packageType;
     private int packageAmount;
     private double price;
-    private boolean recipeNeed;
+    private boolean needPrescription;
     private int storageAmount;
 
-    public Medicine(int medicineNumber, String name, int dosage, List<String> groupType, String packageType, int packageAmount, double price, boolean recipeNeed, int storageAmount) {
-        this.medicineNumber = medicineNumber;
+    public Medicine(int medicineId, String name, int dosage, String medicineGroup, String packageType, int packageAmount, double price, boolean needPrescription, int storageAmount) {
+        this.medicineId = medicineId;
         this.name = name;
         this.dosage = dosage;
-        this.groupType = groupType;
+        this.medicineGroup = medicineGroup;
         this.packageType = packageType;
         this.packageAmount = packageAmount;
         this.price = price;
-        this.recipeNeed = recipeNeed;
+        this.needPrescription = needPrescription;
         this.storageAmount = storageAmount;
     }
 
-    public int getMedicineNumber() {
-        return medicineNumber;
+    public int getMedicineId() {
+        return medicineId;
     }
 
-    public void setMedicineNumber(int medicineNumber) {
-        this.medicineNumber = medicineNumber;
+    public void setMedicineId(int medicineId) {
+        this.medicineId = medicineId;
     }
 
     public String getName() {
@@ -50,12 +49,12 @@ public class Medicine extends Pharmacy{
         this.dosage = dosage;
     }
 
-    public List<String> getGroupType() {
-        return groupType;
+    public String getMedicineGroup() {
+        return medicineGroup;
     }
 
-    public void setGroupType(List<String> groupType) {
-        this.groupType = groupType;
+    public void setMedicineGroup(String medicineGroup) {
+        this.medicineGroup = medicineGroup;
     }
 
     public String getPackageType() {
@@ -82,12 +81,12 @@ public class Medicine extends Pharmacy{
         this.price = price;
     }
 
-    public boolean isRecipeNeed() {
-        return recipeNeed;
+    public boolean needPrescription() {
+        return needPrescription;
     }
 
-    public void setRecipeNeed(boolean recipeNeed) {
-        this.recipeNeed = recipeNeed;
+    public void setNeedPrescription(boolean needPrescription) {
+        this.needPrescription = needPrescription;
     }
 
     public int getStorageAmount() {
@@ -103,19 +102,24 @@ public class Medicine extends Pharmacy{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Medicine medicine = (Medicine) o;
-        return (medicineNumber == medicine.medicineNumber &&
+        return (medicineId == medicine.medicineId &&
                 name.equals(medicine.name) &&
                 dosage == medicine.dosage &&
-                groupType.equals(medicine.groupType) &&
-                packageType.equals(medicine.packageType)) &&
+                medicineGroup.equals(medicine.medicineGroup) &&
+                packageType.equals(medicine.packageType) &&
                 packageAmount == medicine.packageAmount &&
                 Double.compare(medicine.price, price) == 0 &&
-                recipeNeed == medicine.recipeNeed &&
-                storageAmount == medicine.storageAmount;
+                needPrescription == medicine.needPrescription &&
+                storageAmount == medicine.storageAmount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(medicineNumber, name, dosage, groupType, packageType, packageAmount, price, recipeNeed, storageAmount);
+        return Objects.hash(medicineId, name, dosage, medicineGroup, packageType, packageAmount, price, needPrescription, storageAmount);
+    }
+
+    @Override
+    public String toString() {
+        return "Medicine{" + "medicineId=" + medicineId + ", name='" + name + '\'' + ", dosage=" + dosage + ", medicineGroup=" + medicineGroup + ", packageType='" + packageType + '\'' + ", packageAmount=" + packageAmount + ", price=" + price + ", needPrescription=" + needPrescription + ", storageAmount=" + storageAmount + '}';
     }
 }

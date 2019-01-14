@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface UserService {
     List<String> register(PharmacyUser user) throws ServiceException;
-    Optional<String> findUserName(PharmacyPosition position, String mail, String password) throws ServiceException;
+    Optional<PharmacyUser> findUser(String mail, String password) throws ServiceException;
 }

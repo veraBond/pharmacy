@@ -4,7 +4,7 @@ public class PharmacyUser extends Pharmacy {
     private String name;
     private String mail;
     private String password;
-    private PharmacyPosition position; //TODO see MYSQL enum type
+    private PharmacyPosition position;
 
     public PharmacyUser(PharmacyPosition position, String name, String mail, String password) {
         this.name = name;

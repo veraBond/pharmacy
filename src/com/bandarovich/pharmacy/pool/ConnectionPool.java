@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -46,7 +45,7 @@ public class ConnectionPool {
 
     private void init() {
         availableConnections = new LinkedBlockingQueue<>(size);
-        usedConnections = new LinkedBlockingQueue<>();
+        usedConnections = new ArrayBlockingQueue<>(size);
         for(int i = 0; i < size; i++) {
             try{
                 Connection connection = poolManager.takeConnection();
@@ -88,7 +87,6 @@ public class ConnectionPool {
             connection.setAutoCommit(true);
             usedConnections.remove(proxyConnection);
             availableConnections.put(proxyConnection);
-            logger.info("Connection released to the connection pool.");
         } catch (SQLException e){
             logger.error("Could not release connection to the pool. ", e);
         } catch (InterruptedException e){

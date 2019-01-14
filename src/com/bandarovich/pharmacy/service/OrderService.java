@@ -1,5 +1,10 @@
 package com.bandarovich.pharmacy.service;
 
-public interface OrderService {
+import com.bandarovich.pharmacy.entity.PharmacyOrder;
 
+import java.util.Optional;
+
+public interface OrderService {
+    boolean deleteOrder(PharmacyOrder order) throws ServiceException;
+    Optional<PharmacyOrder> completeOrder(String clientMail, int medicineId, int quantity) throws ServiceException;
 }

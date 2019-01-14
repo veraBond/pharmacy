@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status = "info">
 	<Properties>
-		<property name="LOG_DIR">logs</property>
-		<property name="ARCHIVE_LOG_DIR">${LOG_DIR}/archive</property>
+		<property name="LOG_DIR">../logs</property>
+		<property name="ARCHIVE_LOG_DIR">${LOG_DIR/archive}</property>
 		<property name="pattern">%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{5} - %msg%n</property>
 		<property name="pattern_0">%d{HH:mm:ss} %-5level %logger{1} - %msg%n</property>
 	</Properties>
@@ -28,8 +28,8 @@
 			</Policies>
 			<DefaultRolloverStrategy max="10"/>
 		</RollingFile>
-		<RollingFile name="File" fileName="logs/text.log" append="true"
-					 filePattern = "logs/${date:yyyy-MM-dd}/%d{yyyy-MM-dd_HH-mm}_%i.log">
+		<RollingFile name="File" fileName="${LOG_DIR}/text.log" append="true"
+					 filePattern = "${LOG_DIR}/${date:yyyy-MM-dd}/%d{yyyy-MM-dd_HH-mm}_%i.log">
 			<PatternLayout pattern="${pattern}"/>
 			<Policies>
 

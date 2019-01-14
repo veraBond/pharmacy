@@ -1,6 +1,6 @@
 package com.bandarovich.pharmacy.entity;
 
-public abstract class Pharmacy {
+import java.io.Serializable;
 
-    protected Pharmacy(){}
+public abstract class Pharmacy implements Serializable, Cloneable {
 }

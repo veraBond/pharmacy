@@ -13,18 +13,46 @@ public class TransactionHelper {
 
     private TransactionHelper(){}
 
-    public static void beginTransaction(PharmacyDao dao) throws DaoException{
+    public static void beginTransaction(PharmacyDao dao, PharmacyDao ... daos) throws DaoException{
+        beginTransactionDao(dao);
+        for(PharmacyDao d: daos){
+            beginTransactionDao(d);
+        }
+    }
+
+    public static void endTransaction(PharmacyDao dao, PharmacyDao ... daos) {
+        endTransactionDao(dao);
+        for(PharmacyDao d: daos){
+            endTransactionDao(d);
+        }
+    }
+
+    public static void commit(PharmacyDao dao, PharmacyDao ... daos) throws DaoException{
+        commitDao(dao);
+        for(PharmacyDao d: daos){
+            commitDao(d);
+        }
+    }
+
+    public static void rollBack(PharmacyDao dao, PharmacyDao ... daos) throws DaoException{
+        rollBackDao(dao);
+        for(PharmacyDao d: daos){
+            rollBackDao(d);
+        }
+    }
+
+    private static void beginTransactionDao(PharmacyDao dao) throws DaoException{
         try{
             Connection connection = ConnectionPool.getInstance().takeConnection();
             dao.setConnection(connection);
             connection.setAutoCommit(false);
         } catch (PoolException | SQLException e){
-            logger.error("Error in beginning transaction: " + e.getMessage());
-           throw new DaoException();
+            logger.error("Could not begin transaction with " + dao + " : " + e.getMessage());
+            throw new DaoException();
         }
     }
 
-    public static void endTransaction(PharmacyDao dao) {
+    private static void endTransactionDao(PharmacyDao dao){
         try{
             dao.getConnection().setAutoCommit(true);
             dao.getConnection().close();
@@ -33,20 +61,20 @@ public class TransactionHelper {
         }
     }
 
-    public static void commit(PharmacyDao dao) throws DaoException{
+    private static void commitDao(PharmacyDao dao) throws DaoException{
         try{
             dao.getConnection().commit();
         } catch (SQLException e){
             rollBack(dao);
-            throw new DaoException("Could not commit action.", e);
+            throw new DaoException("Could not commit action in " + dao, e);
         }
     }
 
-    public static void rollBack(PharmacyDao dao) throws DaoException{
+    private static void rollBackDao(PharmacyDao dao) throws DaoException{
         try{
             dao.getConnection().rollback();
         } catch (SQLException e){
-            throw new DaoException("Could not roll back.", e);
+            throw new DaoException("Could not roll back in " + dao, e);
         }
     }
 }

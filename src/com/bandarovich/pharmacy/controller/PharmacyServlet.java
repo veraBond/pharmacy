@@ -1,12 +1,7 @@
 package com.bandarovich.pharmacy.controller;
 
-import com.bandarovich.pharmacy.controller.command.CommandMap;
-import com.bandarovich.pharmacy.controller.command.JspAttribute;
-import com.bandarovich.pharmacy.controller.command.JspPath;
-import com.bandarovich.pharmacy.controller.command.PharmacyCommand;
+import com.bandarovich.pharmacy.command.*;
 import com.bandarovich.pharmacy.pool.ConnectionPool;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,19 +10,26 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class PharmacyServlet extends HttpServlet {
-    private final static Logger logger = LogManager.getLogger();
     private final static String COMMAND_PARAMETER = "command";
-    //TODO exception handle correct?
+    private final static String COMMAND_ERROR_MESSAGE = "Command error.";
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String commandName = request.getParameter(COMMAND_PARAMETER);
         PharmacyCommand command = CommandMap.getInstance().get(commandName);
-        try{
-            command.execute(request,response);
-        } catch (Exception e){
-            e.printStackTrace();
-            request.setAttribute(JspAttribute.ERROR_MESSAGE, e);
-            request.getRequestDispatcher(JspPath.COMMAND_ERROR_PAGE).forward(request, response);
+        Router router = command.execute(request);
+        String nextPage = router.getPage();
+        switch (router.getType()) {
+            case FORWARD:
+                request.getRequestDispatcher(nextPage).forward(request, response);
+                break;
+            case REDIRECT:
+                response.sendRedirect(nextPage);
+                break;
+            default:
+                request.setAttribute(JspAttribute.ERROR_MESSAGE, COMMAND_ERROR_MESSAGE);
+                request.setAttribute(JspAttribute.START_PAGE, JspPath.START_PAGE);
+                response.sendRedirect(JspPath.COMMAND_ERROR_PAGE);
         }
     }
 
