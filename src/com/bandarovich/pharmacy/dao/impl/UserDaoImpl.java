@@ -5,7 +5,7 @@ import com.bandarovich.pharmacy.dao.PharmacyDao;
 import com.bandarovich.pharmacy.dao.UserDao;
 import com.bandarovich.pharmacy.entity.PharmacyPosition;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
-import com.bandarovich.pharmacy.util.InputDataService;
+import com.bandarovich.pharmacy.util.PasswordCoding;
 
 import java.sql.*;
 import java.util.List;
@@ -57,7 +57,7 @@ public class UserDaoImpl extends PharmacyDao<String, PharmacyUser> implements Us
             preparedStatement.setString(1, user.getPosition().name());
             preparedStatement.setString(2, user.getName());
             preparedStatement.setString(3, user.getMail());
-            preparedStatement.setString(4, InputDataService.codePassword(user.getPassword()));
+            preparedStatement.setString(4, PasswordCoding.codePassword(user.getPassword()));
             return preparedStatement.executeUpdate();
         } catch (SQLException e){
 

@@ -6,7 +6,7 @@ import com.bandarovich.pharmacy.dao.impl.UserDaoImpl;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
 import com.bandarovich.pharmacy.service.ServiceException;
 import com.bandarovich.pharmacy.service.UserService;
-import com.bandarovich.pharmacy.util.InputDataService;
+import com.bandarovich.pharmacy.util.PasswordCoding;
 import com.bandarovich.pharmacy.util.PharmacyValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
         UserDaoImpl userDao = new UserDaoImpl();
         try{
             TransactionHelper.beginTransaction(userDao);
-            Optional<PharmacyUser> userOptional = userDao.findUser(mail, InputDataService.codePassword(password));
+            Optional<PharmacyUser> userOptional = userDao.findUser(mail, PasswordCoding.codePassword(password));
             return userOptional;
         } catch (DaoException e){
             throw new ServiceException(e);
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
             UserDaoImpl userDao = new UserDaoImpl();
             try{
                 TransactionHelper.beginTransaction(userDao);
-                user.setPassword(InputDataService.codePassword(user.getPassword()));
+                user.setPassword(PasswordCoding.codePassword(user.getPassword()));
                 int result = userDao.create(user);
                 if(result != 1){
                     throw new ServiceException("Could not register user.");

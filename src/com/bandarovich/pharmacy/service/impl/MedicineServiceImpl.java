@@ -1,16 +1,13 @@
 package com.bandarovich.pharmacy.service.impl;
 
 import com.bandarovich.pharmacy.dao.DaoException;
-import com.bandarovich.pharmacy.dao.MedicineDao;
 import com.bandarovich.pharmacy.dao.TransactionHelper;
 import com.bandarovich.pharmacy.dao.impl.MedicineDaoImpl;
 import com.bandarovich.pharmacy.dao.impl.PrescriptionDaoImpl;
 import com.bandarovich.pharmacy.dao.impl.UserDaoImpl;
 import com.bandarovich.pharmacy.entity.Medicine;
-import com.bandarovich.pharmacy.entity.PharmacyUser;
 import com.bandarovich.pharmacy.service.MedicineService;
 import com.bandarovich.pharmacy.service.ServiceException;
-import com.bandarovich.pharmacy.util.InputDataService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

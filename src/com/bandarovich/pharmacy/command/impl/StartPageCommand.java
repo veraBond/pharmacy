@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 public class StartPageCommand implements PharmacyCommand {
     @Override
     public Router execute(HttpServletRequest request) {
-        String startPage = request.getParameter(JspAttribute.START_PAGE);
+        String startPage = (String)request.getSession().getAttribute(JspAttribute.START_PAGE);
         Router router = new Router();
         router.setRedirect(startPage);
         return router;

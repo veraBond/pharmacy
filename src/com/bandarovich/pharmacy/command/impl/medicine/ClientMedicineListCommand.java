@@ -15,22 +15,28 @@ import java.util.List;
 
 public class ClientMedicineListCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
+    private final static String CLIENT_MEDICINE_LIST_ERROR_MESSAGE = "Error while loading medicine list.";
+    private final static String EMPTY_LIST_MESSAGE = "You have no available medicines.";
+
     @Override
     public Router execute(HttpServletRequest request){
-//        String mail = (String)request.getSession().getAttribute(JspAttribute.MAIL);
-//        String nextPage;
-//        try{
-//            List<Medicine> clientMedicines = MedicineServiceImpl.INSTANCE.findClientMedicines(mail);
-//            List<Medicine> availableMedicines = MedicineServiceImpl.INSTANCE.findAllClientAvailableMedicines();
-//            availableMedicines.addAll(clientMedicines);
-//            request.setAttribute(JspAttribute.MEDICINE_LIST, availableMedicines);
-//            nextPage = JspPath.CLIENT_PAGE;
-//
-//        } catch (ServiceException e){
-//            logger.error(e);
-//            request.setAttribute(JspAttribute.ERROR_MESSAGE, "Error while loading medicine list.");
-//            nextPage = JspPath.COMMAND_ERROR_PAGE;
-//        }
-        return null;
+        String mail = (String)request.getSession().getAttribute(JspAttribute.MAIL);
+        Router router = new Router();
+        try{
+            List<Medicine> clientMedicines = MedicineServiceImpl.INSTANCE.findClientMedicineList(mail);
+            List<Medicine> availableMedicines = MedicineServiceImpl.INSTANCE.findAllClientAvailableMedicineList();
+            availableMedicines.addAll(clientMedicines);
+            if(!availableMedicines.isEmpty()){
+                request.getSession().setAttribute(JspAttribute.MEDICINE_LIST, availableMedicines);
+            } else {
+                request.setAttribute(JspAttribute.MESSAGE, EMPTY_LIST_MESSAGE);
+            }
+            router.setForward(JspPath.CLIENT_PAGE);
+        } catch (ServiceException e){
+            logger.error(CLIENT_MEDICINE_LIST_ERROR_MESSAGE, e);
+            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, CLIENT_MEDICINE_LIST_ERROR_MESSAGE + e);
+            router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
+        }
+        return router;
     }
 }

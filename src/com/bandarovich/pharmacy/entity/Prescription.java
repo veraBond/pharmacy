@@ -8,9 +8,8 @@ public class Prescription extends Pharmacy {
     private int availableMedicineAmount;
     private PrescriptionStatus status;
     private boolean isRequestedForExtension;
-    private boolean isValid;
 
-    public Prescription(int prescriptionId, int medicineId, String clientMail, String doctorMail, int availableMedicineAmount, PrescriptionStatus status, boolean isRequestedForExtension, boolean isValid) {
+    public Prescription(int prescriptionId, int medicineId, String clientMail, String doctorMail, int availableMedicineAmount, PrescriptionStatus status, boolean isRequestedForExtension) {
         this.prescriptionId = prescriptionId;
         this.clientMail = clientMail;
         this.doctorMail = doctorMail;
@@ -18,7 +17,6 @@ public class Prescription extends Pharmacy {
         this.availableMedicineAmount = availableMedicineAmount;
         this.status = status;
         this.isRequestedForExtension = isRequestedForExtension;
-        this.isValid = isValid;
     }
 
     public int getPrescriptionId() {
@@ -77,14 +75,6 @@ public class Prescription extends Pharmacy {
         isRequestedForExtension = requestedForExtension;
     }
 
-    public boolean isValid() {
-        return isValid;
-    }
-
-    public void setValid(boolean valid) {
-        isValid = valid;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,7 +86,6 @@ public class Prescription extends Pharmacy {
         if (medicineId != that.medicineId) return false;
         if (availableMedicineAmount != that.availableMedicineAmount) return false;
         if (isRequestedForExtension != that.isRequestedForExtension) return false;
-        if (isValid != that.isValid) return false;
         if (!clientMail.equals(that.clientMail)) return false;
         if (!doctorMail.equals(that.doctorMail)) return false;
         return status == that.status;

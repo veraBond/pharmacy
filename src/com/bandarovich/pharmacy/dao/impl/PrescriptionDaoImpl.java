@@ -15,9 +15,9 @@ import java.util.Optional;
 
 public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> implements PrescriptionDao {
     private final static String FIND_PRESCRIPTION_BY_MEDICINE_ID_CLIENT_ID =
-            "SELECT prescriptionId, medicineId, clients.mail, doctors.mail, amount, status, isRequestedForExtension, isValid " +
+            "SELECT prescriptionId, medicineId, clients.mail, doctors.mail, amount, status, isRequestedForExtension " +
                     "FROM prescriptions, users AS clients, users AS doctors " +
-                    "WHERE medicineId = ? AND clientId = ? AND status = 'active' AND isValid = true";
+                    "WHERE medicineId = ? AND clientId = ? AND status = 'active'";
     private final static String FIND_MEDICINE_CLIENT_DOCTOR_IDS =
             "SELECT medicineId, clients.userId, doctors.userId " +
                     "FROM medicines, users AS clients, users AS doctors " +
@@ -27,22 +27,24 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
                     "FROM prescriptions INNER JOIN medicines USING (medicineId)" +
                     "INNER JOIN users AS clients ON prescriptions.clientId = clients.userId " +
                     "INNER JOIN users AS doctors ON prescriptions.doctorId = doctors.mail " +
-                    "WHERE clients.mail = ? AND isValid = true ";
+                    "WHERE clients.mail = ?";
     private final static String FIND_MIN_PRESCRIPTION_NUMBER =
             "SELECT MIN(prescriptionId) prescriptionNumber FROM prescriptions";
     private final static String FIND_CLIENT_AVAILABLE_AMOUNT =
             "SELECT amount FROM prescriptions " +
-                    "WHERE medicineId = ? AND clientId = ? AND status = 'active' AND isValid = true";
+                    "WHERE medicineId = ? AND clientId = ? AND status = 'active'";
     private final static String CREATE =
-            "INSERT INTO prescriptions(prescriptionId, medicineId, clientId, doctorId, amount, status, isRequestedForExtension, isValid) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO prescriptions(prescriptionId, medicineId, clientId, doctorId, amount, status, isRequestedForExtension ) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final static String UPDATE =
             "UPDATE prescriptions " +
                     "SET medicineId = ?, " +
                     "clientId = (SELECT clients.userId FROM users AS clients where clients.mail = ?), " +
                     "doctorId = (SELECT doctors.userId FROM users AS doctors where doctors.mail = ?), " +
-                    "amount = ?, status = ?, isRequestedForExtension = ?, isValid = ? " +
+                    "amount = ?, status = ?, isRequestedForExtension = ? " +
                     "WHERE prescriptionId = ?";
+    private final static String REQUEST_PRESCRIPTION_FOR_EXTENSION =
+            "UPDATE prescriptions SET isRequestedForExtension = TRUE WHERE prescriptionId = ?";
     private final static String PRESCRIPTION_ID = "prescriptionId";
     private final static String MEDICINE_ID = "medicineId";
     private final static String CLIENT_MAIL = "clients.mail";
@@ -52,7 +54,6 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
     private final static String AMOUNT = "amount";
     private final static String STATUS = "status";
     private final static String IS_REQUESTED_FOR_EXTENSION = "isRequestedForExtension";
-    private final static String IS_VALID = "isValid";
 
     @Override
     public Optional<Prescription> findEntity(Integer id) throws DaoException {
@@ -63,7 +64,7 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
     public List<Prescription> findAll() throws DaoException {
         return null;
     }
-    //TODO check try/catch
+
     @Override
     public int create(Prescription prescription) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_MEDICINE_CLIENT_DOCTOR_IDS)){
@@ -81,7 +82,6 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
                     insertStatement.setInt(5, prescription.getAvailableMedicineAmount());
                     insertStatement.setString(6, prescription.getStatus().name().toLowerCase());
                     insertStatement.setBoolean(7, prescription.isRequestedForExtension());
-                    insertStatement.setBoolean(8, prescription.isValid());
                     result += insertStatement.executeUpdate();
                 }
             }
@@ -105,7 +105,6 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
             preparedStatement.setInt(4, prescription.getAvailableMedicineAmount());
             preparedStatement.setString(5, prescription.getStatus().name());
             preparedStatement.setBoolean(6, prescription.isRequestedForExtension());
-            preparedStatement.setBoolean(7, prescription.isValid());
             preparedStatement.setInt(8, prescription.getPrescriptionId());
             return preparedStatement.executeUpdate();
         } catch (SQLException e){
@@ -136,14 +135,8 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Prescription> prescriptions = new LinkedList<>();
             while (resultSet.next()) {
-                int prescriptionNumber = resultSet.getInt(PRESCRIPTION_ID);
-                String clientMail = resultSet.getString(CLIENT_MAIL);
-                String doctorMail = resultSet.getString(DOCTOR_MAIL);
-                int medicineNumber = resultSet.getInt(MEDICINE_ID);
-                int amount = resultSet.getInt(AMOUNT);
-                PrescriptionStatus status = PrescriptionStatus.valueOf(resultSet.getString(STATUS).toUpperCase());
-                boolean isRequestedForExtension = resultSet.getBoolean(IS_REQUESTED_FOR_EXTENSION);
-                prescriptions.add(new Prescription(prescriptionNumber, medicineNumber, clientMail, doctorMail, amount, status, isRequestedForExtension, true));
+                Prescription prescription = buildPrescription(resultSet);
+                prescriptions.add(prescription);
             }
             return prescriptions;
         } catch (SQLException e){
@@ -176,6 +169,16 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         }
     }
 
+    @Override
+    public int requestPrescriptionForExtension(int prescriptionId) throws DaoException {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(REQUEST_PRESCRIPTION_FOR_EXTENSION)){
+            preparedStatement.setInt(1, prescriptionId);
+            return preparedStatement.executeUpdate();
+        } catch (SQLException e){
+            throw new DaoException(e);
+        }
+    }
+
     private Prescription buildPrescription(ResultSet resultSet) throws SQLException{
         int prescriptionId = resultSet.getInt(PRESCRIPTION_ID);
         int medicineId = resultSet.getInt(MEDICINE_ID);
@@ -184,7 +187,6 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         int amount = resultSet.getInt(AMOUNT);
         PrescriptionStatus status = PrescriptionStatus.valueOf(resultSet.getString(STATUS).toUpperCase());
         boolean isReq = resultSet.getBoolean(IS_REQUESTED_FOR_EXTENSION);
-        boolean isValid = resultSet.getBoolean(IS_VALID);
-        return new Prescription(prescriptionId, medicineId, clientMail, doctorMail, amount, status, isReq, isValid);
+        return new Prescription(prescriptionId, medicineId, clientMail, doctorMail, amount, status, isReq);
     }
 }

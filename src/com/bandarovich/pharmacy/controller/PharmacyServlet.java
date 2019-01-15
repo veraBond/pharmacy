@@ -14,7 +14,7 @@ public class PharmacyServlet extends HttpServlet {
     private final static String COMMAND_ERROR_MESSAGE = "Command error.";
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String commandName = request.getParameter(COMMAND_PARAMETER);
         PharmacyCommand command = CommandMap.getInstance().get(commandName);
         Router router = command.execute(request);
@@ -31,11 +31,6 @@ public class PharmacyServlet extends HttpServlet {
                 request.setAttribute(JspAttribute.START_PAGE, JspPath.START_PAGE);
                 response.sendRedirect(JspPath.COMMAND_ERROR_PAGE);
         }
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doPost(req, resp);
     }
 
     @Override

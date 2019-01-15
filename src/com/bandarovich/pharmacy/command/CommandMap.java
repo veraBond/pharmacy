@@ -1,5 +1,6 @@
 package com.bandarovich.pharmacy.command;
 
+import com.bandarovich.pharmacy.command.impl.SetLocaleCommand;
 import com.bandarovich.pharmacy.command.impl.StartPageCommand;
 import com.bandarovich.pharmacy.command.impl.medicine.BookMedicineCommand;
 import com.bandarovich.pharmacy.command.impl.medicine.DoctorMedicineListCommand;
@@ -8,6 +9,7 @@ import com.bandarovich.pharmacy.command.impl.prescription.ClientPrescriptionList
 import com.bandarovich.pharmacy.command.impl.medicine.AllClientMedicineListCommand;
 import com.bandarovich.pharmacy.command.impl.medicine.ClientMedicineListCommand;
 import com.bandarovich.pharmacy.command.impl.prescription.DoctorPrescriptionListCommand;
+import com.bandarovich.pharmacy.command.impl.prescription.RequestPrescriptionForExtensionCommand;
 import com.bandarovich.pharmacy.command.impl.prescription.WritePrescriptionCommand;
 import com.bandarovich.pharmacy.command.impl.user.LogInCommand;
 import com.bandarovich.pharmacy.command.impl.user.LogOutCommand;
@@ -18,12 +20,14 @@ import java.util.EnumMap;
 public class CommandMap {
     private EnumMap<CommandType, PharmacyCommand> commandMap = new EnumMap<CommandType, PharmacyCommand>(CommandType.class){
         {
+            put(CommandType.SET_LOCALE, new SetLocaleCommand());
             put(CommandType.LOG_IN, new LogInCommand());
             put(CommandType.REGISTRATION, new RegistrationCommand());
             put(CommandType.LOG_OUT, new LogOutCommand());
             put(CommandType.BOOK_MEDICINE, new BookMedicineCommand());
             put(CommandType.COMPLETE_ORDER, new CompleteOrderCommand());
             put(CommandType.CLIENT_MEDICINE_LIST, new ClientMedicineListCommand());
+            put(CommandType.REQUEST_PRESCRIPTION_FOR_EXTENSION, new RequestPrescriptionForExtensionCommand());
             put(CommandType.ALL_CLIENT_MEDICINE_LIST, new AllClientMedicineListCommand());
             put(CommandType.CLIENT_PRESCRIPTION_LIST, new ClientPrescriptionListCommand());
             put(CommandType.DOCTOR_MEDICINE_LIST, new DoctorMedicineListCommand());

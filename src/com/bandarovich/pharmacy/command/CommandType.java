@@ -1,6 +1,7 @@
 package com.bandarovich.pharmacy.command;
 
 public enum CommandType {
+    SET_LOCALE,
     REGISTRATION,
     LOG_IN,
     LOG_OUT,
@@ -8,9 +9,8 @@ public enum CommandType {
     COMPLETE_ORDER,
     CLIENT_MEDICINE_LIST,
     CLIENT_PRESCRIPTION_LIST,
+    REQUEST_PRESCRIPTION_FOR_EXTENSION,
     ALL_CLIENT_MEDICINE_LIST,
-    TRY_ORDER_MEDICINE,
-    ADD_ORDER_MEDICINE,
     DOCTOR_MEDICINE_LIST,
     DOCTOR_PRESCRIPTION_LIST,
     WRITE_PRESCRIPTION,

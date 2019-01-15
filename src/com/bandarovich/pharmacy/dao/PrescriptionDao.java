@@ -10,4 +10,5 @@ public interface PrescriptionDao {
     List<Prescription> findClientPrescriptionList(String mail) throws DaoException;
     int findMinPrescriptionNumber() throws DaoException;
     Optional<Prescription> findPrescriptionByMedicineIdClientId(int medicineId, int clientId) throws DaoException;
+    int requestPrescriptionForExtension(int prescriptionId) throws DaoException;
 }

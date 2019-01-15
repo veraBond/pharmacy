@@ -47,7 +47,7 @@ public class CompleteOrderCommand implements PharmacyCommand {
                 router.setForward(JspPath.CLIENT_ORDER_PAGE);
             }
         } catch (ServiceException e){
-            logger.error("Could not complete order.", e);
+            logger.error(COMPLETE_ORDER_ERROR_MESSAGE, e);
             request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, COMPLETE_ORDER_ERROR_MESSAGE + e);
             router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
         }

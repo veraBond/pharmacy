@@ -12,6 +12,7 @@ public class JspAttribute {
     public final static String AVAILABLE_MEDICINE_QUANTITY = "availableMedicineQuantity";
     public final static String BOOK_MEDICINE_QUANTITY = "bookMedicineQuantity";
     public final static String PRESCRIPTION_LIST = "prescriptionList";
+    public final static String PRESCRIPTION_ID = "prescriptionId";
     public final static String QUANTITY = "quantity";
     public final static String PRESCRIPTION_STATUS = "prescriptionStatus";
     public final static String MESSAGE = "message";

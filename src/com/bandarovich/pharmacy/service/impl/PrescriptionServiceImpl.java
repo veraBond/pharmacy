@@ -61,7 +61,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             try{
                 TransactionHelper.beginTransaction(prescriptionDao);
                 int minPrescriptionNumber = prescriptionDao.findMinPrescriptionNumber();
-                Prescription prescription = new Prescription(++minPrescriptionNumber, medicineNumber, clientMail, doctorMail, amount, PrescriptionStatus.ACTIVE, false, true);
+                Prescription prescription = new Prescription(++minPrescriptionNumber, medicineNumber, clientMail, doctorMail, amount, PrescriptionStatus.ACTIVE, false);
                 int result = prescriptionDao.create(prescription);
                 if(result == 0){
                     throw new ServiceException("Could not create prescription.");
@@ -106,11 +106,31 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             try{
                 TransactionHelper.rollBack(prescriptionDao);
             } catch (DaoException rollBackExc){
-                logger.error("Could not roll back after updating prescription", rollBackExc);
+                logger.error("Could not roll back after updating prescription. ", rollBackExc);
             }
             throw new ServiceException(e);
         } finally {
             TransactionHelper.endTransaction(prescriptionDao, userDao);
+        }
+    }
+
+    @Override
+    public boolean requestPrescriptionForExtension(int prescriptionId) throws ServiceException{
+        PrescriptionDaoImpl prescriptionDao = new PrescriptionDaoImpl();
+        try{
+            TransactionHelper.beginTransaction(prescriptionDao);
+            int result = prescriptionDao.requestPrescriptionForExtension(prescriptionId);
+            TransactionHelper.commit(prescriptionDao);
+            return result == 1;
+        } catch (DaoException e){
+            try{
+                TransactionHelper.rollBack(prescriptionDao);
+            } catch (DaoException rollBackExc){
+                logger.error("Could not roll back after requestPrescriptionForExtension method. ", rollBackExc);
+            }
+            throw new ServiceException(e);
+        } finally {
+            TransactionHelper.endTransaction(prescriptionDao);
         }
     }
 

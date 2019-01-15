@@ -7,12 +7,9 @@ import com.bandarovich.pharmacy.command.Router;
 import com.bandarovich.pharmacy.entity.Medicine;
 import com.bandarovich.pharmacy.entity.PharmacyPosition;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
-import com.bandarovich.pharmacy.entity.Prescription;
 import com.bandarovich.pharmacy.service.ServiceException;
 import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
-import com.bandarovich.pharmacy.service.impl.PrescriptionServiceImpl;
 import com.bandarovich.pharmacy.service.impl.UserServiceImpl;
-import javafx.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -58,8 +55,8 @@ public class LogInCommand implements PharmacyCommand{
                         request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.PHARMACIST_PAGE);
                         router.setRedirect(JspPath.PHARMACIST_PAGE);
                         break;
-                    default://TODO logger WARN?
-                        logger.warn("Unexpected position type " + position);
+                    default:
+                        logger.warn(POSITION_ERROR_MESSAGE + position);
                         request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, POSITION_ERROR_MESSAGE);
                         request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.START_PAGE);
                         router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
@@ -69,7 +66,7 @@ public class LogInCommand implements PharmacyCommand{
                 router.setForward(JspPath.LOGIN_PAGE);
             }
         } catch (ServiceException e){
-            logger.error("Could not log in client.", e);
+            logger.error(LOG_IN_ERROR_MESSAGE, e);
             request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, LOG_IN_ERROR_MESSAGE + e);
             request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.START_PAGE);
             router.setRedirect(JspPath.COMMAND_ERROR_PAGE);

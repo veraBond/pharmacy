@@ -4,8 +4,6 @@ import com.bandarovich.pharmacy.dao.DaoException;
 import com.bandarovich.pharmacy.dao.OrderDao;
 import com.bandarovich.pharmacy.dao.PharmacyDao;
 import com.bandarovich.pharmacy.entity.PharmacyOrder;
-import com.bandarovich.pharmacy.service.impl.UserServiceImpl;
-import com.bandarovich.pharmacy.util.InputDataService;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
