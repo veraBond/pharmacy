@@ -22,6 +22,7 @@ public class LogInCommand implements PharmacyCommand{
     private final static String POSITION_ERROR_MESSAGE = "Log in error: unexpected position.";
     private final static String LOG_IN_ERROR_MESSAGE = "Log in error.";
     private final static String INPUT_ERROR_MESSAGE = "Incorrect e-mail address or password.";
+    private final static String EMPTY_MEDICINE_LIST_MESSAGE = "You have no available medicines.";
 
     @Override
     public Router execute(HttpServletRequest request) {
@@ -35,24 +36,26 @@ public class LogInCommand implements PharmacyCommand{
                 request.getSession().setAttribute(JspAttribute.USER_NAME, user.get().getName());
                 request.getSession().setAttribute(JspAttribute.POSITION, position);
                 request.getSession().setAttribute(JspAttribute.MAIL, mail);
+                List<Medicine> clientMedicineList = MedicineServiceImpl.INSTANCE.findClientMedicineList(mail);
+                clientMedicineList.addAll(MedicineServiceImpl.INSTANCE.findAllClientAvailableMedicineList());
+                request.getSession().setAttribute(JspAttribute.CLIENT_MEDICINE_LIST, clientMedicineList);
                 switch (position) {
                     case CLIENT:
-                        List<Medicine> clientMedicines = MedicineServiceImpl.INSTANCE.findClientMedicineList(mail);
-                        clientMedicines.addAll(MedicineServiceImpl.INSTANCE.findAllClientAvailableMedicineList());
-                        request.getSession().setAttribute(JspAttribute.MEDICINE_LIST, clientMedicines);
                         request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.CLIENT_PAGE);
                         router.setRedirect(JspPath.CLIENT_PAGE);
                         break;
                     case DOCTOR:
                         request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.DOCTOR_PAGE);
                         List<Medicine> doctorMedicines = MedicineServiceImpl.INSTANCE.findDoctorMedicineList();
-                        request.getSession().setAttribute(JspAttribute.MEDICINE_LIST, doctorMedicines);
+                        request.getSession().setAttribute( JspAttribute.DOCTOR_MEDICINE_LIST, doctorMedicines);
+                        request.getSession().setAttribute(JspAttribute.IS_DOCTOR, Boolean.TRUE);
                         router.setRedirect(JspPath.DOCTOR_PAGE);
                         break;
                     case PHARMACIST:
                         List<Medicine> medicines = MedicineServiceImpl.INSTANCE.findAllMedicineList();
-                        request.getSession().setAttribute(JspAttribute.MEDICINE_LIST, medicines);
+                        request.getSession().setAttribute( JspAttribute.PHARMACIST_MEDICINE_LIST, medicines);
                         request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.PHARMACIST_PAGE);
+                        request.getSession().setAttribute(JspAttribute.IS_PHARMACIST, Boolean.TRUE);
                         router.setRedirect(JspPath.PHARMACIST_PAGE);
                         break;
                     default:
@@ -65,7 +68,7 @@ public class LogInCommand implements PharmacyCommand{
                 request.setAttribute(JspAttribute.INPUT_ERROR_MESSAGE, INPUT_ERROR_MESSAGE);
                 router.setForward(JspPath.LOGIN_PAGE);
             }
-        } catch (ServiceException e){
+        } catch (Exception e){
             logger.error(LOG_IN_ERROR_MESSAGE, e);
             request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, LOG_IN_ERROR_MESSAGE + e);
             request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.START_PAGE);

@@ -4,45 +4,34 @@ import com.bandarovich.pharmacy.command.JspAttribute;
 import com.bandarovich.pharmacy.command.JspPath;
 import com.bandarovich.pharmacy.command.PharmacyCommand;
 import com.bandarovich.pharmacy.command.Router;
+import com.bandarovich.pharmacy.entity.Medicine;
 import com.bandarovich.pharmacy.service.ServiceException;
-import com.bandarovich.pharmacy.service.impl.PrescriptionServiceImpl;
+import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
+import java.util.Optional;
 
 public class WritePrescriptionCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
-    private final static String PRESCRIPTION_SUCCESSFUL_WRITTEN = "completed";
-    private final static String PRESCRIPTION_UNSUCCESSFUL_WRITTEN = "Service error";
+    private final static String WRITE_PRESCRIPTION_ERROR_MESSAGE = "Write prescription error. ";
 
     @Override
     public Router execute(HttpServletRequest request) {
-//        String clientMail = request.getParameter(JspAttribute.CLIENT_MAIL);
-//        logger.info(clientMail);
-//        String doctorMail = (String)request.getSession().getAttribute(JspAttribute.MAIL);
-//        int medicineNumber = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_NUMBER));
-//        int amount = Integer.parseInt(request.getParameter(JspAttribute.QUANTITY));
-//        try{
-//            request.setAttribute(JspAttribute.MEDICINE_LIST, request.getParameter(JspAttribute.MEDICINE_LIST));
-//            List<String> errors = PrescriptionServiceImpl.INSTANCE.writePrescription(medicineNumber, clientMail, doctorMail, amount);
-//            if(errors.isEmpty()) {
-//                request.setAttribute(JspAttribute.PRESCRIPTION_STATUS, PRESCRIPTION_SUCCESSFUL_WRITTEN);
-//                response.sendRedirect(JspPath.DOCTOR_MEDICINE_PAGE);
-//            } else {
-//                request.setAttribute(JspAttribute.INPUT_ERRORS, errors);
-//                request.getRequestDispatcher(JspPath.DOCTOR_MEDICINE_PAGE).forward(request, response);
-//            }
-//        } catch (ServiceException e){
-//            logger.error(e);
-//            request.setAttribute(JspAttribute.ERROR_MESSAGE, e);
-//            request.setAttribute(JspAttribute.PREVIOUS_PAGE, JspPath.DOCTOR_MEDICINE_PAGE);
-//            response.sendError(500, PRESCRIPTION_UNSUCCESSFUL_WRITTEN);
-//        }
-        return null;
+        int medicineId = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_ID));
+        Router router = new Router();
+        try{
+            Medicine medicine = MedicineServiceImpl.INSTANCE.findMedicine(medicineId);
+            int availableMedicineQuantity = MedicineServiceImpl.INSTANCE.findAvailableDoctorMedicineAmount(medicineId);
+            request.setAttribute(JspAttribute.AVAILABLE_MEDICINE_QUANTITY, availableMedicineQuantity);
+            request.setAttribute(JspAttribute.MEDICINE, medicine);
+            router.setForward(JspPath.DOCTOR_WRITE_PRESCRIPTION_PAGE);
+        } catch (ServiceException e){
+            logger.error("Could not write prescription.", e);
+            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, WRITE_PRESCRIPTION_ERROR_MESSAGE + e.getMessage());
+            router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
+        }
+        return router;
     }
 }

@@ -23,12 +23,14 @@ public class RegistrationCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
     private final static String POSITION_ERROR_MESSAGE = "Registration error: unexpected position.";
     private final static String REGISTRATION_ERROR_MESSAGE = "Registration error.";
+    private final static String EMPTY_MEDICINE_LIST_MESSAGE = "You have no available medicines.";
 
     @Override
     public Router execute(HttpServletRequest request)  {
         PharmacyPosition position = PharmacyPosition.valueOf(request.getParameter(JspAttribute.POSITION).toUpperCase());
         String mail = request.getParameter(JspAttribute.MAIL);
-        PharmacyUser user = new PharmacyUser(position, request.getParameter(JspAttribute.USER_NAME), mail, request.getParameter(JspAttribute.PASSWORD));
+        String password = request.getParameter(JspAttribute.PASSWORD);
+        PharmacyUser user = new PharmacyUser(position, request.getParameter(JspAttribute.USER_NAME), mail, password);
         Router router = new Router();
         try {
             List<String> errors = UserServiceImpl.INSTANCE.register(user);
@@ -36,28 +38,30 @@ public class RegistrationCommand implements PharmacyCommand {
                 request.getSession().setAttribute(JspAttribute.USER_NAME, user.getName());
                 request.getSession().setAttribute(JspAttribute.POSITION, user.getPosition().name());
                 request.getSession().setAttribute(JspAttribute.MAIL, user.getMail());
+                List<Medicine> clientMedicineList = MedicineServiceImpl.INSTANCE.findClientMedicineList(mail);
+                clientMedicineList.addAll(MedicineServiceImpl.INSTANCE.findAllClientAvailableMedicineList());
+                request.getSession().setAttribute( JspAttribute.CLIENT_MEDICINE_LIST, clientMedicineList);
                 switch (position) {
                     case CLIENT:
                         request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.CLIENT_PAGE);
-                        List<Medicine> clientMedicines = MedicineServiceImpl.INSTANCE.findClientMedicineList(mail);
-                        clientMedicines.addAll(MedicineServiceImpl.INSTANCE.findAllClientAvailableMedicineList());
-                        request.getSession().setAttribute(JspAttribute.MEDICINE_LIST, clientMedicines);
                         router.setRedirect(JspPath.CLIENT_PAGE);
                         break;
                     case DOCTOR:
                         List<Medicine> doctorMedicines = MedicineServiceImpl.INSTANCE.findDoctorMedicineList();
-                        request.getSession().setAttribute(JspAttribute.MEDICINE_LIST, doctorMedicines);
+                        request.getSession().setAttribute( JspAttribute.DOCTOR_MEDICINE_LIST, doctorMedicines);
                         request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.DOCTOR_PAGE);
+                        request.getSession().setAttribute(JspAttribute.IS_DOCTOR, Boolean.TRUE);
                         router.setRedirect(JspPath.DOCTOR_PAGE);
                         break;
                     case PHARMACIST:
                         List<Medicine> medicines = MedicineServiceImpl.INSTANCE.findAllMedicineList();
-                        request.getSession().setAttribute(JspAttribute.MEDICINE_LIST, medicines);
+                        request.getSession().setAttribute( JspAttribute.PHARMACIST_MEDICINE_LIST, medicines);
                         request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.PHARMACIST_PAGE);
+                        request.getSession().setAttribute(JspAttribute.IS_PHARMACIST, Boolean.TRUE);
                         router.setRedirect(JspPath.PHARMACIST_PAGE);
                         break;
                     default:
-                        logger.warn("Unexpected position type " + position);
+                        logger.warn(POSITION_ERROR_MESSAGE + position);
                         request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, POSITION_ERROR_MESSAGE);
                         request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.START_PAGE);
                         router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
@@ -71,7 +75,7 @@ public class RegistrationCommand implements PharmacyCommand {
                 router.setForward(JspPath.REGISTRATION_PAGE);
             }
         } catch (ServiceException e){
-            logger.error("Could not register client.", e);
+            logger.error(REGISTRATION_ERROR_MESSAGE, e);
             request.setAttribute(JspAttribute.ERROR_MESSAGE, REGISTRATION_ERROR_MESSAGE + e);
             request.setAttribute(JspAttribute.START_PAGE, JspPath.START_PAGE);
             router.setRedirect(JspPath.COMMAND_ERROR_PAGE);

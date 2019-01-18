@@ -32,7 +32,7 @@ public class RequestPrescriptionForExtensionCommand implements PharmacyCommand {
             }
         } catch (ServiceException e){
             logger.error(REQUEST_PRESCRIPTION_ERROR_MESSAGE, e);
-            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, REQUEST_PRESCRIPTION_ERROR_MESSAGE + e);
+            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, e);
             router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
         }
         return router;

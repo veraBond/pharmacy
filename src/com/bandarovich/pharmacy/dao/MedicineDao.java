@@ -9,4 +9,5 @@ public interface MedicineDao {
     List<Medicine> findClientMedicineList(String mail) throws DaoException;
     List<Medicine> findDoctorMedicineList() throws  DaoException;
     int findMedicineStorageAmount(int medicineId) throws DaoException;
+    int updateStorageAmount(int medicineId, int orderAmount) throws DaoException;
 }

@@ -2,6 +2,7 @@ package com.bandarovich.pharmacy.controller;
 
 import com.bandarovich.pharmacy.command.*;
 import com.bandarovich.pharmacy.pool.ConnectionPool;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

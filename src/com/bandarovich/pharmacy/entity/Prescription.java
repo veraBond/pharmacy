@@ -7,16 +7,16 @@ public class Prescription extends Pharmacy {
     private int medicineId;
     private int availableMedicineAmount;
     private PrescriptionStatus status;
-    private boolean isRequestedForExtension;
+    private boolean requestedForExtension;
 
-    public Prescription(int prescriptionId, int medicineId, String clientMail, String doctorMail, int availableMedicineAmount, PrescriptionStatus status, boolean isRequestedForExtension) {
+    public Prescription(int prescriptionId, int medicineId, String clientMail, String doctorMail, int availableMedicineAmount, PrescriptionStatus status, boolean requestedForExtension) {
         this.prescriptionId = prescriptionId;
         this.clientMail = clientMail;
         this.doctorMail = doctorMail;
         this.medicineId = medicineId;
         this.availableMedicineAmount = availableMedicineAmount;
         this.status = status;
-        this.isRequestedForExtension = isRequestedForExtension;
+        this.requestedForExtension = requestedForExtension;
     }
 
     public int getPrescriptionId() {
@@ -68,11 +68,11 @@ public class Prescription extends Pharmacy {
     }
 
     public boolean isRequestedForExtension() {
-        return isRequestedForExtension;
+        return requestedForExtension;
     }
 
     public void setRequestedForExtension(boolean requestedForExtension) {
-        isRequestedForExtension = requestedForExtension;
+        requestedForExtension = requestedForExtension;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class Prescription extends Pharmacy {
         if (prescriptionId != that.prescriptionId) return false;
         if (medicineId != that.medicineId) return false;
         if (availableMedicineAmount != that.availableMedicineAmount) return false;
-        if (isRequestedForExtension != that.isRequestedForExtension) return false;
+        if (requestedForExtension != that.requestedForExtension) return false;
         if (!clientMail.equals(that.clientMail)) return false;
         if (!doctorMail.equals(that.doctorMail)) return false;
         return status == that.status;
@@ -99,7 +99,7 @@ public class Prescription extends Pharmacy {
         result = 31 * result + medicineId;
         result = 31 * result + availableMedicineAmount;
         result = 31 * result + status.hashCode();
-        result = 31 * result + (isRequestedForExtension ? 1 : 0);
+        result = 31 * result + (requestedForExtension ? 1 : 0);
         return result;
     }
 }

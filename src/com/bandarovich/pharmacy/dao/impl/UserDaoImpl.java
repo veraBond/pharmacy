@@ -5,17 +5,25 @@ import com.bandarovich.pharmacy.dao.PharmacyDao;
 import com.bandarovich.pharmacy.dao.UserDao;
 import com.bandarovich.pharmacy.entity.PharmacyPosition;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
-import com.bandarovich.pharmacy.util.PasswordCoding;
 
 import java.sql.*;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 public class UserDaoImpl extends PharmacyDao<String, PharmacyUser> implements UserDao {
+    private final static String FIND_ENTITY =
+            "SELECT position, userName, mail, password FROM users WHERE mail = ?";
+    private final static String FIND_ALL =
+            "SELECT position, userName, mail, password FROM users";
     private final static String CREATE =
             "INSERT INTO users(position, userName, mail, password) VALUES (?, ?, ?, ?)";
-    private final static String FIND_ENTITY =
-            "SELECT position, userName, password FROM users WHERE mail = ?";
+    private final static String UPDATE =
+            "UPDATE users SET position = ?, userName = ?, password = ? WHERE mail = ?";
+    private final static String DELETE =
+            "UPDATE users SET isDeleted = TRUE WHERE mail = ?";
+    private final static String FIND_MAX_ID =
+            "SELECT MAX(userId) FROM users";
     private final static String FIND_USER_BY_MAIL_PASSWORD =
             "SELECT position, userName FROM users WHERE mail = ? AND password = ?";
     private final static String FIND_USER_ID =
@@ -24,6 +32,7 @@ public class UserDaoImpl extends PharmacyDao<String, PharmacyUser> implements Us
     private final static String USER_ID = "userId";
     private final static String POSITION = "position";
     private final static String USER_NAME = "userName";
+    private final static String MAIL = "mail";
     private final static String PASSWORD = "password";
 
     @Override
@@ -31,13 +40,8 @@ public class UserDaoImpl extends PharmacyDao<String, PharmacyUser> implements Us
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_ENTITY)){
             preparedStatement.setString(1, mail);
             ResultSet resultSet = preparedStatement.executeQuery();
-            PharmacyUser user = null;
             if(resultSet.next()){
-                PharmacyPosition position = PharmacyPosition.valueOf(resultSet.getString(POSITION).toUpperCase());
-                String userName = resultSet.getString(USER_NAME);
-                String password = resultSet.getString(PASSWORD);
-                user = new PharmacyUser(position, userName, mail, password);
-                return Optional.of(user);
+                return Optional.of(buildUser(resultSet));
             } else {
                 return Optional.empty();
             }
@@ -47,8 +51,17 @@ public class UserDaoImpl extends PharmacyDao<String, PharmacyUser> implements Us
     }
 
     @Override
-    public List<PharmacyUser> findAll() {
-        return null;
+    public List<PharmacyUser> findAll() throws DaoException{
+        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL)){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<PharmacyUser> users = new LinkedList<>();
+            while(resultSet.next()){
+                users.add(buildUser(resultSet));
+            }
+            return users;
+        } catch (SQLException e){
+            throw new DaoException(e);
+        }
     }
 
     @Override
@@ -57,7 +70,7 @@ public class UserDaoImpl extends PharmacyDao<String, PharmacyUser> implements Us
             preparedStatement.setString(1, user.getPosition().name());
             preparedStatement.setString(2, user.getName());
             preparedStatement.setString(3, user.getMail());
-            preparedStatement.setString(4, PasswordCoding.codePassword(user.getPassword()));
+            preparedStatement.setString(4, user.getPassword());
             return preparedStatement.executeUpdate();
         } catch (SQLException e){
 
@@ -66,18 +79,39 @@ public class UserDaoImpl extends PharmacyDao<String, PharmacyUser> implements Us
     }
 
     @Override
-    public int update(PharmacyUser entity) throws DaoException {
-        return 0;
+    public int update(PharmacyUser user) throws DaoException {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)){
+            preparedStatement.setString(1, user.getPosition().name());
+            preparedStatement.setString(2, user.getName());
+            preparedStatement.setString(3, user.getPassword());
+            preparedStatement.setString(4, user.getMail());
+            return preparedStatement.executeUpdate();
+        } catch (SQLException e){
+            throw new DaoException(e);
+        }
     }
 
     @Override
-    public int delete(String mail) {
-        return 0;
+    public int delete(String mail) throws DaoException{
+        try(PreparedStatement preparedStatement = connection.prepareStatement(DELETE)){
+            preparedStatement.setString(1, mail);
+            return preparedStatement.executeUpdate();
+        } catch (SQLException e){
+            throw new DaoException(e);
+        }
     }
 
     @Override
     public int findMaxId() throws DaoException {
-        return 0;
+        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_MAX_ID)){
+            ResultSet result = preparedStatement.executeQuery();
+            if(result.next()){
+                return result.getInt(USER_ID);
+            }
+            return 0;
+        } catch (SQLException e){
+            throw new DaoException(e);
+        }
     }
 
     public Optional<PharmacyUser> findUser(String mail, String password) throws DaoException{
@@ -109,5 +143,13 @@ public class UserDaoImpl extends PharmacyDao<String, PharmacyUser> implements Us
         } catch (SQLException e){
             throw new DaoException(e);
         }
+    }
+
+    private PharmacyUser buildUser(ResultSet resultSet) throws SQLException{
+        PharmacyPosition position = PharmacyPosition.valueOf(resultSet.getString(POSITION).toUpperCase());
+        String userName = resultSet.getString(USER_NAME);
+        String password = resultSet.getString(PASSWORD);
+        String mail = resultSet.getString(MAIL);
+        return new PharmacyUser(position, userName, mail, password);
     }
 }

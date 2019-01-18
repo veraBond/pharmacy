@@ -1,13 +1,12 @@
 package com.bandarovich.pharmacy.entity;
 
-import java.util.Objects;
 
 public class PharmacyOrder extends Pharmacy{
     private int orderId;
     private String clientMail;
     private int medicineId;
     private int orderAmount;
-    private double totalCost; //TODO is it ok to have a such calculated field?
+    private double totalCost;
 
     public PharmacyOrder(int orderId, String clientMail, int medicineId, int orderAmount, double totalCost) {
         this.orderId = orderId;

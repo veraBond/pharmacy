@@ -17,7 +17,6 @@ import java.util.List;
 
 public class ClientPrescriptionListCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
-    private final static String EMPTY_LIST_MESSAGE = "You have no prescriptions yet";
     private final static String CLIENT_PRESCRIPTION_LIST_ERROR_MESSAGE = "Error while loading prescription list";
 
     @Override
@@ -26,11 +25,7 @@ public class ClientPrescriptionListCommand implements PharmacyCommand {
         Router router = new Router();
         try{
             List<Pair<Prescription, Medicine>> clientPrescriptionList = PrescriptionServiceImpl.INSTANCE.findClientPrescriptionList(mail);
-            if(!clientPrescriptionList.isEmpty()) {
-                request.setAttribute(JspAttribute.PRESCRIPTION_LIST, clientPrescriptionList);
-            } else {
-                request.setAttribute(JspAttribute.MESSAGE, EMPTY_LIST_MESSAGE);
-            }
+            request.setAttribute(JspAttribute.CLIENT_PRESCRIPTION_LIST, clientPrescriptionList);
             router.setForward(JspPath.CLIENT_PRESCRIPTION_PAGE);
         } catch (ServiceException e){
             logger.error(CLIENT_PRESCRIPTION_LIST_ERROR_MESSAGE, e);

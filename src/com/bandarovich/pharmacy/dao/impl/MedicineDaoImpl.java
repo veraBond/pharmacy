@@ -5,7 +5,6 @@ import com.bandarovich.pharmacy.dao.MedicineDao;
 import com.bandarovich.pharmacy.dao.PharmacyDao;
 import com.bandarovich.pharmacy.entity.Medicine;
 
-import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,34 +15,52 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
             "SELECT medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
                     "packageAmount, price, prescriptionNeed, storageAmount "+
                     "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
-                    "WHERE medicineId = ?";
-    private final static String FIND_ALL_CLIENT_MEDICINES =
+                    "WHERE medicineId = ? AND isDeleted = FALSE";
+    private final static String FIND_ALL =
             "SELECT medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
-                    "packageAmount, price, prescriptionNeed, storageAmount " +
+                    "packageAmount, price, prescriptionNeed, storageAmount "+
                     "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
-                    "WHERE prescriptionNeed = 0";
-    private final static String FIND_CLIENT_MEDICINES =
-            "SELECT medicines.medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
-                    "packageAmount, price, prescriptionNeed, storageAmount " +
-                    "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
-                    "INNER JOIN prescriptions USING (medicineId) " +
-                    "INNER JOIN users ON prescriptions.clientId = users.userId " +
-                    "WHERE users.mail = ?";
-    private final static String FIND_DOCTOR_MEDICINES =
-            "SELECT medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
-                    "packageAmount, price, prescriptionNeed, storageAmount " +
-                    "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
-                    "WHERE prescriptionNeed = 1";
-    private final static String FIND_MEDICINE_STORAGE_AMOUNT =
-            "SELECT storageAmount FROM medicines WHERE medicineId = ?";
-    private final static String FIND_MAX_ID =
-            "SELECT MAX(medicineId) FROM medicines";
+                    "WHERE isDeleted = FALSE";
+    private final static String CREATE =
+            "INSERT INTO medicines " +
+                    "SET medicineId = ?, " +
+                    "medicineName = ?, " +
+                    "dosage = ?, " +
+                    "medicineGroup = ?, " +
+                    "packageType = (SELECT packageTypeId FROM package_type WHERE typeName = ?), " +
+                    "packageAmount = ?, price = ?, prescriptionNeed = ?, storageAmount = ?";
     private final static String UPDATE =
             "UPDATE medicines " +
                     "SET medicineName = ?, dosage = ?, medicineGroup = ?, " +
                     "packageType = (SELECT packageTypeId FROM package_type where typeName = ?), " +
                     "packageAmount = ?, price = ?, prescriptionNeed = ?, storageAmount = ? " +
                     "WHERE medicineId = ?";
+    private final static String DELETE =
+            "UPDATE medicines SET isDeleted = TRUE WHERE medicineId = ?";
+    private final static String FIND_MAX_ID =
+            "SELECT MAX(medicineId) FROM medicines";
+    private final static String FIND_ALL_CLIENT_MEDICINES =
+            "SELECT medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
+                    "packageAmount, price, prescriptionNeed, storageAmount " +
+                    "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
+                    "WHERE prescriptionNeed = 0 AND isDeleted = FALSE AND storageAmount > 0";
+    private final static String FIND_CLIENT_MEDICINES =
+            "SELECT medicines.medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
+                    "packageAmount, price, prescriptionNeed, storageAmount " +
+                    "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
+                    "INNER JOIN prescriptions USING (medicineId) " +
+                    "INNER JOIN users ON prescriptions.clientId = users.userId " +
+                    "WHERE users.mail = ? AND medicines.isDeleted = FALSE AND storageAmount > 0 " +
+                    "AND prescriptions.amount > 0 AND prescriptions.status = 'active'";
+    private final static String FIND_DOCTOR_MEDICINES =
+            "SELECT medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
+                    "packageAmount, price, prescriptionNeed, storageAmount " +
+                    "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
+                    "WHERE prescriptionNeed = 1 AND isDeleted = FALSE AND storageAmount > 0";
+    private final static String FIND_MEDICINE_STORAGE_AMOUNT =
+            "SELECT storageAmount FROM medicines WHERE medicineId = ? AND isDeleted = FALSE";
+    private final static String UPDATE_STORAGE_AMOUNT =
+            "UPDATE medicines SET storageAmount = (storageAmount - ?) WHERE medicineId = ?";
 
     private final static String MEDICINE_ID = "medicineId";
     private final static String MEDICINE_NAME = "medicineName";
@@ -54,11 +71,6 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
     private final static String PRICE = "price";
     private final static String PRESCRIPTION_NEED = "prescriptionNeed";
     private final static String STORAGE_AMOUNT = "storageAmount";
-
-    @Override
-    public List<Medicine> findAll() throws DaoException {
-        return null;
-    }
 
     @Override
     public Optional<Medicine> findEntity(Integer medicineId) throws DaoException {
@@ -77,8 +89,31 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
     }
 
     @Override
-    public int create(Medicine entity) throws DaoException {
-        return 0;
+    public List<Medicine> findAll() throws DaoException {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL)){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return buildMedicineList(resultSet);
+        } catch (SQLException e){
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public int create(Medicine medicine) throws DaoException {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(CREATE)){
+            preparedStatement.setInt(1, medicine.getMedicineId());
+            preparedStatement.setString(2, medicine.getName());
+            preparedStatement.setInt(3, medicine.getDosage());
+            preparedStatement.setString(4, medicine.getMedicineGroup());
+            preparedStatement.setString(5, medicine.getPackageType());
+            preparedStatement.setInt(6, medicine.getPackageAmount());
+            preparedStatement.setDouble(7, medicine.getPrice());
+            preparedStatement.setBoolean(8, medicine.needPrescription());
+            preparedStatement.setInt(9, medicine.getStorageAmount());
+            return preparedStatement.executeUpdate();
+        } catch (SQLException e){
+            throw new DaoException(e);
+        }
     }
 
     @Override
@@ -101,7 +136,12 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
 
     @Override
     public int delete(Integer id) throws DaoException {
-        return 0;
+        try(PreparedStatement preparedStatement = connection.prepareStatement(DELETE)){
+            preparedStatement.setInt(1, id);
+            return preparedStatement.executeUpdate();
+        } catch (SQLException e){
+            throw new DaoException(e);
+        }
     }
 
     @Override
@@ -152,6 +192,17 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
         }
     }
 
+    @Override
+    public int updateStorageAmount(int medicineId, int orderAmount) throws DaoException {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STORAGE_AMOUNT)){
+            preparedStatement.setInt(1, orderAmount);
+            preparedStatement.setInt(2, medicineId);
+            return preparedStatement.executeUpdate();
+        } catch (SQLException e){
+            throw new DaoException(e);
+        }
+    }
+
     private List<Medicine> buildMedicineList(ResultSet resultSet) throws SQLException{
         List<Medicine> medicines = new LinkedList<>();
         while(resultSet.next()){
@@ -170,7 +221,6 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
         double price = resultSet.getDouble(PRICE);
         boolean prescriptionNeed = resultSet.getBoolean(PRESCRIPTION_NEED);
         int storageAmount = resultSet.getInt(STORAGE_AMOUNT);
-        Medicine medicine = new Medicine(medicineId, medicineName, dosage, groups, packageType, packageAmount, price, prescriptionNeed, storageAmount);
-        return medicine;
+        return new Medicine(medicineId, medicineName, dosage, groups, packageType, packageAmount, price, prescriptionNeed, storageAmount);
     }
 }

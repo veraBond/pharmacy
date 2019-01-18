@@ -17,21 +17,20 @@ public class UserServiceImpl implements UserService {
     private final static Logger logger = LogManager.getLogger();
     public final static UserService INSTANCE = new UserServiceImpl();
     private UserServiceImpl(){}
-//TODO return in try block ok?
+
     @Override
     public Optional<PharmacyUser> findUser(String mail, String password) throws ServiceException{
         UserDaoImpl userDao = new UserDaoImpl();
         try{
             TransactionHelper.beginTransaction(userDao);
-            Optional<PharmacyUser> userOptional = userDao.findUser(mail, PasswordCoding.codePassword(password));
-            return userOptional;
+            return userDao.findUser(mail, PasswordCoding.codePassword(password));
         } catch (DaoException e){
             throw new ServiceException(e);
         } finally {
             TransactionHelper.endTransaction(userDao);
         }
     }
-    //TODO roll back catch block: log message is enough?
+
     @Override
     public List<String> register(PharmacyUser user) throws ServiceException{
         List<String> errors = new LinkedList<>();
@@ -44,7 +43,8 @@ public class UserServiceImpl implements UserService {
             UserDaoImpl userDao = new UserDaoImpl();
             try{
                 TransactionHelper.beginTransaction(userDao);
-                user.setPassword(PasswordCoding.codePassword(user.getPassword()));
+                String password = PasswordCoding.codePassword(user.getPassword());
+                user.setPassword(password);
                 int result = userDao.create(user);
                 if(result != 1){
                     throw new ServiceException("Could not register user.");

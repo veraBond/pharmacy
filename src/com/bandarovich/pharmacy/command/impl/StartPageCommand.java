@@ -1,6 +1,7 @@
 package com.bandarovich.pharmacy.command.impl;
 
 import com.bandarovich.pharmacy.command.JspAttribute;
+import com.bandarovich.pharmacy.command.JspPath;
 import com.bandarovich.pharmacy.command.PharmacyCommand;
 import com.bandarovich.pharmacy.command.Router;
 
@@ -10,6 +11,9 @@ public class StartPageCommand implements PharmacyCommand {
     @Override
     public Router execute(HttpServletRequest request) {
         String startPage = (String)request.getSession().getAttribute(JspAttribute.START_PAGE);
+        if(startPage == null){
+            startPage = JspPath.START_PAGE;
+        }
         Router router = new Router();
         router.setRedirect(startPage);
         return router;

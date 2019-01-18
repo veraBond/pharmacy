@@ -16,7 +16,6 @@ import java.util.List;
 public class ClientMedicineListCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
     private final static String CLIENT_MEDICINE_LIST_ERROR_MESSAGE = "Error while loading medicine list.";
-    private final static String EMPTY_LIST_MESSAGE = "You have no available medicines.";
 
     @Override
     public Router execute(HttpServletRequest request){
@@ -26,11 +25,7 @@ public class ClientMedicineListCommand implements PharmacyCommand {
             List<Medicine> clientMedicines = MedicineServiceImpl.INSTANCE.findClientMedicineList(mail);
             List<Medicine> availableMedicines = MedicineServiceImpl.INSTANCE.findAllClientAvailableMedicineList();
             availableMedicines.addAll(clientMedicines);
-            if(!availableMedicines.isEmpty()){
-                request.getSession().setAttribute(JspAttribute.MEDICINE_LIST, availableMedicines);
-            } else {
-                request.setAttribute(JspAttribute.MESSAGE, EMPTY_LIST_MESSAGE);
-            }
+            request.getSession().setAttribute(JspAttribute.CLIENT_MEDICINE_LIST, availableMedicines);
             router.setForward(JspPath.CLIENT_PAGE);
         } catch (ServiceException e){
             logger.error(CLIENT_MEDICINE_LIST_ERROR_MESSAGE, e);

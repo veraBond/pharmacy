@@ -2,15 +2,12 @@ package com.bandarovich.pharmacy.command;
 
 import com.bandarovich.pharmacy.command.impl.SetLocaleCommand;
 import com.bandarovich.pharmacy.command.impl.StartPageCommand;
-import com.bandarovich.pharmacy.command.impl.medicine.BookMedicineCommand;
+import com.bandarovich.pharmacy.command.impl.order.BookMedicineCommand;
 import com.bandarovich.pharmacy.command.impl.medicine.DoctorMedicineListCommand;
 import com.bandarovich.pharmacy.command.impl.order.CompleteOrderCommand;
-import com.bandarovich.pharmacy.command.impl.prescription.ClientPrescriptionListCommand;
+import com.bandarovich.pharmacy.command.impl.prescription.*;
 import com.bandarovich.pharmacy.command.impl.medicine.AllClientMedicineListCommand;
 import com.bandarovich.pharmacy.command.impl.medicine.ClientMedicineListCommand;
-import com.bandarovich.pharmacy.command.impl.prescription.DoctorPrescriptionListCommand;
-import com.bandarovich.pharmacy.command.impl.prescription.RequestPrescriptionForExtensionCommand;
-import com.bandarovich.pharmacy.command.impl.prescription.WritePrescriptionCommand;
 import com.bandarovich.pharmacy.command.impl.user.LogInCommand;
 import com.bandarovich.pharmacy.command.impl.user.LogOutCommand;
 import com.bandarovich.pharmacy.command.impl.user.RegistrationCommand;
@@ -32,6 +29,7 @@ public class CommandMap {
             put(CommandType.CLIENT_PRESCRIPTION_LIST, new ClientPrescriptionListCommand());
             put(CommandType.DOCTOR_MEDICINE_LIST, new DoctorMedicineListCommand());
             put(CommandType.WRITE_PRESCRIPTION, new WritePrescriptionCommand());
+            put(CommandType.COMPLETE_WRITE_PRESCRIPTION, new CompleteWritePrescriptionCommand());
             put(CommandType.DOCTOR_PRESCRIPTION_LIST, new DoctorPrescriptionListCommand());
             put(CommandType.START_PAGE, new StartPageCommand());
         }

@@ -47,8 +47,7 @@ public class TransactionHelper {
             dao.setConnection(connection);
             connection.setAutoCommit(false);
         } catch (PoolException | SQLException e){
-            logger.error("Could not begin transaction with " + dao + " : " + e.getMessage());
-            throw new DaoException();
+            throw new DaoException(e);
         }
     }
 
@@ -57,7 +56,7 @@ public class TransactionHelper {
             dao.getConnection().setAutoCommit(true);
             dao.getConnection().close();
         } catch (SQLException e){
-            logger.error("Could not end transaction with " + dao + ": " + e.getMessage());
+            logger.error("Could not end transaction with " + dao, e);
         }
     }
 
@@ -65,8 +64,8 @@ public class TransactionHelper {
         try{
             dao.getConnection().commit();
         } catch (SQLException e){
-            rollBack(dao);
-            throw new DaoException("Could not commit action in " + dao, e);
+            rollBackDao(dao);
+            throw new DaoException(e);
         }
     }
 
@@ -74,7 +73,7 @@ public class TransactionHelper {
         try{
             dao.getConnection().rollback();
         } catch (SQLException e){
-            throw new DaoException("Could not roll back in " + dao, e);
+            throw new DaoException(e);
         }
     }
 }
