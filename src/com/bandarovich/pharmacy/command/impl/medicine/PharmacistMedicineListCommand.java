@@ -1,7 +1,7 @@
 package com.bandarovich.pharmacy.command.impl.medicine;
 
-import com.bandarovich.pharmacy.command.JspPath;
 import com.bandarovich.pharmacy.command.JspAttribute;
+import com.bandarovich.pharmacy.command.JspPath;
 import com.bandarovich.pharmacy.command.PharmacyCommand;
 import com.bandarovich.pharmacy.command.Router;
 import com.bandarovich.pharmacy.entity.Medicine;
@@ -13,23 +13,22 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-public class ClientMedicineListCommand implements PharmacyCommand {
+public class PharmacistMedicineListCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
-    private final static String CLIENT_MEDICINE_LIST_ERROR_MESSAGE = "Error while loading medicine list.";
+    private final static String PHARMACY_MEDICINE_LIST_ERROR_MESSAGE = "Error while loading medicine list.";
 
     @Override
-    public Router execute(HttpServletRequest request){
-        String mail = (String)request.getSession().getAttribute(JspAttribute.MAIL);
+    public Router execute(HttpServletRequest request) {
         Router router = new Router();
-        try{
-            List<Medicine> clientMedicines = MedicineServiceImpl.INSTANCE.findClientMedicineList(mail);
-            request.setAttribute(JspAttribute.CLIENT_MEDICINE_LIST, clientMedicines);
-            router.setForward(JspPath.CLIENT_PAGE);
-        } catch (ServiceException e){
-            logger.error(CLIENT_MEDICINE_LIST_ERROR_MESSAGE, e);
+        try {
+            List<Medicine> pharmacistMedicines = MedicineServiceImpl.INSTANCE.findAllMedicineList();
+            request.setAttribute(JspAttribute.CLIENT_MEDICINE_LIST, pharmacistMedicines);
+            router.setForward(JspPath.PHARMACIST_PAGE);
+        } catch (ServiceException e) {
             request.getSession().setAttribute(JspAttribute.ERROR, e);
-            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, CLIENT_MEDICINE_LIST_ERROR_MESSAGE);
+            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, PHARMACY_MEDICINE_LIST_ERROR_MESSAGE);
             router.setForward(JspPath.COMMAND_ERROR_PAGE);
+            logger.error(PHARMACY_MEDICINE_LIST_ERROR_MESSAGE, e);
         }
         return router;
     }

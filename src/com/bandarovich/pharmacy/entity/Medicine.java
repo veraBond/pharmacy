@@ -1,7 +1,5 @@
 package com.bandarovich.pharmacy.entity;
 
-import java.util.Objects;
-
 public class Medicine extends Pharmacy{
     private int medicineId;
     private String name;
@@ -81,10 +79,6 @@ public class Medicine extends Pharmacy{
         this.price = price;
     }
 
-    public boolean needPrescription() {
-        return needPrescription;
-    }
-
     public void setNeedPrescription(boolean needPrescription) {
         this.needPrescription = needPrescription;
     }
@@ -97,25 +91,44 @@ public class Medicine extends Pharmacy{
         this.storageAmount = storageAmount;
     }
 
+    public boolean isNeedPrescription() {
+        return needPrescription;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Medicine medicine = (Medicine) o;
-        return (medicineId == medicine.medicineId &&
-                name.equals(medicine.name) &&
-                dosage == medicine.dosage &&
-                medicineGroup.equals(medicine.medicineGroup) &&
-                packageType.equals(medicine.packageType) &&
-                packageAmount == medicine.packageAmount &&
-                Double.compare(medicine.price, price) == 0 &&
-                needPrescription == medicine.needPrescription &&
-                storageAmount == medicine.storageAmount);
+
+        if (medicineId != medicine.medicineId) return false;
+        if (dosage != medicine.dosage) return false;
+        if (packageAmount != medicine.packageAmount) return false;
+        if (Double.compare(medicine.price, price) != 0) return false;
+        if (needPrescription != medicine.needPrescription) return false;
+        if (storageAmount != medicine.storageAmount) return false;
+        if (name != null ? !name.equals(medicine.name) : medicine.name != null) return false;
+        if (medicineGroup != null ? !medicineGroup.equals(medicine.medicineGroup) : medicine.medicineGroup != null)
+            return false;
+        return packageType != null ? packageType.equals(medicine.packageType) : medicine.packageType == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(medicineId, name, dosage, medicineGroup, packageType, packageAmount, price, needPrescription, storageAmount);
+        int result;
+        long temp;
+        result = medicineId;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + dosage;
+        result = 31 * result + (medicineGroup != null ? medicineGroup.hashCode() : 0);
+        result = 31 * result + (packageType != null ? packageType.hashCode() : 0);
+        result = 31 * result + packageAmount;
+        temp = Double.doubleToLongBits(price);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (needPrescription ? 1 : 0);
+        result = 31 * result + storageAmount;
+        return result;
     }
 
     @Override

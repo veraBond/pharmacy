@@ -37,7 +37,9 @@
 
         <div class="content">
             <div class="content-title">
-                <fmt:message key="successfullyCompleted"></fmt:message>
+                <fmt:message key="successfullyCompleted"></fmt:message><br>
+                <c:if test="${totalCost != null}">
+                    <fmt:message key="totalCost"></fmt:message>${totalCost}</c:if>
             </div>
         </div>
     </section>

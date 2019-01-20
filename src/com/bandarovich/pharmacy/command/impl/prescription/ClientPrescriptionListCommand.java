@@ -29,7 +29,8 @@ public class ClientPrescriptionListCommand implements PharmacyCommand {
             router.setForward(JspPath.CLIENT_PRESCRIPTION_PAGE);
         } catch (ServiceException e){
             logger.error(CLIENT_PRESCRIPTION_LIST_ERROR_MESSAGE, e);
-            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, CLIENT_PRESCRIPTION_LIST_ERROR_MESSAGE + e);
+            request.getSession().setAttribute(JspAttribute.ERROR, e);
+            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, CLIENT_PRESCRIPTION_LIST_ERROR_MESSAGE);
             router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
         }
         return router;

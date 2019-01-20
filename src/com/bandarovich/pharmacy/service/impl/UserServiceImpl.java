@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
                 user.setPassword(password);
                 int result = userDao.create(user);
                 if(result != 1){
+                    TransactionHelper.rollBack(userDao);
                     throw new ServiceException("Could not register user.");
                 }
                 TransactionHelper.commit(userDao);
@@ -64,7 +65,7 @@ public class UserServiceImpl implements UserService {
         return errors;
     }
 
-    private boolean findUser(String mail) throws ServiceException{
+    public boolean findUser(String mail) throws ServiceException{
         UserDaoImpl userDao = new UserDaoImpl();
         try{
             TransactionHelper.beginTransaction(userDao);
@@ -76,7 +77,7 @@ public class UserServiceImpl implements UserService {
             TransactionHelper.endTransaction(userDao);
         }
     }
-
+//TODO rewrite with localization
     private List<String> formErrorList(PharmacyUser user){
         List<String> errors = new LinkedList<>();
         boolean nameIsCorrect = PharmacyValidator.userNameIsCorrect(user.getName());

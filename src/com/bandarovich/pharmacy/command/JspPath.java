@@ -12,8 +12,10 @@ public class JspPath {
     public final static String DOCTOR_PAGE = "page/doctor/medicines.jsp";
     public final static String DOCTOR_PRESCRIPTION_PAGE = "page/doctor/prescriptions.jsp";
     public final static String DOCTOR_WRITE_PRESCRIPTION_PAGE = "page/doctor/writePrescription.jsp";
+    public final static String DOCTOR_EXTEND_PRESCRIPTION_PAGE = "page/doctor/extendPrescription.jsp";
     public final static String PHARMACIST_PAGE = "page/pharmacist/medicines.jsp";
     public final static String PHARMACIST_MODIFY_MEDICINE_PAGE = "page/pharmacist/modifyMedicine.jsp";
+    public final static String PHARMACIST_ADD_MEDICINE_PAGE = "page/pharmacist/addMedicine.jsp";
 
     private JspPath(){}
 }

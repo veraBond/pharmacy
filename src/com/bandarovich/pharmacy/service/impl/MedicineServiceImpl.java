@@ -48,24 +48,13 @@ public class MedicineServiceImpl implements MedicineService {
     }
 
     @Override
-    public List<Medicine> findAllClientAvailableMedicineList() throws ServiceException{
-        MedicineDaoImpl medicineDao = new MedicineDaoImpl();
-        try{
-            TransactionHelper.beginTransaction(medicineDao);
-            return medicineDao.findAllClientAvailableMedicineList();
-        } catch (DaoException e){
-            throw new ServiceException(e);
-        } finally {
-            TransactionHelper.endTransaction(medicineDao);
-        }
-    }
-
-    @Override
     public List<Medicine> findClientMedicineList(String mail) throws ServiceException {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
         try{
             TransactionHelper.beginTransaction(medicineDao);
-            return medicineDao.findClientMedicineList(mail);
+            List<Medicine> clientMedicines = medicineDao.findClientMedicineList(mail);
+            clientMedicines.addAll(medicineDao.findAllClientAvailableMedicineList());
+            return clientMedicines;
         } catch (DaoException e){
             throw new ServiceException(e);
         } finally {
@@ -87,6 +76,32 @@ public class MedicineServiceImpl implements MedicineService {
     }
 
     @Override
+    public List<String> findMedicineGroupList() throws ServiceException {
+        MedicineDaoImpl medicineDao = new MedicineDaoImpl();
+        try{
+            TransactionHelper.beginTransaction(medicineDao);
+            return medicineDao.findMedicineGroupList();
+        } catch (DaoException e){
+            throw new ServiceException(e);
+        } finally {
+            TransactionHelper.endTransaction(medicineDao);
+        }
+    }
+
+    @Override
+    public List<String> findPackageTypeList() throws ServiceException {
+        MedicineDaoImpl medicineDao = new MedicineDaoImpl();
+        try{
+            TransactionHelper.beginTransaction(medicineDao);
+            return medicineDao.findPackageTypeList();
+        } catch (DaoException e){
+            throw new ServiceException(e);
+        } finally {
+            TransactionHelper.endTransaction(medicineDao);
+        }
+    }
+
+    @Override
     public int findAvailableClientMedicineAmount(int medicineId, String mail) throws ServiceException {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
         PrescriptionDaoImpl prescriptionDao = new PrescriptionDaoImpl();
@@ -97,11 +112,13 @@ public class MedicineServiceImpl implements MedicineService {
             int clientId = userDao.findUserId(mail).orElseThrow(ServiceException::new);
             int storageAmount = medicineDao.findMedicineStorageAmount(medicineId);
             int availableClientMedicineAmount = (AVAILABLE_BOOK_MEDICINE_AMOUNT < storageAmount) ? AVAILABLE_BOOK_MEDICINE_AMOUNT : storageAmount;
-            boolean needPrescription = medicine.needPrescription();
+            boolean needPrescription = medicine.isNeedPrescription();
             if(needPrescription){
                 int prescriptionAvailableAmount = prescriptionDao.findClientAvailableAmount(clientId, medicineId);
-                availableClientMedicineAmount = (prescriptionAvailableAmount < availableClientMedicineAmount) ? prescriptionAvailableAmount : availableClientMedicineAmount;
-            }
+                if(prescriptionAvailableAmount < availableClientMedicineAmount){
+                    availableClientMedicineAmount = prescriptionAvailableAmount;
+                }
+           }
             return availableClientMedicineAmount;
         } catch (DaoException e) {
             throw new ServiceException(e);
@@ -116,36 +133,37 @@ public class MedicineServiceImpl implements MedicineService {
         try{
             TransactionHelper.beginTransaction(medicineDao);
             int storageAmount = medicineDao.findMedicineStorageAmount(medicineId);
-            return (storageAmount > AVAILABLE_BOOK_MEDICINE_AMOUNT ? AVAILABLE_BOOK_MEDICINE_AMOUNT : storageAmount);
+            return (AVAILABLE_BOOK_MEDICINE_AMOUNT < storageAmount ? AVAILABLE_BOOK_MEDICINE_AMOUNT : storageAmount);
         } catch (DaoException e){
             throw new ServiceException(e);
         } finally {
             TransactionHelper.endTransaction(medicineDao);
         }
     }
-
-    @Override
-    public boolean updateMedicineStorageAmount(int medicineId, int orderAmount) throws ServiceException{
-        MedicineDaoImpl medicineDao = new MedicineDaoImpl();
-        try{
-            TransactionHelper.beginTransaction(medicineDao);
-            int update = medicineDao.updateStorageAmount(medicineId, orderAmount);
-            if(update == 1){
-                TransactionHelper.commit(medicineDao);
-                return true;
-            } else {
-                TransactionHelper.rollBack(medicineDao);
-                return false;
-            }
-        } catch (DaoException e){
-            try{
-                TransactionHelper.rollBack(medicineDao);
-            } catch (DaoException rollBackExc){
-                logger.error("Could not roll back in updateMedicineStorageAmount method.", rollBackExc);
-            }
-            throw new ServiceException(e);
-        } finally {
-            TransactionHelper.endTransaction(medicineDao);
-        }
-    }
+    //TODO delete??
+//
+//    @Override
+//    public boolean updateMedicineStorageAmount(int medicineId, int orderAmount) throws ServiceException{
+//        MedicineDaoImpl medicineDao = new MedicineDaoImpl();
+//        try{
+//            TransactionHelper.beginTransaction(medicineDao);
+//            int update = medicineDao.updateStorageAmount(medicineId, orderAmount);
+//            if(update == 1){
+//                TransactionHelper.commit(medicineDao);
+//                return true;
+//            } else {
+//                TransactionHelper.rollBack(medicineDao);
+//                return false;
+//            }
+//        } catch (DaoException e){
+//            try{
+//                TransactionHelper.rollBack(medicineDao);
+//            } catch (DaoException rollBackExc){
+//                logger.error("Could not roll back in updateMedicineStorageAmount method.", rollBackExc);
+//            }
+//            throw new ServiceException(e);
+//        } finally {
+//            TransactionHelper.endTransaction(medicineDao);
+//        }
+//    }
 }

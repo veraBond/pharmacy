@@ -51,16 +51,18 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
                     "INNER JOIN prescriptions USING (medicineId) " +
                     "INNER JOIN users ON prescriptions.clientId = users.userId " +
                     "WHERE users.mail = ? AND medicines.isDeleted = FALSE AND storageAmount > 0 " +
-                    "AND prescriptions.amount > 0 AND prescriptions.status = 'active'";
+                    "AND prescriptions.amount > 0";
     private final static String FIND_DOCTOR_MEDICINES =
             "SELECT medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
                     "packageAmount, price, prescriptionNeed, storageAmount " +
                     "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
                     "WHERE prescriptionNeed = 1 AND isDeleted = FALSE AND storageAmount > 0";
+    private final static String FIND_MEDICINE_GROUPS =
+            "SHOW COLUMNS FROM medicines LIKE 'medicineGroup'";
+    private final static String FIND_PACKAGE_TYPES =
+            "SELECT package_type.typeName FROM package_type";
     private final static String FIND_MEDICINE_STORAGE_AMOUNT =
             "SELECT storageAmount FROM medicines WHERE medicineId = ? AND isDeleted = FALSE";
-    private final static String UPDATE_STORAGE_AMOUNT =
-            "UPDATE medicines SET storageAmount = (storageAmount - ?) WHERE medicineId = ?";
 
     private final static String MEDICINE_ID = "medicineId";
     private final static String MEDICINE_NAME = "medicineName";
@@ -108,7 +110,7 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
             preparedStatement.setString(5, medicine.getPackageType());
             preparedStatement.setInt(6, medicine.getPackageAmount());
             preparedStatement.setDouble(7, medicine.getPrice());
-            preparedStatement.setBoolean(8, medicine.needPrescription());
+            preparedStatement.setBoolean(8, medicine.isNeedPrescription());
             preparedStatement.setInt(9, medicine.getStorageAmount());
             return preparedStatement.executeUpdate();
         } catch (SQLException e){
@@ -125,7 +127,7 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
             preparedStatement.setString(4, medicine.getPackageType());
             preparedStatement.setInt(5, medicine.getPackageAmount());
             preparedStatement.setDouble(6, medicine.getPrice());
-            preparedStatement.setBoolean(7, medicine.needPrescription());
+            preparedStatement.setBoolean(7, medicine.isNeedPrescription());
             preparedStatement.setInt(8, medicine.getStorageAmount());
             preparedStatement.setInt(9, medicine.getMedicineId());
             return preparedStatement.executeUpdate();
@@ -182,22 +184,39 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
         }
     }
 
-    public int findMedicineStorageAmount(int medicineId) throws DaoException{
-        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_MEDICINE_STORAGE_AMOUNT)){
-            preparedStatement.setInt(1, medicineId);
+    @Override
+    public List<String> findMedicineGroupList() throws DaoException {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_MEDICINE_GROUPS)){
             ResultSet resultSet = preparedStatement.executeQuery();
-            return (resultSet.next() ? resultSet.getInt(STORAGE_AMOUNT) : 0);
+            List<String> groups = new LinkedList<>();
+            while(resultSet.next()){
+                groups.add(resultSet.getString(2));
+            }
+            return groups;
         } catch (SQLException e){
             throw new DaoException(e);
         }
     }
 
     @Override
-    public int updateStorageAmount(int medicineId, int orderAmount) throws DaoException {
-        try(PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STORAGE_AMOUNT)){
-            preparedStatement.setInt(1, orderAmount);
-            preparedStatement.setInt(2, medicineId);
-            return preparedStatement.executeUpdate();
+    public List<String> findPackageTypeList() throws DaoException {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_PACKAGE_TYPES)){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<String> types = new LinkedList<>();
+            while(resultSet.next()){
+                types.add(resultSet.getString(1));
+            }
+            return types;
+        } catch (SQLException e){
+            throw new DaoException(e);
+        }
+    }
+
+    public int findMedicineStorageAmount(int medicineId) throws DaoException{
+        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_MEDICINE_STORAGE_AMOUNT)){
+            preparedStatement.setInt(1, medicineId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return (resultSet.next() ? resultSet.getInt(STORAGE_AMOUNT) : 0);
         } catch (SQLException e){
             throw new DaoException(e);
         }

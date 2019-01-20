@@ -1,6 +1,5 @@
 package com.bandarovich.pharmacy.command.impl;
 
-import com.bandarovich.pharmacy.command.JspPath;
 import com.bandarovich.pharmacy.command.PharmacyCommand;
 import com.bandarovich.pharmacy.command.Router;
 

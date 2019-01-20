@@ -8,6 +8,7 @@ public interface MedicineDao {
     List<Medicine> findAllClientAvailableMedicineList() throws DaoException;
     List<Medicine> findClientMedicineList(String mail) throws DaoException;
     List<Medicine> findDoctorMedicineList() throws  DaoException;
+    List<String> findMedicineGroupList() throws  DaoException;
+    List<String> findPackageTypeList() throws  DaoException;
     int findMedicineStorageAmount(int medicineId) throws DaoException;
-    int updateStorageAmount(int medicineId, int orderAmount) throws DaoException;
 }

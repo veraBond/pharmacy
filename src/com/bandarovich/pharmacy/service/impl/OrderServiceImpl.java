@@ -4,14 +4,17 @@ import com.bandarovich.pharmacy.dao.DaoException;
 import com.bandarovich.pharmacy.dao.TransactionHelper;
 import com.bandarovich.pharmacy.dao.impl.MedicineDaoImpl;
 import com.bandarovich.pharmacy.dao.impl.OrderDaoImpl;
+import com.bandarovich.pharmacy.dao.impl.PrescriptionDaoImpl;
 import com.bandarovich.pharmacy.entity.Medicine;
 import com.bandarovich.pharmacy.entity.PharmacyOrder;
+import com.bandarovich.pharmacy.entity.Prescription;
 import com.bandarovich.pharmacy.service.OrderService;
 import com.bandarovich.pharmacy.service.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
+
 
 public class OrderServiceImpl implements OrderService {
     private final static Logger logger = LogManager.getLogger();
@@ -20,42 +23,28 @@ public class OrderServiceImpl implements OrderService {
     private OrderServiceImpl(){}
 
     @Override
-    public boolean deleteOrder(PharmacyOrder order) throws ServiceException {
-        OrderDaoImpl orderDao = new OrderDaoImpl();
-        try{
-            TransactionHelper.beginTransaction(orderDao);
-            int delete = orderDao.delete(order.getOrderId());
-            TransactionHelper.commit(orderDao);
-            return delete == 1;
-        } catch (DaoException e) {
-            try {
-                TransactionHelper.rollBack(orderDao);
-            } catch (DaoException exc) {
-                logger.error("Could not roll back in deleteOrder. ", exc);
-            }
-            throw new ServiceException(e);
-        } finally {
-            TransactionHelper.endTransaction(orderDao);
-        }
+    public double completeOrder(String clientMail, int medicineId, int quantity) throws ServiceException{
+        updatePrescription(clientMail, medicineId, quantity);
+        updateStorageAmount(medicineId, quantity);
+        return createOrder(clientMail, medicineId, quantity);
     }
-//TODO check!!!!!
-    @Override
-    public PharmacyOrder completeOrder(String clientMail, int medicineId, int quantity) throws ServiceException{
+
+    private double createOrder(String clientMail, int medicineId, int quantity) throws ServiceException{
         OrderDaoImpl orderDao = new OrderDaoImpl();
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
         try {
             TransactionHelper.beginTransaction(orderDao, medicineDao);
             Medicine medicine = medicineDao.findEntity(medicineId).orElseThrow(ServiceException::new);
-            double totalCost = quantity * medicine.getPrice();
             int id = orderDao.findMaxId() + 1;
+            double totalCost = quantity * medicine.getPrice();
             PharmacyOrder order = new PharmacyOrder(id, clientMail, medicineId, quantity, totalCost);
-            int result = orderDao.create(order);
-            if(result == 1){
+            boolean createOrder = orderDao.create(order) == 1;
+            if (createOrder) {
                 TransactionHelper.commit(orderDao);
-                return order;
+                return totalCost;
             } else {
                 TransactionHelper.rollBack(orderDao);
-                throw new ServiceException("Could not create order.");
+                throw new ServiceException("Could not create order. ");
             }
         } catch (DaoException e) {
             try {
@@ -66,6 +55,61 @@ public class OrderServiceImpl implements OrderService {
             throw new ServiceException(e);
         } finally {
             TransactionHelper.endTransaction(orderDao, medicineDao);
+        }
+    }
+
+    private void updateStorageAmount(int medicineId, int quantity) throws ServiceException{
+        MedicineDaoImpl medicineDao = new MedicineDaoImpl();
+        try {
+            TransactionHelper.beginTransaction(medicineDao);
+            Medicine medicine = medicineDao.findEntity(medicineId).orElseThrow(ServiceException::new);
+            int updateStorageAmount = medicine.getStorageAmount() - quantity;
+            medicine.setStorageAmount(updateStorageAmount);
+            boolean updateMedicine = medicineDao.update(medicine) == 1;
+            if (updateMedicine) {
+                TransactionHelper.commit(medicineDao);
+            } else {
+                TransactionHelper.rollBack(medicineDao);
+                throw new ServiceException("Could not update medicine storage. ");
+            }
+        } catch (DaoException e) {
+            try {
+                TransactionHelper.rollBack(medicineDao);
+            } catch (DaoException rollbackExc) {
+                logger.error("Could not roll back in update storage amount. ", rollbackExc);
+            }
+            throw new ServiceException(e);
+        } finally {
+            TransactionHelper.endTransaction(medicineDao);
+        }
+    }
+
+    private void updatePrescription(String clientMail, int medicineId, int quantity) throws ServiceException{
+        PrescriptionDaoImpl prescriptionDao = new PrescriptionDaoImpl();
+        try {
+            TransactionHelper.beginTransaction(prescriptionDao);
+            Optional<Prescription> prescriptionOptional = prescriptionDao.findPrescription(medicineId, clientMail);
+            boolean updatePrescription = true;
+            if(prescriptionOptional.isPresent()){
+                int updatePrescriptionAmount = prescriptionOptional.get().getAvailableMedicineAmount() - quantity;
+                prescriptionOptional.get().setAvailableMedicineAmount(updatePrescriptionAmount);
+                updatePrescription = prescriptionDao.update(prescriptionOptional.get()) == 1;
+            }
+            if (updatePrescription) {
+                TransactionHelper.commit(prescriptionDao);
+            } else {
+                TransactionHelper.rollBack(prescriptionDao);
+                throw new ServiceException("Could not update prescription amount. ");
+            }
+        } catch (DaoException e) {
+            try {
+                TransactionHelper.rollBack(prescriptionDao);
+            } catch (DaoException rollbackExc) {
+                logger.error("Could not roll back in update prescription amount. ", rollbackExc);
+            }
+            throw new ServiceException(e);
+        } finally {
+            TransactionHelper.endTransaction(prescriptionDao);
         }
     }
 }

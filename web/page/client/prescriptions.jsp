@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <fmt:setBundle basename="language.locale"></fmt:setBundle>
     <link rel="stylesheet" href="/styles.css">
-    <title><fmt:message key="client.Prescriptions"></fmt:message></title>
+    <title><fmt:message key="Prescriptions"></fmt:message></title>
 </head>
 <body>
 
@@ -61,7 +61,6 @@
                             <th><fmt:message key="medicine.PackageType"></fmt:message></th>
                             <th><fmt:message key="medicine.Amount"></fmt:message></th>
                             <th><fmt:message key="medicine.AvailableQuantity"></fmt:message></th>
-                            <th><fmt:message key="prescription.Status"></fmt:message></th>
                             <th><fmt:message key="prescription.DoctorEmail"></fmt:message></th>
                             <th><fmt:message key="prescription.ExtensionRequest"></fmt:message></th>
                         </tr>
@@ -72,14 +71,13 @@
                                 <td><c:out value="${prescription.getValue().packageType}"></c:out></td>
                                 <td><c:out value="${prescription.getValue().packageAmount}"></c:out></td>
                                 <td><c:out value="${prescription.getKey().availableMedicineAmount}"></c:out></td>
-                                <td><c:out value="${prescription.getKey().status}"></c:out></td>
                                 <td><c:out value="${prescription.getKey().doctorMail}"></c:out></td>
                                 <td><c:choose>
                                     <c:when test="${prescription.getKey().requestedForExtension}">
                                         <fmt:message key="prescription.Requested"></fmt:message></c:when>
                                     <c:otherwise>
                                         <form method="post" action="/pharmacy">
-                                            <input type="hidden" name="prescriptionId" value="prescription.getKey().prescriptionId">
+                                            <input type="hidden" name="prescriptionId" value="${prescription.getKey().prescriptionId}">
                                             <button name="command" value="request-prescription-for-extension" type="submit">
                                                 <fmt:message key="prescription.Request"></fmt:message>
                                             </button>

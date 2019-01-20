@@ -67,7 +67,7 @@ public class PharmacyOrder extends Pharmacy{
         if (medicineId != that.medicineId) return false;
         if (orderAmount != that.orderAmount) return false;
         if (Double.compare(that.totalCost, totalCost) != 0) return false;
-        return clientMail.equals(that.clientMail);
+        return clientMail != null ? clientMail.equals(that.clientMail) : that.clientMail == null;
     }
 
     @Override
@@ -75,11 +75,16 @@ public class PharmacyOrder extends Pharmacy{
         int result;
         long temp;
         result = orderId;
-        result = 31 * result + clientMail.hashCode();
+        result = 31 * result + (clientMail != null ? clientMail.hashCode() : 0);
         result = 31 * result + medicineId;
         result = 31 * result + orderAmount;
         temp = Double.doubleToLongBits(totalCost);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "PharmacyOrder{" + "orderId=" + orderId + ", clientMail='" + clientMail + '\'' + ", medicineId=" + medicineId + ", orderAmount=" + orderAmount + ", totalCost=" + totalCost + '}';
     }
 }

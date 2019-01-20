@@ -8,6 +8,7 @@ import com.bandarovich.pharmacy.entity.Medicine;
 import com.bandarovich.pharmacy.service.ServiceException;
 import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
 import com.bandarovich.pharmacy.service.impl.PrescriptionServiceImpl;
+import com.bandarovich.pharmacy.service.impl.UserServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,23 +28,25 @@ public class CompleteWritePrescriptionCommand implements PharmacyCommand {
         Router router = new Router();
         try{
             Medicine medicine = MedicineServiceImpl.INSTANCE.findMedicine(medicineId);
-            boolean complete = PrescriptionServiceImpl.INSTANCE.writePrescription(medicineId, clientMail, doctorMail, prescriptionAmount);
+            boolean findUser = UserServiceImpl.INSTANCE.findUser(clientMail);
             boolean rightQuantity = prescriptionAmount <= availableAmount;
-            formAttributes(complete, JspAttribute.INCORRECT_MAIL, request);
+            formAttributes(findUser, JspAttribute.INCORRECT_MAIL, request);
             formAttributes(rightQuantity, JspAttribute.INCORRECT_QUANTITY, request);
-            if(!complete || !rightQuantity){
+            if(!findUser || !rightQuantity){
                 request.setAttribute(JspAttribute.MEDICINE, medicine);
                 request.setAttribute(JspAttribute.CLIENT_MAIL, clientMail);
                 request.setAttribute(JspAttribute.PRESCRIPTION_MEDICINE_QUANTITY, prescriptionAmount);
                 request.setAttribute(JspAttribute.AVAILABLE_MEDICINE_QUANTITY, availableAmount);
                 router.setForward(JspPath.DOCTOR_WRITE_PRESCRIPTION_PAGE);
             } else {
+                PrescriptionServiceImpl.INSTANCE.writePrescription(medicineId, clientMail, doctorMail, prescriptionAmount);
                 router.setRedirect(JspPath.SUCCESSFULLY_COMPLETE_PAGE);
             }
         } catch (ServiceException e){
-            logger.error(COMPLETE_WRITE_PRESCRIPTION_ERROR_MESSAGE, e);
-            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, COMPLETE_WRITE_PRESCRIPTION_ERROR_MESSAGE + e);
+            request.getSession().setAttribute(JspAttribute.ERROR, e);
+            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, COMPLETE_WRITE_PRESCRIPTION_ERROR_MESSAGE );
             router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
+            logger.error(COMPLETE_WRITE_PRESCRIPTION_ERROR_MESSAGE, e);
         }
         return router;
     }

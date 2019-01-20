@@ -13,6 +13,7 @@
 <h3 align="right">${userName}, ${position}</h3>
 <h1><fmt:message key="error"></fmt:message></h1>
 <h2>${errorMessage}</h2>
+<h2>${error}</h2>
 <form method="get" action="/pharmacy">
     <input type="hidden" name="command" value="start-page">
     <button type="submit"><fmt:message key="back"></fmt:message></button>

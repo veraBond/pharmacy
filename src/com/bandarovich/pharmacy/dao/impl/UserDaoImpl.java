@@ -114,6 +114,7 @@ public class UserDaoImpl extends PharmacyDao<String, PharmacyUser> implements Us
         }
     }
 
+    @Override
     public Optional<PharmacyUser> findUser(String mail, String password) throws DaoException{
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_USER_BY_MAIL_PASSWORD)){
             preparedStatement.setString(1, mail);
@@ -131,6 +132,7 @@ public class UserDaoImpl extends PharmacyDao<String, PharmacyUser> implements Us
         }
     }
 
+    @Override
     public Optional<Integer> findUserId(String mail) throws DaoException{
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_USER_ID)){
             preparedStatement.setString(1, mail);

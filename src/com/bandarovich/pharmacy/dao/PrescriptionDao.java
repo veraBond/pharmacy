@@ -9,8 +9,10 @@ import java.util.Optional;
 
 public interface PrescriptionDao {
     int findClientAvailableAmount(int clientId, int medicineId) throws DaoException;
+    Optional<Prescription> findPrescription(int medicineId, String clientMail) throws DaoException;
     List<Pair<Prescription, Medicine>> findClientPrescriptionList(String mail) throws DaoException;
-    Optional<Prescription> findPrescriptionByMedicineIdClientId(int medicineId, int clientId) throws DaoException;
+    List<Pair<Prescription, Medicine>> findDoctorPrescriptionList(String mail) throws DaoException;
     int requestPrescriptionForExtension(int prescriptionId) throws DaoException;
-    int updatePrescriptionAmount(int orderAmount, int medicineId, String clientMail) throws DaoException;
+    int extendPrescription(int prescriptionId, int amount) throws DaoException;
+    int updatePrescriptionAmount(int prescriptionId, int orderAmount) throws DaoException;
 }

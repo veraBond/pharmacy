@@ -7,7 +7,6 @@ import com.bandarovich.pharmacy.command.Router;
 import com.bandarovich.pharmacy.entity.Medicine;
 import com.bandarovich.pharmacy.entity.PharmacyPosition;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
-import com.bandarovich.pharmacy.service.ServiceException;
 import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
 import com.bandarovich.pharmacy.service.impl.UserServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +21,6 @@ public class LogInCommand implements PharmacyCommand{
     private final static String POSITION_ERROR_MESSAGE = "Log in error: unexpected position.";
     private final static String LOG_IN_ERROR_MESSAGE = "Log in error.";
     private final static String INPUT_ERROR_MESSAGE = "Incorrect e-mail address or password.";
-    private final static String EMPTY_MEDICINE_LIST_MESSAGE = "You have no available medicines.";
 
     @Override
     public Router execute(HttpServletRequest request) {
@@ -37,7 +35,6 @@ public class LogInCommand implements PharmacyCommand{
                 request.getSession().setAttribute(JspAttribute.POSITION, position);
                 request.getSession().setAttribute(JspAttribute.MAIL, mail);
                 List<Medicine> clientMedicineList = MedicineServiceImpl.INSTANCE.findClientMedicineList(mail);
-                clientMedicineList.addAll(MedicineServiceImpl.INSTANCE.findAllClientAvailableMedicineList());
                 request.getSession().setAttribute(JspAttribute.CLIENT_MEDICINE_LIST, clientMedicineList);
                 switch (position) {
                     case CLIENT:

@@ -11,25 +11,30 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-public class WritePrescriptionCommand implements PharmacyCommand {
+
+public class ExtendPrescriptionCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
-    private final static String WRITE_PRESCRIPTION_ERROR_MESSAGE = "Write prescription error. ";
+    private final static String EXTEND_PRESCRIPTION_ERROR_MESSAGE = "Could not extend prescription. ";
 
     @Override
     public Router execute(HttpServletRequest request) {
+        int prescriptionId = Integer.parseInt(request.getParameter(JspAttribute.PRESCRIPTION_ID));
         int medicineId = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_ID));
+        String clientMail = request.getParameter(JspAttribute.CLIENT_MAIL);
         Router router = new Router();
         try{
             Medicine medicine = MedicineServiceImpl.INSTANCE.findMedicine(medicineId);
             int availableMedicineQuantity = MedicineServiceImpl.INSTANCE.findAvailableDoctorMedicineAmount(medicineId);
-            request.setAttribute(JspAttribute.AVAILABLE_MEDICINE_QUANTITY, availableMedicineQuantity);
+            request.setAttribute(JspAttribute.PRESCRIPTION_ID, prescriptionId);
+            request.setAttribute(JspAttribute.CLIENT_MAIL, clientMail);
             request.setAttribute(JspAttribute.MEDICINE, medicine);
-            router.setForward(JspPath.DOCTOR_WRITE_PRESCRIPTION_PAGE);
+            request.setAttribute(JspAttribute.AVAILABLE_MEDICINE_QUANTITY, availableMedicineQuantity);
+            router.setForward(JspPath.DOCTOR_EXTEND_PRESCRIPTION_PAGE);
         } catch (ServiceException e){
-            logger.error(WRITE_PRESCRIPTION_ERROR_MESSAGE, e);
-            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, WRITE_PRESCRIPTION_ERROR_MESSAGE);
+            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, EXTEND_PRESCRIPTION_ERROR_MESSAGE);
             request.getSession().setAttribute(JspAttribute.ERROR, e);
             router.setForward(JspPath.COMMAND_ERROR_PAGE);
+            logger.error(EXTEND_PRESCRIPTION_ERROR_MESSAGE, e);
         }
         return router;
     }

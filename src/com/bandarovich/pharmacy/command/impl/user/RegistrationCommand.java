@@ -7,12 +7,9 @@ import com.bandarovich.pharmacy.command.Router;
 import com.bandarovich.pharmacy.entity.Medicine;
 import com.bandarovich.pharmacy.entity.PharmacyPosition;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
-import com.bandarovich.pharmacy.entity.Prescription;
 import com.bandarovich.pharmacy.service.ServiceException;
 import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
-import com.bandarovich.pharmacy.service.impl.PrescriptionServiceImpl;
 import com.bandarovich.pharmacy.service.impl.UserServiceImpl;
-import javafx.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,10 +33,9 @@ public class RegistrationCommand implements PharmacyCommand {
             List<String> errors = UserServiceImpl.INSTANCE.register(user);
             if(errors.isEmpty()){
                 request.getSession().setAttribute(JspAttribute.USER_NAME, user.getName());
-                request.getSession().setAttribute(JspAttribute.POSITION, user.getPosition().name());
+                request.getSession().setAttribute(JspAttribute.POSITION, user.getPosition());
                 request.getSession().setAttribute(JspAttribute.MAIL, user.getMail());
                 List<Medicine> clientMedicineList = MedicineServiceImpl.INSTANCE.findClientMedicineList(mail);
-                clientMedicineList.addAll(MedicineServiceImpl.INSTANCE.findAllClientAvailableMedicineList());
                 request.getSession().setAttribute( JspAttribute.CLIENT_MEDICINE_LIST, clientMedicineList);
                 switch (position) {
                     case CLIENT:
@@ -76,8 +72,9 @@ public class RegistrationCommand implements PharmacyCommand {
             }
         } catch (ServiceException e){
             logger.error(REGISTRATION_ERROR_MESSAGE, e);
-            request.setAttribute(JspAttribute.ERROR_MESSAGE, REGISTRATION_ERROR_MESSAGE + e);
+            request.setAttribute(JspAttribute.ERROR_MESSAGE, REGISTRATION_ERROR_MESSAGE);
             request.setAttribute(JspAttribute.START_PAGE, JspPath.START_PAGE);
+            request.setAttribute(JspAttribute.ERROR, e);
             router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
         }
         return router;

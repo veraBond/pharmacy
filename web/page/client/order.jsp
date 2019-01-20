@@ -51,7 +51,7 @@
                     <input type="hidden" name="command" value="complete-order">
                     <input type="hidden" name="medicineId" value="${medicine.medicineId}">
                     <input type="hidden" name="availableMedicineQuantity" value="${availableMedicineQuantity}">
-                    <c:out value="${inputErrors}"></c:out>
+                    <c:out value="${incorrectQuantity}"></c:out>
                     <fmt:message key="medicine.Name"></fmt:message> ${medicine.name} <br>
                     <fmt:message key="medicine.Dosage"></fmt:message> ${medicine.dosage}<br>
                     <fmt:message key="medicine.Group"></fmt:message> <c:forEach var="group" items="${medicine.medicineGroup}">

@@ -1,101 +1,108 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html lang="en">
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ page contentType="text/html; charset=UTF8" pageEncoding="UTF-8"%>
+<%request.setCharacterEncoding("UTF-8");%>
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Prescriptions</title>
+    <fmt:setBundle basename="language.locale"></fmt:setBundle>
+    <link rel="stylesheet" href="/styles.css">
+    <title><fmt:message key="Prescriptions"></fmt:message></title>
 </head>
 <body>
-    <style>
-        table{
-            margin: 50px 0;
-            text-align: left;
-            border-collapse: separate;
-            border: 1px solid #ddd;
-            border-spacing: 1px;
-            border-radius: 3px;
-            background: #fdfdfd;
-            font-size: 12px;
-            width: auto;
-        }
-        td,th{
-            border: 1px solid #ddd;
-            padding: 5px;
-            border-radius: 3px;
-        }
-        th{
-            background: #E4E4E4;
-        }
-        caption{
-            font-style: italic;
-            text-align: right;
-            color: #547901;
-        }
-    </style>
-    <h2 align="right">${userName}, ${position}</h2>
-    <h2>${errorMessage}</h2>
-    <form method="get" action="/pharmacy">
-        <input type="hidden" name="command" value="doctor-medicine-list">
-        <div>
-            <button type="submit">Write prescription</button>
-        </div>
-    </form>
-    <form method="get" action="/pharmacy">
-        <input type="hidden" name="command" value="doctor-prescription-list">
-        <div>
-            <button type="submit">Prescriptions</button>
-        </div>
-    </form>
-    <table>
-        <caption>Prescriptions</caption>
-        <tr>
-            <th>Medicine Name</th>
-            <th>Dosage</th>
-            <th>Package type</th>
-            <th>Package Amount</th>
-            <th>Available Quantity</th>
-            <th>Status</th>
-            <th>Request for Extension</th>
-            <th>Client e-mail</th>
-            <th>Modify</th>
-            <th>Delete</th>
-        </tr>
 
-        <c:forEach var="prescription" items="${prescriptionList}">
-            <tr>
-                <td><c:out value="${prescription.getValue().name}"></c:out></td>
-                <td><c:out value="${prescription.getValue().dosage}"></c:out></td>
-                <td><c:out value="${prescription.getValue().packageType}"></c:out></td>
-                <td><c:out value="${prescription.getValue().packageAmount}"></c:out></td>
-                <td><input type="number" min="1" max="${medicines.storageAmount > 5 ? 5 : medicines.storageAmount}"
-                           step="1" name="addedMedicineAmount" value="0" pattern="[01234]">${prescription.getKey().availableMedicineAmount}
-                </td>
-                <td><c:out value="${prescription.getKey().status}"></c:out></td>
-                <td><c:out value="${prescription.getKey().isRequestedForExtension ? 'requested' : 'no'}"></c:out>
-                    <input type="radio" name="prolong" value="prolong">prolong<br>
-                    <input type="radio" name="reject" value="reject">reject<br>
-                </td>
-                <td><c:out value="${prescription.getKey().clientMail}"></c:out></td>
-                <td><form method="post" action="/pharmacy">
-                        <input type="hidden" name="command" value="modify-prescription">
-                        <input type="hidden" name="modified-prescription" value="prescription.getKey().prescriptionNumber">
-                        <button type="submit">modify</button>
-                    </form>
-                </td>
-                <td><form method="post" action="/pharmacy">
-                        <input type="hidden" name="command" value="delete-prescription">
-                        <input type="hidden" name="deleted-prescription" value="prescription.getKey().prescriptionNumber">
-                        <button type="submit">delete</button>
-                    </form>
-                </td>
-            </tr>
-        </c:forEach>
-    </table>
-    <form method="post" action="/pharmacy">
-        <input type="hidden" name="command" value="log-out">
-        <div>
-            <button type="submit">Log out</button>
+<div class="body-content">
+
+    <header>
+        <div class="header-logo">
+            <span class="header-logo-helper"></span>
+            <img src="/./logo.png" alt="Pharmacy" height="52" width="52">
         </div>
-    </form>
+        <div class="header-info">
+            <h3>${userName}, ${position}</h3>
+        </div>
+    </header>
+
+    <section>
+
+        <nav>
+            <ul>
+                <li>
+                    <form method="get" action="/pharmacy">
+                        <button name="command" value="doctor-medicine-list" type="submit">
+                            <fmt:message key="AvailableMedicines"></fmt:message></button>
+                    </form>
+                </li>
+                <li>
+                    <form method="get" action="/pharmacy">
+                        <button name="command" value="doctor-prescription-list" type="submit">
+                            <fmt:message key="WrittenPrescriptions"></fmt:message></button>
+                    </form>
+                </li>
+                <li>
+                    <form method="post" action="/pharmacy">
+                        <button name="command" value="log-out" type="submit">
+                            <fmt:message key="logOut"></fmt:message></button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="content-title">
+                <fmt:message key="WrittenPrescriptions"></fmt:message>
+            </div>
+            <c:choose>
+                <c:when test="${!doctorPrescriptionList.isEmpty()}">
+                    <table>
+                        <tr>
+                            <th><fmt:message key="medicine.Name"></fmt:message></th>
+                            <th><fmt:message key="medicine.Dosage"></fmt:message></th>
+                            <th><fmt:message key="medicine.PackageType"></fmt:message></th>
+                            <th><fmt:message key="medicine.Amount"></fmt:message></th>
+                            <th><fmt:message key="medicine.AvailableQuantity"></fmt:message></th>
+                            <th><fmt:message key="prescription.clientEmail"></fmt:message></th>
+                            <th><fmt:message key="prescription.ExtensionRequest"></fmt:message></th>
+                            <th><fmt:message key="prescription.extend"></fmt:message></th>
+                        </tr>
+                        <c:forEach var="prescription" items="${doctorPrescriptionList}">
+                            <tr>
+                                <td><c:out value="${prescription.getValue().name}"></c:out></td>
+                                <td><c:out value="${prescription.getValue().dosage}"></c:out></td>
+                                <td><c:out value="${prescription.getValue().packageType}"></c:out></td>
+                                <td><c:out value="${prescription.getValue().packageAmount}"></c:out></td>
+                                <td><c:out value="${prescription.getKey().availableMedicineAmount}"></c:out></td>
+                                <td><c:out value="${prescription.getKey().clientMail}"></c:out></td>
+                                <td><c:choose>
+                                    <c:when test="${prescription.getKey().requestedForExtension}">
+                                        <fmt:message key="prescription.Requested"></fmt:message></c:when>
+                                    <c:otherwise>
+                                        <fmt:message key="no"></fmt:message>
+                                    </c:otherwise>
+                                </c:choose>
+                                </td>
+                                <td><form method="get" action="/pharmacy">
+                                    <input type="hidden" name="prescriptionId" value="${prescription.getKey().prescriptionId}">
+                                    <input type="hidden" name="medicineId" value="${prescription.getValue().medicineId}">
+                                    <input type="hidden" name="clientMail" value="${prescription.getKey().clientMail}">
+                                    <button name="command" value="extend-prescription" type="submit">
+                                        <fmt:message key="prescription.extend"></fmt:message>
+                                    </button>
+                                </form></td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                </c:when>
+                <c:otherwise><fmt:message key="noPrescriptions"></fmt:message></c:otherwise>
+            </c:choose>
+        </div>
+
+    </section>
+</div>
+
+<footer>
+    <p>verabond © 2019</p>
+</footer>
+
 </body>
 </html>

@@ -11,11 +11,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 public class BookMedicineCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
-    private final static String BOOK_MEDICINE_ERROR_MESSAGE = "Book medicine error.";
+    private final static String BOOK_MEDICINE_ERROR_MESSAGE = "Could not book medicine. ";
 
     @Override
     public Router execute(HttpServletRequest request) {
@@ -29,9 +28,10 @@ public class BookMedicineCommand implements PharmacyCommand {
             request.setAttribute(JspAttribute.MEDICINE, medicine);
             router.setForward(JspPath.CLIENT_ORDER_PAGE);
         } catch (ServiceException e){
-            logger.error("Could not book medicine.", e);
-            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, BOOK_MEDICINE_ERROR_MESSAGE + e.getMessage());
-            router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
+            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, BOOK_MEDICINE_ERROR_MESSAGE);
+            request.getSession().setAttribute(JspAttribute.ERROR, e);
+            logger.error(BOOK_MEDICINE_ERROR_MESSAGE, e);
+            router.setForward(JspPath.COMMAND_ERROR_PAGE);
         }
         return router;
     }

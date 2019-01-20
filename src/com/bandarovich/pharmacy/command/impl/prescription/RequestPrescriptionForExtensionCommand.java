@@ -13,26 +13,19 @@ import javax.servlet.http.HttpServletRequest;
 
 public class RequestPrescriptionForExtensionCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
-    private final static String SUCCESSFULLY_REQUESTED_MESSAGE = "Request was sent successfully.";
-    private final static String NOT_REQUESTED_MESSAGE = "Request was not sent successfully.";
-    private final static String REQUEST_PRESCRIPTION_ERROR_MESSAGE = "Error in request prescription for extension.";
+    private final static String REQUEST_PRESCRIPTION_ERROR_MESSAGE = "Could not request prescription for extension. ";
 
     @Override
     public Router execute(HttpServletRequest request) {
         Router router = new Router();
-        int prescriptionId = (Integer)(request.getAttribute(JspAttribute.PRESCRIPTION_ID));
+        int prescriptionId = Integer.parseInt(request.getParameter(JspAttribute.PRESCRIPTION_ID));
         try{
-            boolean requested = PrescriptionServiceImpl.INSTANCE.requestPrescriptionForExtension(prescriptionId);
-            if(requested){
-                request.getSession().setAttribute(JspAttribute.MESSAGE, SUCCESSFULLY_REQUESTED_MESSAGE);
-                router.setRedirect(JspPath.SUCCESSFULLY_COMPLETE_PAGE);
-            } else {
-                request.getSession().setAttribute(JspAttribute.MESSAGE, NOT_REQUESTED_MESSAGE);
-                router.setForward(JspPath.CLIENT_PRESCRIPTION_PAGE);
-            }
+            PrescriptionServiceImpl.INSTANCE.requestPrescriptionForExtension(prescriptionId);
+            router.setRedirect(JspPath.SUCCESSFULLY_COMPLETE_PAGE);
         } catch (ServiceException e){
             logger.error(REQUEST_PRESCRIPTION_ERROR_MESSAGE, e);
-            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, e);
+            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, REQUEST_PRESCRIPTION_ERROR_MESSAGE);
+            request.getSession().setAttribute(JspAttribute.ERROR, e);
             router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
         }
         return router;

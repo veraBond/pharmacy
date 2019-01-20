@@ -6,16 +6,14 @@ public class Prescription extends Pharmacy {
     private String doctorMail;
     private int medicineId;
     private int availableMedicineAmount;
-    private PrescriptionStatus status;
     private boolean requestedForExtension;
 
-    public Prescription(int prescriptionId, int medicineId, String clientMail, String doctorMail, int availableMedicineAmount, PrescriptionStatus status, boolean requestedForExtension) {
+    public Prescription(int prescriptionId, int medicineId, String clientMail, String doctorMail, int availableMedicineAmount, boolean requestedForExtension) {
         this.prescriptionId = prescriptionId;
         this.clientMail = clientMail;
         this.doctorMail = doctorMail;
         this.medicineId = medicineId;
         this.availableMedicineAmount = availableMedicineAmount;
-        this.status = status;
         this.requestedForExtension = requestedForExtension;
     }
 
@@ -59,20 +57,12 @@ public class Prescription extends Pharmacy {
         this.availableMedicineAmount = availableMedicineAmount;
     }
 
-    public PrescriptionStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PrescriptionStatus status) {
-        this.status = status;
-    }
-
     public boolean isRequestedForExtension() {
         return requestedForExtension;
     }
 
     public void setRequestedForExtension(boolean requestedForExtension) {
-        requestedForExtension = requestedForExtension;
+        this.requestedForExtension = requestedForExtension;
     }
 
     @Override
@@ -86,20 +76,24 @@ public class Prescription extends Pharmacy {
         if (medicineId != that.medicineId) return false;
         if (availableMedicineAmount != that.availableMedicineAmount) return false;
         if (requestedForExtension != that.requestedForExtension) return false;
-        if (!clientMail.equals(that.clientMail)) return false;
-        if (!doctorMail.equals(that.doctorMail)) return false;
-        return status == that.status;
+        if (clientMail != null ? !clientMail.equals(that.clientMail) : that.clientMail != null) return false;
+        if (doctorMail != null ? !doctorMail.equals(that.doctorMail) : that.doctorMail != null) return false;
+        return true;
     }
 
     @Override
     public int hashCode() {
         int result = prescriptionId;
-        result = 31 * result + clientMail.hashCode();
-        result = 31 * result + doctorMail.hashCode();
+        result = 31 * result + (clientMail != null ? clientMail.hashCode() : 0);
+        result = 31 * result + (doctorMail != null ? doctorMail.hashCode() : 0);
         result = 31 * result + medicineId;
         result = 31 * result + availableMedicineAmount;
-        result = 31 * result + status.hashCode();
         result = 31 * result + (requestedForExtension ? 1 : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Prescription{" + "prescriptionId=" + prescriptionId + ", clientMail='" + clientMail + '\'' + ", doctorMail='" + doctorMail + '\'' + ", medicineId=" + medicineId + ", availableMedicineAmount=" + availableMedicineAmount + ", requestedForExtension=" + requestedForExtension + '}';
     }
 }

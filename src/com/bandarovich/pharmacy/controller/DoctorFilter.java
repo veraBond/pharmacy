@@ -2,9 +2,6 @@ package com.bandarovich.pharmacy.controller;
 
 import com.bandarovich.pharmacy.command.JspAttribute;
 import com.bandarovich.pharmacy.command.JspPath;
-import com.bandarovich.pharmacy.entity.PharmacyPosition;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

@@ -45,4 +45,30 @@ public class PharmacyUser extends Pharmacy {
         this.position = position;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PharmacyUser user = (PharmacyUser) o;
+
+        if (name != null ? !name.equals(user.name) : user.name != null) return false;
+        if (mail != null ? !mail.equals(user.mail) : user.mail != null) return false;
+        if (password != null ? !password.equals(user.password) : user.password != null) return false;
+        return position == user.position;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (mail != null ? mail.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (position != null ? position.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "PharmacyUser{" + "name='" + name + '\'' + ", mail='" + mail + '\'' + ", password='" + password + '\'' + ", position=" + position + '}';
+    }
 }

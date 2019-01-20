@@ -10,26 +10,25 @@ import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 public class DoctorMedicineListCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
+    private final static String DOCTOR_MEDICINE_LIST_ERROR_MESSAGE = "Could not load doctor medicines. ";
     @Override
     public Router execute(HttpServletRequest request) {
-//        String nextPage;
-//        try{
-//            List<Medicine> doctorMedicines = MedicineServiceImpl.INSTANCE.findDoctorMedicines();
-//            request.setAttribute(JspAttribute.MEDICINE_LIST, doctorMedicines);
-//            nextPage = JspPath.DOCTOR_MEDICINE_PAGE;
-//        } catch (ServiceException e){
-//            logger.error(e);
-//            request.setAttribute(JspAttribute.ERROR_MESSAGE, "Error while loading medicine list.");
-//            nextPage = JspPath.DOCTOR_PAGE;
-//        }
-        return null;
+        Router router = new Router();
+        try{
+            List<Medicine> doctorMedicines = MedicineServiceImpl.INSTANCE.findDoctorMedicineList();
+            request.setAttribute(JspAttribute.CLIENT_MEDICINE_LIST, doctorMedicines);
+            router.setForward(JspPath.DOCTOR_PAGE);
+        } catch (ServiceException e){
+            logger.error(DOCTOR_MEDICINE_LIST_ERROR_MESSAGE, e);
+            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, DOCTOR_MEDICINE_LIST_ERROR_MESSAGE);
+            request.getSession().setAttribute(JspAttribute.ERROR, e);
+            router.setForward(JspPath.COMMAND_ERROR_PAGE);
+        }
+        return router;
     }
 }
