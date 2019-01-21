@@ -9,6 +9,7 @@ import com.bandarovich.pharmacy.entity.PharmacyPosition;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
 import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
 import com.bandarovich.pharmacy.service.impl.UserServiceImpl;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +21,6 @@ public class LogInCommand implements PharmacyCommand{
     private final static Logger logger = LogManager.getLogger();
     private final static String POSITION_ERROR_MESSAGE = "Log in error: unexpected position.";
     private final static String LOG_IN_ERROR_MESSAGE = "Log in error.";
-    private final static String INPUT_ERROR_MESSAGE = "Incorrect e-mail address or password.";
 
     @Override
     public Router execute(HttpServletRequest request) {
@@ -62,7 +62,7 @@ public class LogInCommand implements PharmacyCommand{
                         router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
                 }
             } else {
-                request.setAttribute(JspAttribute.INPUT_ERROR_MESSAGE, INPUT_ERROR_MESSAGE);
+                request.setAttribute(JspAttribute.LOG_IN_ERROR, Boolean.TRUE);
                 router.setForward(JspPath.LOGIN_PAGE);
             }
         } catch (Exception e){

@@ -67,7 +67,7 @@ public class RegistrationCommand implements PharmacyCommand {
                 request.setAttribute(JspAttribute.USER_NAME, user.getName());
                 request.setAttribute(JspAttribute.MAIL, user.getMail());
                 request.setAttribute(JspAttribute.POSITION, user.getPosition());
-                request.setAttribute(JspAttribute.INPUT_ERROR_MESSAGE, errors);
+                errors.forEach(error -> {request.setAttribute(error, Boolean.TRUE);});
                 router.setForward(JspPath.REGISTRATION_PAGE);
             }
         } catch (ServiceException e){

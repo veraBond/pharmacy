@@ -64,6 +64,7 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
     private final static String FIND_MEDICINE_STORAGE_AMOUNT =
             "SELECT storageAmount FROM medicines WHERE medicineId = ? AND isDeleted = FALSE";
 
+    private final static String MEDICINE_ID_MAX = "MAX(medicineId)";
     private final static String MEDICINE_ID = "medicineId";
     private final static String MEDICINE_NAME = "medicineName";
     private final static String DOSAGE = "dosage";
@@ -150,7 +151,7 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
     public int findMaxId() throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_MAX_ID)){
             ResultSet resultSet = preparedStatement.executeQuery();
-            return (resultSet.next() ? resultSet.getInt(MEDICINE_ID) : 0);
+            return (resultSet.next() ? resultSet.getInt(MEDICINE_ID_MAX) : 0);
         } catch (SQLException e){
             throw new DaoException(e);
         }
@@ -185,14 +186,14 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
     }
 
     @Override
-    public List<String> findMedicineGroupList() throws DaoException {
+    public String findMedicineGroupSet() throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_MEDICINE_GROUPS)){
             ResultSet resultSet = preparedStatement.executeQuery();
-            List<String> groups = new LinkedList<>();
-            while(resultSet.next()){
-                groups.add(resultSet.getString(2));
+            if(resultSet.next()){
+                return resultSet.getString(2);
+            } else {
+                throw new DaoException("Empty medicine group set. ");
             }
-            return groups;
         } catch (SQLException e){
             throw new DaoException(e);
         }

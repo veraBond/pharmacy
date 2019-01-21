@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
-<%@ page contentType="text/html; charset=UTF8" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF8" pageEncoding="UTF-8" %>
 <%request.setCharacterEncoding("UTF-8");%>
 <html>
 <head>
@@ -10,40 +10,81 @@
     <title><fmt:message key="prescription.extendPrescription"></fmt:message></title>
 </head>
 <body>
-<h3 align="right">${userName}, ${position}</h3>
-<form method="post" action="/pharmacy">
-    <div align="right">
-        <button name="command" value="log-out" type="submit">
-            <fmt:message key="logOut"></fmt:message></button>
-    </div>
-</form>
-<form method="post" action="/pharmacy">
-    <input type="hidden" name="command" value="complete-extend-prescription">
-    <input type="hidden" name="medicineId" value="${medicine.medicineId}">
-    <input type="hidden" name="prescriptionId" value="${prescriptionId}">
-    <input type="hidden" name="availableMedicineQuantity" value="${availableMedicineQuantity}">
-    <h2><fmt:message key="prescription.extendPrescription"></fmt:message></h2>
-    <h3><c:if test="${incorrectQuantity}"><fmt:message key="incorrectQuantity"></fmt:message></c:if></h3>
-    <fmt:message key="medicine.Name"></fmt:message> ${medicine.name} <br>
-    <fmt:message key="medicine.Dosage"></fmt:message> ${medicine.dosage}<br>
-    <fmt:message key="medicine.Group"></fmt:message>
-    <c:forEach var="group" items="${medicine.medicineGroup}">
-        <c:out value="${group}"></c:out>
-    </c:forEach><br>
-    <fmt:message key="medicine.PackageType"></fmt:message> ${medicine.packageType}<br>
-    <fmt:message key="medicine.Amount"></fmt:message> ${medicine.packageAmount}<br>
-    <fmt:message key="medicine.Price"></fmt:message> ${medicine.price}<br>
-    <fmt:message key="prescription.clientEmail"></fmt:message> ${clientMail}<br>
-    <fmt:message key="EnterQuantity"></fmt:message> ${availableMedicineQuantity}
-    <input type="number" name="prescriptionMedicineQuantity"
-           value="${prescriptionMedicineQuantity == null ? 1 : prescriptionMedicineQuantity}" min="1" max="${availableMedicineQuantity}"><br>
-    <div>
-        <button type="submit"><fmt:message key="complete"></fmt:message></button>
-    </div>
-</form>
-<form method="get" action="/pharmacy">
-    <input type="hidden" name="command" value="start-page">
-    <button type="submit"><fmt:message key="cancel"></fmt:message></button>
-</form>
+
+<div class="body-content">
+    <header>
+        <div class="header-logo">
+            <span class="header-logo-helper"></span>
+            <img src="/./logo.png" alt="Pharmacy" height="52" width="52">
+        </div>
+        <div class="header-info">
+            <h3>${userName}, ${position}</h3>
+        </div>
+    </header>
+
+    <section>
+        <nav>
+            <ul>
+                <li>
+                    <form method="get" action="/pharmacy">
+                        <input type="hidden" name="command" value="start-page">
+                        <button type="submit"><fmt:message key="cancel"></fmt:message></button>
+                    </form>
+                </li>
+                <li>
+                    <form method="post" action="/pharmacy">
+                        <button name="command" value="log-out" type="submit">
+                            <fmt:message key="logOut"></fmt:message></button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="content-title">
+                <fmt:message key="prescription.extendPrescription"></fmt:message>
+            </div>
+
+            <div>
+
+                <form method="post" action="/pharmacy">
+                    <input type="hidden" name="command" value="complete-extend-prescription">
+                    <input type="hidden" name="medicineId" value="${medicine.medicineId}">
+                    <input type="hidden" name="prescriptionId" value="${prescriptionId}">
+                    <input type="hidden" name="availableMedicineQuantity" value="${availableMedicineQuantity}">
+                    <fmt:message key="medicine.Name"></fmt:message> ${medicine.name} <br>
+                    <fmt:message key="medicine.Dosage"></fmt:message> ${medicine.dosage}<br>
+                    <fmt:message key="medicine.Group"></fmt:message>
+                    <c:forEach var="group" items="${medicine.medicineGroup}">
+                        <c:out value="${group}"></c:out>
+                    </c:forEach><br>
+                    <fmt:message key="medicine.PackageType"></fmt:message> ${medicine.packageType}<br>
+                    <fmt:message key="medicine.Amount"></fmt:message> ${medicine.packageAmount}<br>
+                    <fmt:message key="medicine.Price"></fmt:message> ${medicine.price}<br>
+                    <fmt:message key="prescription.clientEmail"></fmt:message> ${clientMail}<br>
+                    <fmt:message key="EnterQuantity"></fmt:message> ${availableMedicineQuantity}
+                    <input type="number" name="prescriptionMedicineQuantity"
+                           value="${prescriptionMedicineQuantity == null ? 1 : prescriptionMedicineQuantity}" min="1"
+                           max="${availableMedicineQuantity}">
+
+                    <div class="form-errors">
+                        <span><c:if test="${incorrectQuantity}"><fmt:message
+                                key="incorrectQuantity"></fmt:message></c:if></span>
+                    </div>
+
+                    <div class="submit-button">
+                        <button type="submit"><fmt:message key="complete"></fmt:message></button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<footer>
+    <p>verabond © 2019</p>
+</footer>
+
 </body>
 </html>

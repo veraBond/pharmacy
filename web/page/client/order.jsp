@@ -63,7 +63,8 @@
                     <label><fmt:message key="EnterQuantity"></fmt:message> ${availableMedicineQuantity}
                         <input type="number" name="bookMedicineQuantity" value="1" min="1" max="${availableMedicineQuantity}">
                     </label>
-                    <div>
+                    <div class="form-errors"></div>
+                    <div class="submit-button">
                         <button type="submit"><fmt:message key="complete"></fmt:message></button>
                     </div>
                 </form>

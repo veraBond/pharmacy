@@ -22,7 +22,7 @@ button {
 	font-size: 14px;
 }
 table {
-	margin: 50px 0;
+	margin: 20px 0;
 	text-align: left;
 	font-size: 16px;
 	width: auto;
@@ -110,7 +110,7 @@ nav ul {
 
 .content-title {
 	padding-bottom: 20px;
-	font-size: 18px;
+	font-size: 20px;
 }
 
 .main {
@@ -121,4 +121,13 @@ nav ul {
 
 .form-item {
 	padding: 10px 0;
+}
+
+.submit-button {
+	padding-top: 15px;
+}
+
+.form-errors {
+	padding-top: 15px;
+	color: orangered;
 }

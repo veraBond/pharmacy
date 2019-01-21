@@ -56,9 +56,20 @@
                 </div>
             </form>
 
-            <c:forEach var="error" items="${inputErrors}">
-                <c:out value="${error}"></c:out>
-            </c:forEach>
+            <div class="form-errors">
+                <span>
+
+                    <c:if test="${incorrectNameRegistration}">
+                        <fmt:message key="incorrectNameRegistration"></fmt:message><br>
+                    </c:if>
+                    <c:if test="${incorrectMailRegistration}">
+                        <fmt:message key="incorrectMailRegistration"></fmt:message><br>
+                    </c:if>
+                    <c:if test="${incorrectPasswordRegistration}">
+                        <fmt:message key="incorrectPasswordRegistration"></fmt:message><br>
+                    </c:if>
+                </span>
+            </div>
 
             <div>
                 <button onclick="location.href='/'"><fmt:message key="back"></fmt:message></button>

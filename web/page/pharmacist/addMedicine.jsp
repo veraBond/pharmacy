@@ -49,6 +49,8 @@
             <div>
                 <form method="post" action="/pharmacy">
                     <input type="hidden" name="command" value="complete-add-medicine">
+                    <input type="hidden" name="medicineGroupList" value="${medicineGroupList}">
+                    <input type="hidden" name="packageTypeList" value="${packageTypeList}">
                     <div class="form-item">
                         <label><fmt:message key="medicine.Name"></fmt:message>
                             <input type="text" name="medicineName" value="${medicineName}" pattern="[\p{Alpha}]{2,20}">
@@ -62,18 +64,18 @@
                     </div>
                     <div class="form-item">
                         <label><fmt:message key="medicine.Group"></fmt:message>
-                            <select name="position">
+                            <select name="medicineGroup" required>
                                 <c:forEach var="group" items="${medicineGroupList}">
-                                    <option value="${group}"></option>
+                                    <option value="${group}">${group}</option>
                                 </c:forEach>
                             </select>
                         </label>
                     </div>
                     <div class="form-item">
                         <label><fmt:message key="medicine.PackageType"></fmt:message>
-                            <select name="position">
+                            <select name="packageType" required>
                                 <c:forEach var="type" items="${packageTypeList}">
-                                    <option value="${type}"></option>
+                                    <option value="${type}">${type}</option>
                                 </c:forEach>
                             </select>
                         </label>
@@ -86,15 +88,15 @@
                     </div>
                     <div class="form-item">
                         <label><fmt:message key="medicine.Price"></fmt:message>
-                            <input type="number" name="medicinePrice" value="${medicinePrice == null ? 0 : medicinePrice}"
-                                   min="0" max="1000">
+                            <input type="text" name="medicinePrice" value="${medicinePrice == null ? 0 : medicinePrice}"
+                                   pattern="[\d]{1,3}[.]?[\d]{0,2}">
                         </label>
                     </div>
                     <div class="form-item">
                         <label><fmt:message key="medicine.PrescriptionNeed"></fmt:message>
                             <select name="prescriptionNeed">
-                                <option value="yes"></option><fmt:message key="need"></fmt:message>
-                                <option value="no"></option><fmt:message key="no"></fmt:message>
+                                <option value="yes"><fmt:message key="need"></fmt:message></option>
+                                <option value="no"><fmt:message key="no"></fmt:message></option>
                             </select>
                         </label>
                     </div>
@@ -104,14 +106,36 @@
                                    min="0" max="1000">
                         </label>
                     </div>
-                    <div>
-                        <button type="submit"><fmt:message key="registration.Register"></fmt:message></button>
+                    <div class="form-errors">
+                        <span>
+                            <c:if test="${incorrectMedicineName}">
+                                <fmt:message key="incorrectMedicineName"></fmt:message><br>
+                            </c:if>
+                            <c:if test="${incorrectMedicineDosage}">
+                                <fmt:message key="incorrectMedicineDosage"></fmt:message><br>
+                            </c:if>
+                            <c:if test="${incorrectMedicineGroup}">
+                                <fmt:message key="incorrectMedicineGroup"></fmt:message><br>
+                            </c:if>
+                            <c:if test="${incorrectPackageType}">
+                                <fmt:message key="incorrectPackageType"></fmt:message><br>
+                            </c:if>
+                            <c:if test="${incorrectPackageAmount}">
+                                <fmt:message key="incorrectPackageAmount"></fmt:message><br>
+                            </c:if>
+                            <c:if test="${incorrectPrice}">
+                                <fmt:message key="incorrectPrice"></fmt:message><br>
+                            </c:if>
+                            <c:if test="${incorrectStorageAmount}">
+                                <fmt:message key="incorrectStorageAmount"></fmt:message><br>
+                            </c:if>
+                        </span>
+                    </div>
+                    <div class="submit-button">
+                        <button type="submit"><fmt:message key="complete"></fmt:message></button>
                     </div>
                 </form>
 
-                <c:forEach var="error" items="${inputErrors}">
-                    <c:out value="${error}"></c:out>
-                </c:forEach>
             </div>
 
         </div>

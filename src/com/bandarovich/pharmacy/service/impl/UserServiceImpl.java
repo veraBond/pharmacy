@@ -1,5 +1,6 @@
 package com.bandarovich.pharmacy.service.impl;
 
+import com.bandarovich.pharmacy.command.JspAttribute;
 import com.bandarovich.pharmacy.dao.DaoException;
 import com.bandarovich.pharmacy.dao.TransactionHelper;
 import com.bandarovich.pharmacy.dao.impl.UserDaoImpl;
@@ -77,20 +78,20 @@ public class UserServiceImpl implements UserService {
             TransactionHelper.endTransaction(userDao);
         }
     }
-//TODO rewrite with localization
+
     private List<String> formErrorList(PharmacyUser user){
         List<String> errors = new LinkedList<>();
         boolean nameIsCorrect = PharmacyValidator.userNameIsCorrect(user.getName());
         boolean mailIsCorrect = PharmacyValidator.mailIsCorrect(user.getMail());
         boolean passwordIsCorrect = PharmacyValidator.passwordIsCorrect(user.getPassword());
         if (!nameIsCorrect) {
-            errors.add("Name must contain only letters (at least 2).");
+            errors.add(JspAttribute.INCORRECT_NAME_REGISTRATION);
         }
         if (!mailIsCorrect) {
-            errors.add("Check your e-mail address! It must be like ivan@gmail.com");
+            errors.add(JspAttribute.INCORRECT_MAIL_REGISTRATION);
         }
         if (!passwordIsCorrect) {
-            errors.add("Password must contain only word symbols (at least 5).");
+            errors.add(JspAttribute.INCORRECT_PASSWORD_REGISTRATION);
         }
         return errors;
     }

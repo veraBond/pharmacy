@@ -2,13 +2,10 @@ package com.bandarovich.pharmacy.command;
 
 import com.bandarovich.pharmacy.command.impl.SetLocaleCommand;
 import com.bandarovich.pharmacy.command.impl.StartPageCommand;
-import com.bandarovich.pharmacy.command.impl.medicine.AddMedicineCommand;
-import com.bandarovich.pharmacy.command.impl.medicine.CompleteAddMedicineCommand;
+import com.bandarovich.pharmacy.command.impl.medicine.*;
 import com.bandarovich.pharmacy.command.impl.order.BookMedicineCommand;
-import com.bandarovich.pharmacy.command.impl.medicine.DoctorMedicineListCommand;
 import com.bandarovich.pharmacy.command.impl.order.CompleteOrderCommand;
 import com.bandarovich.pharmacy.command.impl.prescription.*;
-import com.bandarovich.pharmacy.command.impl.medicine.ClientMedicineListCommand;
 import com.bandarovich.pharmacy.command.impl.user.LogInCommand;
 import com.bandarovich.pharmacy.command.impl.user.LogOutCommand;
 import com.bandarovich.pharmacy.command.impl.user.RegistrationCommand;
@@ -36,6 +33,10 @@ public class CommandMap {
             put(CommandType.COMPLETE_EXTEND_PRESCRIPTION, new CompleteExtendPrescriptionCommand());
             put(CommandType.ADD_MEDICINE, new AddMedicineCommand());
             put(CommandType.COMPLETE_ADD_MEDICINE, new CompleteAddMedicineCommand());
+            put(CommandType.MODIFY_MEDICINE, new ModifyMedicineCommand());
+            put(CommandType.COMPLETE_MODIFY_MEDICINE, new CompleteModifyMedicineCommand());
+            put(CommandType.DELETE_MEDICINE, new DeleteMedicineCommand());
+            put(CommandType.COMPLETE_DELETE_MEDICINE, new CompleteDeleteMedicineCommand());
         }
     };
 

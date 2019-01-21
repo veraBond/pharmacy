@@ -15,6 +15,7 @@ import java.util.List;
 public class AddMedicineCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
     private final static String ADD_MEDICINE_ERROR = "Could not load data for adding medicine. ";
+
     @Override
     public Router execute(HttpServletRequest request) {
         Router router = new Router();

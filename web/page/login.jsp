@@ -42,7 +42,13 @@
                 </div>
             </form>
 
-            <c:out value="${inputErrors}"></c:out>
+            <div class="form-errors">
+                <span>
+                    <c:if test="${logInError}">
+                        <fmt:message key="logInError"></fmt:message>
+                    </c:if>
+                </span>
+            </div>
 
             <div>
                 <button onclick="location.href='/'"><fmt:message key="back"></fmt:message></button>

@@ -13,6 +13,16 @@ public class JspAttribute {
     public final static String DOCTOR_MEDICINE_LIST = "doctorMedicineList";
     public final static String PHARMACIST_MEDICINE_LIST = "pharmacistMedicineList";
     public final static String MEDICINE_ID = "medicineId";
+    public final static String MEDICINE_NAME = "medicineName";
+    public final static String MEDICINE_DOSAGE = "medicineDosage";
+    public final static String MEDICINE_GROUP = "medicineGroup";
+    public final static String MEDICINE_GROUP_LIST = "medicineGroupList";
+    public final static String PACKAGE_TYPE = "packageType";
+    public final static String PACKAGE_TYPE_LIST = "packageTypeList";
+    public final static String PACKAGE_AMOUNT = "packageAmount";
+    public final static String MEDICINE_PRICE = "medicinePrice";
+    public final static String PRESCRIPTION_NEED = "prescriptionNeed";
+    public final static String STORAGE_AMOUNT = "storageAmount";
     public final static String AVAILABLE_MEDICINE_QUANTITY = "availableMedicineQuantity";
     public final static String BOOK_MEDICINE_QUANTITY = "bookMedicineQuantity";
     public final static String TOTAL_COST = "totalCost";
@@ -21,13 +31,22 @@ public class JspAttribute {
     public final static String PRESCRIPTION_ID = "prescriptionId";
     public final static String PRESCRIPTION_MEDICINE_QUANTITY = "prescriptionMedicineQuantity";
     public final static String CLIENT_MAIL = "clientMail";
-    public final static String MEDICINE_GROUP_LIST = "medicineGroupList";
-    public final static String PACKAGE_TYPE_LIST = "packageTypeList";
     public final static String ERROR_MESSAGE = "errorMessage";
     public final static String ERROR = "error";
-    public final static String INPUT_ERROR_MESSAGE = "inputErrors";
+    public final static String LOG_IN_ERROR = "logInError";
+    public final static String ERROR_LIST = "errorList";
     public final static String INCORRECT_QUANTITY = "incorrectQuantity";
     public final static String INCORRECT_MAIL = "incorrectMail";
+    public final static String INCORRECT_NAME_REGISTRATION = "incorrectNameRegistration";
+    public final static String INCORRECT_MAIL_REGISTRATION = "incorrectMailRegistration";
+    public final static String INCORRECT_PASSWORD_REGISTRATION = "incorrectPasswordRegistration";
+    public final static String INCORRECT_MEDICINE_NAME = "incorrectMedicineName";
+    public final static String INCORRECT_MEDICINE_DOSAGE = "incorrectMedicineDosage";
+    public final static String INCORRECT_MEDICINE_GROUP = "incorrectMedicineGroup";
+    public final static String INCORRECT_PACKAGE_TYPE = "incorrectPackageType";
+    public final static String INCORRECT_PACKAGE_AMOUNT = "incorrectPackageAmount";
+    public final static String INCORRECT_PRICE = "incorrectPrice";
+    public final static String INCORRECT_STORAGE_AMOUNT = "incorrectStorageAmount";
 
     private JspAttribute(){}
 }

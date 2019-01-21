@@ -16,6 +16,7 @@ public class JspPath {
     public final static String PHARMACIST_PAGE = "page/pharmacist/medicines.jsp";
     public final static String PHARMACIST_MODIFY_MEDICINE_PAGE = "page/pharmacist/modifyMedicine.jsp";
     public final static String PHARMACIST_ADD_MEDICINE_PAGE = "page/pharmacist/addMedicine.jsp";
+    public final static String PHARMACIST_DELETE_MEDICINE_PAGE = "page/pharmacist/deleteMedicine.jsp";
 
     private JspPath(){}
 }

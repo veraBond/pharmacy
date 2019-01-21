@@ -12,14 +12,15 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-public class CompleteAddMedicineCommand implements PharmacyCommand {
+public class CompleteModifyMedicineCommand implements PharmacyCommand {
     private final static Logger logger = LogManager.getLogger();
     private final static String NEED = "yes";
-    private final static String COMPLETE_ADD_MEDICINE_ERROR_MESSAGE = "Could not add medicine. ";
+    private final static String COMPLETE_MODIFY_MEDICINE_ERROR_MESSAGE = "Could not modify medicine. ";
 
     @Override
     public Router execute(HttpServletRequest request) {
         Router router = new Router();
+        int medicineId = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_ID));
         String medicineName = request.getParameter(JspAttribute.MEDICINE_NAME);
         int dosage = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_DOSAGE));
         String medicineGroup = request.getParameter(JspAttribute.MEDICINE_GROUP);
@@ -32,9 +33,10 @@ public class CompleteAddMedicineCommand implements PharmacyCommand {
             List<String> errors = MedicineServiceImpl.INSTANCE.validateMedicine(
                     medicineName, dosage, medicineGroup, packageType, packageAmount, price, storageAmount);
             if(errors.isEmpty()){
-                MedicineServiceImpl.INSTANCE.formMedicine(medicineName, dosage, medicineGroup, packageType, packageAmount, price, prescriptionNeed, storageAmount);
+                MedicineServiceImpl.INSTANCE.updateMedicine(medicineId, medicineName, dosage, medicineGroup, packageType, packageAmount, price, prescriptionNeed, storageAmount);
                 router.setRedirect(JspPath.SUCCESSFULLY_COMPLETE_PAGE);
             } else {
+                request.setAttribute(JspAttribute.MEDICINE_ID, medicineId);
                 request.setAttribute(JspAttribute.MEDICINE_NAME, medicineName);
                 request.setAttribute(JspAttribute.MEDICINE_DOSAGE, dosage);
                 request.setAttribute(JspAttribute.PACKAGE_AMOUNT, packageAmount);
@@ -46,10 +48,10 @@ public class CompleteAddMedicineCommand implements PharmacyCommand {
                 router.setForward(JspPath.PHARMACIST_ADD_MEDICINE_PAGE);
             }
         } catch (ServiceException e){
-            logger.error(COMPLETE_ADD_MEDICINE_ERROR_MESSAGE, e);
+            logger.error(COMPLETE_MODIFY_MEDICINE_ERROR_MESSAGE, e);
             router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
             request.getSession().setAttribute(JspAttribute.ERROR, e);
-            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, COMPLETE_ADD_MEDICINE_ERROR_MESSAGE );
+            request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, COMPLETE_MODIFY_MEDICINE_ERROR_MESSAGE );
         }
         return router;
     }
