@@ -14,11 +14,23 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * The Class StartPageCommand.
+ */
 public class StartPageCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant POSITION_ERROR_MESSAGE. */
     private static final String POSITION_ERROR_MESSAGE = "Unexpected position.";
+    
+    /** The Constant START_PAGE_ERROR_MESSAGE. */
     private static final String START_PAGE_ERROR_MESSAGE = "Could not load data fo start page. ";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         Router router = new Router();

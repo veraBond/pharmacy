@@ -12,10 +12,20 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * The Class BookMedicineCommand.
+ */
 public class BookMedicineCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant BOOK_MEDICINE_ERROR_MESSAGE. */
     private static final String BOOK_MEDICINE_ERROR_MESSAGE = "Could not book medicine. ";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         int bookMedicineId = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_ID));

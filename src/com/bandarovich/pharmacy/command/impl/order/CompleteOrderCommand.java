@@ -13,10 +13,20 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * The Class CompleteOrderCommand.
+ */
 public class CompleteOrderCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant COMPLETE_ERROR_MESSAGE. */
     private static final String COMPLETE_ERROR_MESSAGE = "Could not complete order with client ";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         int medicineId = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_ID));

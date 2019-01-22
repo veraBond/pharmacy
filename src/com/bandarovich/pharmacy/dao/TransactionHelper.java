@@ -8,11 +8,26 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * The Class TransactionHelper.
+ */
 public class TransactionHelper {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
 
+    /**
+     * Instantiates a new transaction helper.
+     */
     private TransactionHelper(){}
 
+    /**
+     * Begin transaction.
+     *
+     * @param dao the dao
+     * @param daos the daos
+     * @throws DaoException the dao exception
+     */
     public static void beginTransaction(PharmacyDao dao, PharmacyDao ... daos) throws DaoException{
         beginTransactionDao(dao);
         for(PharmacyDao d: daos){
@@ -20,6 +35,12 @@ public class TransactionHelper {
         }
     }
 
+    /**
+     * End transaction.
+     *
+     * @param dao the dao
+     * @param daos the daos
+     */
     public static void endTransaction(PharmacyDao dao, PharmacyDao ... daos) {
         endTransactionDao(dao);
         for(PharmacyDao d: daos){
@@ -27,6 +48,13 @@ public class TransactionHelper {
         }
     }
 
+    /**
+     * Commit.
+     *
+     * @param dao the dao
+     * @param daos the daos
+     * @throws DaoException the dao exception
+     */
     public static void commit(PharmacyDao dao, PharmacyDao ... daos) throws DaoException{
         commitDao(dao);
         for(PharmacyDao d: daos){
@@ -34,6 +62,13 @@ public class TransactionHelper {
         }
     }
 
+    /**
+     * Roll back.
+     *
+     * @param dao the dao
+     * @param daos the daos
+     * @throws DaoException the dao exception
+     */
     public static void rollBack(PharmacyDao dao, PharmacyDao ... daos) throws DaoException{
         rollBackDao(dao);
         for(PharmacyDao d: daos){
@@ -41,6 +76,12 @@ public class TransactionHelper {
         }
     }
 
+    /**
+     * Begin transaction dao.
+     *
+     * @param dao the dao
+     * @throws DaoException the dao exception
+     */
     private static void beginTransactionDao(PharmacyDao dao) throws DaoException{
         try{
             Connection connection = ConnectionPool.getInstance().takeConnection();
@@ -51,6 +92,11 @@ public class TransactionHelper {
         }
     }
 
+    /**
+     * End transaction dao.
+     *
+     * @param dao the dao
+     */
     private static void endTransactionDao(PharmacyDao dao){
         try{
             dao.getConnection().setAutoCommit(true);
@@ -60,6 +106,12 @@ public class TransactionHelper {
         }
     }
 
+    /**
+     * Commit dao.
+     *
+     * @param dao the dao
+     * @throws DaoException the dao exception
+     */
     private static void commitDao(PharmacyDao dao) throws DaoException{
         try{
             dao.getConnection().commit();
@@ -69,6 +121,12 @@ public class TransactionHelper {
         }
     }
 
+    /**
+     * Roll back dao.
+     *
+     * @param dao the dao
+     * @throws DaoException the dao exception
+     */
     private static void rollBackDao(PharmacyDao dao) throws DaoException{
         try{
             dao.getConnection().rollback();

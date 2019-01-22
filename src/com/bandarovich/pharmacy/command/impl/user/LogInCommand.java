@@ -16,11 +16,23 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The Class LogInCommand.
+ */
 public class LogInCommand implements PharmacyCommand{
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant POSITION_ERROR_MESSAGE. */
     private static final String POSITION_ERROR_MESSAGE = "Log in error: unexpected position.";
+    
+    /** The Constant LOG_IN_ERROR_MESSAGE. */
     private static final String LOG_IN_ERROR_MESSAGE = "Log in error.";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         String mail = request.getParameter(JspAttribute.MAIL);

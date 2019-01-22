@@ -11,10 +11,20 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * The Class CompleteDeleteMedicineCommand.
+ */
 public class CompleteDeleteMedicineCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant DELETE_MEDICINE_ERROR_MESSAGE. */
     private static final String DELETE_MEDICINE_ERROR_MESSAGE = "Could not delete medicine. ";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         Router router = new Router();

@@ -13,9 +13,20 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * The Class DoctorMedicineListCommand.
+ */
 public class DoctorMedicineListCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant DOCTOR_MEDICINE_LIST_ERROR_MESSAGE. */
     private static final String DOCTOR_MEDICINE_LIST_ERROR_MESSAGE = "Could not load doctor medicines. ";
+    
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         Router router = new Router();

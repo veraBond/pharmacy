@@ -14,10 +14,20 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * The Class CompleteWritePrescriptionCommand.
+ */
 public class CompleteWritePrescriptionCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant COMPLETE_WRITE_PRESCRIPTION_ERROR_MESSAGE. */
     private static final String COMPLETE_WRITE_PRESCRIPTION_ERROR_MESSAGE = "Complete write prescription error. ";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         String doctorMail = (String)request.getSession().getAttribute(JspAttribute.MAIL);
@@ -51,6 +61,13 @@ public class CompleteWritePrescriptionCommand implements PharmacyCommand {
         return router;
     }
 
+    /**
+     * Form attributes.
+     *
+     * @param inputValue the input value
+     * @param attribute the attribute
+     * @param request the request
+     */
     private void formAttributes(boolean inputValue, String attribute, HttpServletRequest request){
         if(!inputValue){
             request.setAttribute(attribute, Boolean.TRUE);

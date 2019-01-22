@@ -13,10 +13,20 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * The Class ModifyMedicineCommand.
+ */
 public class ModifyMedicineCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant MODIFY_MEDICINE_ERROR_MESSAGE. */
     private static final String MODIFY_MEDICINE_ERROR_MESSAGE = "Could not modify medicine. ";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         int medicineId = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_ID));

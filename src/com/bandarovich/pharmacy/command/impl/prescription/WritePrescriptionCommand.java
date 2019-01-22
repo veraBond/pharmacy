@@ -11,10 +11,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+
+/**
+ * The Class WritePrescriptionCommand.
+ */
 public class WritePrescriptionCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant WRITE_PRESCRIPTION_ERROR_MESSAGE. */
     private static final String WRITE_PRESCRIPTION_ERROR_MESSAGE = "Write prescription error. ";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         int medicineId = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_ID));

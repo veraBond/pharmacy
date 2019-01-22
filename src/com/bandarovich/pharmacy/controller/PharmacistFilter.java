@@ -8,12 +8,32 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * The Class PharmacistFilter.
+ */
 public class PharmacistFilter implements Filter {
+    
+    /** The Constant FORBIDDEN_ACCESS_MESSAGE. */
     private static final String FORBIDDEN_ACCESS_MESSAGE = "Forbidden. Access denied.";
 
+    /**
+     * Inits the.
+     *
+     * @param fConfig the f config
+     * @throws ServletException the servlet exception
+     */
     public void init(FilterConfig fConfig) throws ServletException {
     }
 
+    /**
+     * Do filter.
+     *
+     * @param servletRequest the servlet request
+     * @param servletResponse the servlet response
+     * @param filterChain the filter chain
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws ServletException the servlet exception
+     */
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException  {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
@@ -26,6 +46,9 @@ public class PharmacistFilter implements Filter {
         }
     }
 
+    /**
+     * Destroy.
+     */
     public void destroy()  {
     }
 }

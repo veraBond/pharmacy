@@ -11,13 +11,29 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Properties;
 
+/**
+ * The Class PoolManager.
+ */
 class PoolManager {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger(PoolManager.class);
+    
+    /** The Constant PROPERTY_PATH. */
     private static final String PROPERTY_PATH = "/dao/dataBase.properties";
+    
+    /** The Constant POOL_SIZE. */
     private static final String POOL_SIZE = "poolSize";
+    
+    /** The Constant URL. */
     private static final String URL = "url";
+    
+    /** The properties. */
     private Properties properties;
 
+    /**
+     * Instantiates a new pool manager.
+     */
     PoolManager(){
         properties = new Properties();
         try {
@@ -29,10 +45,21 @@ class PoolManager {
         }
     }
 
+    /**
+     * Take pool size.
+     *
+     * @return the int
+     */
     int takePoolSize(){
         return Integer.parseInt(properties.getProperty(POOL_SIZE));
     }
 
+    /**
+     * Take connection.
+     *
+     * @return the connection
+     * @throws PoolException the pool exception
+     */
     Connection takeConnection() throws PoolException {
         try {
             return DriverManager.getConnection(properties.getProperty(URL), properties);
@@ -41,6 +68,9 @@ class PoolManager {
         }
     }
 
+    /**
+     * Deregister drivers.
+     */
     void deregisterDrivers() {
         Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {

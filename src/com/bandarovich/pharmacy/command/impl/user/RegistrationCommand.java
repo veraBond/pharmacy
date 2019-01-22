@@ -16,12 +16,26 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * The Class RegistrationCommand.
+ */
 public class RegistrationCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant POSITION_ERROR_MESSAGE. */
     private static final String POSITION_ERROR_MESSAGE = "Registration error: unexpected position.";
+    
+    /** The Constant REGISTRATION_ERROR_MESSAGE. */
     private static final String REGISTRATION_ERROR_MESSAGE = "Registration error.";
+    
+    /** The Constant EMPTY_MEDICINE_LIST_MESSAGE. */
     private static final String EMPTY_MEDICINE_LIST_MESSAGE = "You have no available medicines.";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request)  {
         PharmacyPosition position = PharmacyPosition.valueOf(request.getParameter(JspAttribute.POSITION).toUpperCase());

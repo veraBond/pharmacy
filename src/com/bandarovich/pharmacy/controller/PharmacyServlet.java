@@ -9,10 +9,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * The Class PharmacyServlet.
+ */
 public class PharmacyServlet extends HttpServlet {
+    
+    /** The Constant COMMAND_PARAMETER. */
     private static final String COMMAND_PARAMETER = "command";
+    
+    /** The Constant COMMAND_ERROR_MESSAGE. */
     private static final String COMMAND_ERROR_MESSAGE = "Command error.";
 
+    /**
+     * Service.
+     *
+     * @param request the request
+     * @param response the response
+     * @throws ServletException the servlet exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String commandName = request.getParameter(COMMAND_PARAMETER);
@@ -33,6 +48,9 @@ public class PharmacyServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Destroy.
+     */
     @Override
     public void destroy() {
         ConnectionPool.getInstance().closePool();

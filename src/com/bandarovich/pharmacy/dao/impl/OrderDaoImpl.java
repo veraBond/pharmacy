@@ -12,36 +12,65 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The Class OrderDaoImpl.
+ */
 public class OrderDaoImpl extends PharmacyDao<Integer, PharmacyOrder> implements OrderDao {
+    
+    /** The Constant FIND_ENTITY. */
     private static final String FIND_ENTITY =
             "SELECT orderId, mail, medicineId, amount, totalCost " +
                     "FROM orders INNER JOIN users ON (clientId = userId) " +
                     "WHERE orderId = ?";
+    
+    /** The Constant FIND_ALL. */
     private static final String FIND_ALL =
             "SELECT orderId, mail, medicineId, amount, totalCost " +
                     "FROM orders INNER JOIN users ON (clientId = userId) ORDER BY orderId";
+    
+    /** The Constant CREATE. */
     private static final String CREATE =
             "INSERT INTO orders " +
                     "SET orderId = ?, " +
                     "clientId = (SELECT clients.userId FROM users AS clients WHERE clients.mail = ?), " +
                     "medicineId = ?, amount = ?, totalCost = ?";
+    
+    /** The Constant UPDATE. */
     private static final String UPDATE =
             "UPDATE orders " +
                     "SET clientId = (SELECT clients.userId FROM users AS clients WHERE clients.mail = ?), " +
                     "medicineId = ?, amount = ?, totalCost = ? " +
                     "WHERE orderId = ?";
+    
+    /** The Constant DELETE. */
     private static final String DELETE =
             "DELETE FROM orders WHERE orderId = ?";
+    
+    /** The Constant FIND_MAX_ID. */
     private static final String FIND_MAX_ID =
             "SELECT MAX(orderId) FROM orders";
 
+    /** The Constant MAX_ORDER_ID. */
     private static final String MAX_ORDER_ID = "MAX(orderId)";
+    
+    /** The Constant ORDER_ID. */
     private static final String ORDER_ID = "orderId";
+    
+    /** The Constant MAIL. */
     private static final String MAIL = "mail";
+    
+    /** The Constant MEDICINE_ID. */
     private static final String MEDICINE_ID = "medicineId";
+    
+    /** The Constant AMOUNT. */
     private static final String AMOUNT = "amount";
+    
+    /** The Constant TOTAL_COST. */
     private static final String TOTAL_COST = "totalCost";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#findEntity(java.lang.Object)
+     */
     @Override
     public Optional<PharmacyOrder> findEntity(Integer id) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_ENTITY)){
@@ -57,6 +86,9 @@ public class OrderDaoImpl extends PharmacyDao<Integer, PharmacyOrder> implements
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#findAll()
+     */
     @Override
     public List<PharmacyOrder> findAll() throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL)){
@@ -67,6 +99,9 @@ public class OrderDaoImpl extends PharmacyDao<Integer, PharmacyOrder> implements
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#create(com.bandarovich.pharmacy.entity.Pharmacy)
+     */
     @Override
     public int create(PharmacyOrder order) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(CREATE)){
@@ -81,6 +116,9 @@ public class OrderDaoImpl extends PharmacyDao<Integer, PharmacyOrder> implements
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#update(com.bandarovich.pharmacy.entity.Pharmacy)
+     */
     @Override
     public int update(PharmacyOrder order) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)){
@@ -95,6 +133,9 @@ public class OrderDaoImpl extends PharmacyDao<Integer, PharmacyOrder> implements
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#delete(java.lang.Object)
+     */
     @Override
     public int delete(Integer id) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(DELETE)){
@@ -105,6 +146,9 @@ public class OrderDaoImpl extends PharmacyDao<Integer, PharmacyOrder> implements
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#findMaxId()
+     */
     @Override
     public int findMaxId() throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_MAX_ID)){
@@ -115,6 +159,13 @@ public class OrderDaoImpl extends PharmacyDao<Integer, PharmacyOrder> implements
         }
     }
 
+    /**
+     * Builds the order list.
+     *
+     * @param resultSet the result set
+     * @return the list
+     * @throws SQLException the SQL exception
+     */
     private List<PharmacyOrder> buildOrderList(ResultSet resultSet) throws SQLException{
         List<PharmacyOrder> orders = new LinkedList<>();
         while(resultSet.next()){
@@ -123,6 +174,13 @@ public class OrderDaoImpl extends PharmacyDao<Integer, PharmacyOrder> implements
         return orders;
     }
 
+    /**
+     * Builds the order.
+     *
+     * @param resultSet the result set
+     * @return the pharmacy order
+     * @throws SQLException the SQL exception
+     */
     private PharmacyOrder buildOrder(ResultSet resultSet) throws SQLException{
         int orderId = resultSet.getInt(ORDER_ID);
         String clientMail = resultSet.getString(MAIL);

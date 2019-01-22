@@ -12,10 +12,20 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * The Class AddMedicineCommand.
+ */
 public class AddMedicineCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant ADD_MEDICINE_ERROR. */
     private static final String ADD_MEDICINE_ERROR = "Could not load data for adding medicine. ";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         Router router = new Router();

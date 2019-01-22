@@ -13,10 +13,20 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * The Class CompleteExtendPrescriptionCommand.
+ */
 public class CompleteExtendPrescriptionCommand implements PharmacyCommand {
+    
+    /** The Constant COMPLETE_EXTEND_PRESCRIPTION_ERROR_MESSAGE. */
     private static final String COMPLETE_EXTEND_PRESCRIPTION_ERROR_MESSAGE = "Could not extend prescription. ";
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         String clientMail = request.getParameter(JspAttribute.CLIENT_MAIL);

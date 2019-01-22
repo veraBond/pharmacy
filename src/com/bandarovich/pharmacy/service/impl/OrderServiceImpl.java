@@ -15,13 +15,25 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
-
+/**
+ * The Class OrderServiceImpl.
+ */
 public class OrderServiceImpl implements OrderService {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant INSTANCE. */
     public static final OrderService INSTANCE = new OrderServiceImpl();
 
+    /**
+     * Instantiates a new order service impl.
+     */
     private OrderServiceImpl(){}
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.OrderService#completeOrder(java.lang.String, int, int)
+     */
     @Override
     public double completeOrder(String clientMail, int medicineId, int quantity) throws ServiceException{
         updatePrescription(clientMail, medicineId, quantity);
@@ -29,6 +41,15 @@ public class OrderServiceImpl implements OrderService {
         return createOrder(clientMail, medicineId, quantity);
     }
 
+    /**
+     * Creates the order.
+     *
+     * @param clientMail the client mail
+     * @param medicineId the medicine id
+     * @param quantity the quantity
+     * @return the double
+     * @throws ServiceException the service exception
+     */
     private double createOrder(String clientMail, int medicineId, int quantity) throws ServiceException{
         OrderDaoImpl orderDao = new OrderDaoImpl();
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
@@ -58,6 +79,13 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    /**
+     * Update storage amount.
+     *
+     * @param medicineId the medicine id
+     * @param quantity the quantity
+     * @throws ServiceException the service exception
+     */
     private void updateStorageAmount(int medicineId, int quantity) throws ServiceException{
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
         try {
@@ -84,6 +112,14 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    /**
+     * Update prescription.
+     *
+     * @param clientMail the client mail
+     * @param medicineId the medicine id
+     * @param quantity the quantity
+     * @throws ServiceException the service exception
+     */
     private void updatePrescription(String clientMail, int medicineId, int quantity) throws ServiceException{
         PrescriptionDaoImpl prescriptionDao = new PrescriptionDaoImpl();
         try {

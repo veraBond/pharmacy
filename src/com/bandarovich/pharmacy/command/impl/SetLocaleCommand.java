@@ -6,9 +6,17 @@ import com.bandarovich.pharmacy.command.Router;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * The Class SetLocaleCommand.
+ */
 public class SetLocaleCommand implements PharmacyCommand {
+    
+    /** The Constant LANGUAGE. */
     private static final String LANGUAGE = "language";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         String locale = request.getParameter(LANGUAGE);

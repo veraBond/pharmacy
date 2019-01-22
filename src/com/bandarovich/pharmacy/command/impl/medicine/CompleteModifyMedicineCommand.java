@@ -12,11 +12,23 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * The Class CompleteModifyMedicineCommand.
+ */
 public class CompleteModifyMedicineCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant NEED. */
     private static final String NEED = "yes";
+    
+    /** The Constant COMPLETE_MODIFY_MEDICINE_ERROR_MESSAGE. */
     private static final String COMPLETE_MODIFY_MEDICINE_ERROR_MESSAGE = "Could not modify medicine. ";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request) {
         Router router = new Router();

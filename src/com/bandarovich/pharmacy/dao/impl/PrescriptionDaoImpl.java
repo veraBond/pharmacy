@@ -14,16 +14,25 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The Class PrescriptionDaoImpl.
+ */
 public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> implements PrescriptionDao {
+    
+    /** The Constant FIND_ENTITY. */
     private static final String FIND_ENTITY =
             "SELECT prescriptionId, medicineId, clients.mail, doctors.mail, amount, isRequestedForExtension " +
                     "FROM prescriptions INNER JOIN users clients ON(clients.userId = clientId) " +
                     "INNER JOIN users doctors ON(doctors.userId = doctorId) " +
                     "WHERE prescriptionId = ?";
+    
+    /** The Constant FIND_ALL. */
     private static final String FIND_ALL =
             "SELECT prescriptionId, medicineId, clients.mail, doctors.mail, amount, isRequestedForExtension " +
                     "FROM prescriptions INNER JOIN users clients ON(clients.userId = clientId) " +
                     "INNER JOIN users doctors ON(doctors.userId = doctorId) ORDER BY prescriptionId";
+    
+    /** The Constant CREATE. */
     private static final String CREATE =
             "INSERT INTO prescriptions " +
                     "SET prescriptionId = ?, " +
@@ -31,6 +40,8 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
                     "clientId = (SELECT userId FROM users WHERE mail = ?), " +
                     "doctorId = (SELECT userId FROM users WHERE mail = ?), " +
                     "amount = ?, isRequestedForExtension = ? ";
+    
+    /** The Constant UPDATE. */
     private static final String UPDATE =
             "UPDATE prescriptions " +
                     "SET medicineId = ?, " +
@@ -38,13 +49,21 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
                     "doctorId = (SELECT doctors.userId FROM users AS doctors where doctors.mail = ?), " +
                     "amount = ?, isRequestedForExtension = ? " +
                     "WHERE prescriptionId = ?";
+    
+    /** The Constant DELETE. */
     private static final String DELETE =
             "DELETE FROM prescriptions WHERE prescriptionId = ?";
+    
+    /** The Constant FIND_MAX_ID. */
     private static final String FIND_MAX_ID =
             "SELECT MAX(prescriptionId) FROM prescriptions";
+    
+    /** The Constant FIND_PRESCRIPTION_BY_MEDICINE_ID_CLIENT_MAIL. */
     private static final String FIND_PRESCRIPTION_BY_MEDICINE_ID_CLIENT_MAIL =
             "SELECT prescriptionId FROM prescriptions " +
                     "WHERE medicineId = ? AND clientId = (SELECT userId FROM users WHERE mail = ?)";
+    
+    /** The Constant FIND_CLIENT_PRESCRIPTIONS. */
     private static final String FIND_CLIENT_PRESCRIPTIONS =
             "SELECT prescriptionId, medicineId, clients.mail, doctors.mail, amount, isRequestedForExtension, " +
                     "medicineName, dosage, medicine_group.groupName, package_type.typeName, packageAmount, price, prescriptionNeed, storageAmount " +
@@ -54,6 +73,8 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
                     "WHERE doctors.userId = prescriptions.doctorId AND clients.mail = ? AND prescriptionNeed = TRUE " +
                     "AND packageTypeId = packageType AND medicineGroup = groupId AND medicines.isDeleted = FALSE " +
                     "ORDER BY prescriptionId";
+    
+    /** The Constant FIND_DOCTOR_PRESCRIPTIONS. */
     private static final String FIND_DOCTOR_PRESCRIPTIONS =
             "SELECT prescriptionId, medicineId, clients.mail, doctors.mail, amount, isRequestedForExtension, " +
                     "medicineName, dosage, medicine_group.groupName, package_type.typeName, packageAmount, price, prescriptionNeed, storageAmount " +
@@ -63,32 +84,72 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
                     "WHERE clients.userId = prescriptions.clientId AND doctors.mail = ?  AND prescriptionNeed = TRUE " +
                     "AND packageTypeId = packageType AND medicineGroup = groupId  AND medicines.isDeleted = FALSE " +
                     "ORDER BY isRequestedForExtension DESC, prescriptionId";
+    
+    /** The Constant FIND_CLIENT_AVAILABLE_AMOUNT. */
     private static final String FIND_CLIENT_AVAILABLE_AMOUNT =
             "SELECT amount FROM prescriptions " +
                     "WHERE medicineId = ? AND clientId = ?";
+    
+    /** The Constant REQUEST_PRESCRIPTION_FOR_EXTENSION. */
     private static final String REQUEST_PRESCRIPTION_FOR_EXTENSION =
             "UPDATE prescriptions SET isRequestedForExtension = TRUE WHERE prescriptionId = ?";
+    
+    /** The Constant EXTEND_PRESCRIPTION. */
     private static final String EXTEND_PRESCRIPTION =
             "UPDATE prescriptions SET isRequestedForExtension = FALSE, amount = (amount + ?) WHERE prescriptionId = ?";
+    
+    /** The Constant UPDATE_PRESCRIPTION_AMOUNT. */
     private static final String UPDATE_PRESCRIPTION_AMOUNT =
             "UPDATE prescriptions SET amount = (amount - ?) WHERE prescriptionId = ?";
+    
+    /** The Constant MAX_PRESCRIPTION_ID. */
     private static final String MAX_PRESCRIPTION_ID = "MAX(prescriptionId)";
+    
+    /** The Constant PRESCRIPTION_ID. */
     private static final String PRESCRIPTION_ID = "prescriptionId";
+    
+    /** The Constant MEDICINE_ID. */
     private static final String MEDICINE_ID = "medicineId";
+    
+    /** The Constant CLIENT_MAIL. */
     private static final String CLIENT_MAIL = "clients.mail";
+    
+    /** The Constant DOCTOR_MAIL. */
     private static final String DOCTOR_MAIL = "doctors.mail";
+    
+    /** The Constant AMOUNT. */
     private static final String AMOUNT = "amount";
+    
+    /** The Constant IS_REQUESTED_FOR_EXTENSION. */
     private static final String IS_REQUESTED_FOR_EXTENSION = "isRequestedForExtension";
 
+    /** The Constant MEDICINE_NAME. */
     private static final String MEDICINE_NAME = "medicineName";
+    
+    /** The Constant DOSAGE. */
     private static final String DOSAGE = "dosage";
+    
+    /** The Constant MEDICINE_GROUP. */
     private static final String MEDICINE_GROUP = "medicine_group.groupName";
+    
+    /** The Constant PACKAGE_TYPE. */
     private static final String PACKAGE_TYPE = "package_type.typeName";
+    
+    /** The Constant PACKAGE_AMOUNT. */
     private static final String PACKAGE_AMOUNT = "packageAmount";
+    
+    /** The Constant PRICE. */
     private static final String PRICE = "price";
+    
+    /** The Constant PRESCRIPTION_NEED. */
     private static final String PRESCRIPTION_NEED = "prescriptionNeed";
+    
+    /** The Constant STORAGE_AMOUNT. */
     private static final String STORAGE_AMOUNT = "storageAmount";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#findEntity(java.lang.Object)
+     */
     @Override
     public Optional<Prescription> findEntity(Integer id) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_ENTITY)){
@@ -104,6 +165,9 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#findAll()
+     */
     @Override
     public List<Prescription> findAll() throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL)){
@@ -118,6 +182,9 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#create(com.bandarovich.pharmacy.entity.Pharmacy)
+     */
     @Override
     public int create(Prescription prescription) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(CREATE)){
@@ -133,6 +200,9 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#update(com.bandarovich.pharmacy.entity.Pharmacy)
+     */
     @Override
     public int update(Prescription prescription) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)){
@@ -148,6 +218,9 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#delete(java.lang.Object)
+     */
     @Override
     public int delete(Integer id) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(DELETE)){
@@ -158,6 +231,9 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PharmacyDao#findMaxId()
+     */
     @Override
     public int findMaxId() throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_MAX_ID)){
@@ -172,6 +248,9 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PrescriptionDao#findClientAvailableAmount(int, int)
+     */
     @Override
     public int findClientAvailableAmount(int clientId, int medicineId) throws DaoException{
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_CLIENT_AVAILABLE_AMOUNT)){
@@ -184,16 +263,25 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PrescriptionDao#findClientPrescriptionList(java.lang.String)
+     */
     @Override
     public List<Pair<Prescription, Medicine>> findClientPrescriptionList(String mail) throws DaoException{
         return findUserPrescriptionList(mail, FIND_CLIENT_PRESCRIPTIONS);
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PrescriptionDao#findDoctorPrescriptionList(java.lang.String)
+     */
     @Override
     public List<Pair<Prescription, Medicine>> findDoctorPrescriptionList(String mail) throws DaoException{
         return findUserPrescriptionList(mail, FIND_DOCTOR_PRESCRIPTIONS);
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PrescriptionDao#findPrescription(int, java.lang.String)
+     */
     @Override
     public Optional<Prescription> findPrescription(int medicineId, String clientMail) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_PRESCRIPTION_BY_MEDICINE_ID_CLIENT_MAIL)){
@@ -211,6 +299,9 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PrescriptionDao#requestPrescriptionForExtension(int)
+     */
     @Override
     public int requestPrescriptionForExtension(int prescriptionId) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(REQUEST_PRESCRIPTION_FOR_EXTENSION)){
@@ -221,6 +312,9 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.dao.PrescriptionDao#extendPrescription(int, int)
+     */
     @Override
     public int extendPrescription(int prescriptionId, int amount) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(EXTEND_PRESCRIPTION)){
@@ -232,6 +326,13 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         }
     }
 
+    /**
+     * Builds the prescription list.
+     *
+     * @param resultSet the result set
+     * @return the list
+     * @throws SQLException the SQL exception
+     */
     private List<Pair<Prescription, Medicine>> buildPrescriptionList(ResultSet resultSet) throws SQLException{
             List<Pair<Prescription, Medicine>> prescriptions = new LinkedList<>();
             while (resultSet.next()) {
@@ -242,6 +343,13 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
             return prescriptions;
     }
 
+    /**
+     * Builds the prescription.
+     *
+     * @param resultSet the result set
+     * @return the prescription
+     * @throws SQLException the SQL exception
+     */
     private Prescription buildPrescription(ResultSet resultSet) throws SQLException{
         int prescriptionId = resultSet.getInt(PRESCRIPTION_ID);
         int medicineId = resultSet.getInt(MEDICINE_ID);
@@ -252,6 +360,13 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         return new Prescription(prescriptionId, medicineId, clientMail, doctorMail, amount, isReq);
     }
 
+    /**
+     * Builds the medicine.
+     *
+     * @param resultSet the result set
+     * @return the medicine
+     * @throws SQLException the SQL exception
+     */
     private Medicine buildMedicine(ResultSet resultSet) throws SQLException{
         int medicineId = resultSet.getInt(MEDICINE_ID);
         String medicineName = resultSet.getString(MEDICINE_NAME);
@@ -265,6 +380,14 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
         return new Medicine(medicineId, medicineName, dosage, groups, packageType, packageAmount, price, prescriptionNeed, storageAmount);
     }
 
+    /**
+     * Find user prescription list.
+     *
+     * @param mail the mail
+     * @param sql the sql
+     * @return the list
+     * @throws DaoException the dao exception
+     */
     private List<Pair<Prescription, Medicine>> findUserPrescriptionList(String mail, String sql) throws DaoException{
         try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
             preparedStatement.setString(1, mail);

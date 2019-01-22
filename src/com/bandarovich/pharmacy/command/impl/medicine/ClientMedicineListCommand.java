@@ -13,10 +13,20 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * The Class ClientMedicineListCommand.
+ */
 public class ClientMedicineListCommand implements PharmacyCommand {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant CLIENT_MEDICINE_LIST_ERROR_MESSAGE. */
     private static final String CLIENT_MEDICINE_LIST_ERROR_MESSAGE = "Error while loading medicine list.";
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.command.PharmacyCommand#execute(HttpServletRequest)
+     */
     @Override
     public Router execute(HttpServletRequest request){
         String mail = (String)request.getSession().getAttribute(JspAttribute.MAIL);

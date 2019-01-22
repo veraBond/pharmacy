@@ -9,19 +9,32 @@ import com.bandarovich.pharmacy.dao.impl.UserDaoImpl;
 import com.bandarovich.pharmacy.entity.Medicine;
 import com.bandarovich.pharmacy.service.MedicineService;
 import com.bandarovich.pharmacy.service.ServiceException;
-import com.bandarovich.pharmacy.util.PharmacyValidator;
+import com.bandarovich.pharmacy.util.MedicineValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The Class MedicineServiceImpl.
+ */
 public class MedicineServiceImpl implements MedicineService {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant INSTANCE. */
     public static final MedicineService INSTANCE = new MedicineServiceImpl();
 
+    /**
+     * Instantiates a new medicine service impl.
+     */
     private MedicineServiceImpl(){}
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#findMedicine(int)
+     */
     @Override
     public Medicine findMedicine(int medicineId) throws ServiceException{
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
@@ -35,6 +48,9 @@ public class MedicineServiceImpl implements MedicineService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#findAllMedicineList()
+     */
     @Override
     public List<Medicine> findAllMedicineList() throws ServiceException {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
@@ -48,6 +64,9 @@ public class MedicineServiceImpl implements MedicineService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#findClientMedicineList(java.lang.String)
+     */
     @Override
     public List<Medicine> findClientMedicineList(String mail) throws ServiceException {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
@@ -63,6 +82,9 @@ public class MedicineServiceImpl implements MedicineService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#findDoctorMedicineList()
+     */
     @Override
     public List<Medicine> findDoctorMedicineList() throws ServiceException {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
@@ -76,6 +98,9 @@ public class MedicineServiceImpl implements MedicineService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#findMedicineGroupList()
+     */
     @Override
     public List<String> findMedicineGroupList() throws ServiceException {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
@@ -89,6 +114,9 @@ public class MedicineServiceImpl implements MedicineService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#findPackageTypeList()
+     */
     @Override
     public List<String> findPackageTypeList() throws ServiceException {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
@@ -102,6 +130,9 @@ public class MedicineServiceImpl implements MedicineService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#findAvailableClientMedicineAmount(int, java.lang.String)
+     */
     @Override
     public int findAvailableClientMedicineAmount(int medicineId, String mail) throws ServiceException {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
@@ -126,6 +157,9 @@ public class MedicineServiceImpl implements MedicineService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#findAvailableDoctorMedicineAmount(int)
+     */
     @Override
     public int findAvailableDoctorMedicineAmount(int medicineId) throws ServiceException {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
@@ -139,6 +173,9 @@ public class MedicineServiceImpl implements MedicineService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#formMedicine(java.lang.String, int, java.lang.String, java.lang.String, int, double, boolean, int)
+     */
     @Override
     public void formMedicine(String medicineName, int dosage, String medicineGroup, String packageType, int packageAmount, double price, boolean prescriptionNeed, int storageAmount)throws ServiceException {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
@@ -159,34 +196,40 @@ public class MedicineServiceImpl implements MedicineService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#validateMedicine(java.lang.String, int, java.lang.String, java.lang.String, int, double, int)
+     */
     @Override
     public List<String> validateMedicine(String medicineName, int dosage, String medicineGroup, String packageType,
                                        int packageAmount, double price, int storageAmount){
         List<String> errors = new LinkedList<>();
-        if(!PharmacyValidator.medicineNameIsCorrect(medicineName)){
+        if(!MedicineValidator.medicineNameIsCorrect(medicineName)){
             errors.add(JspAttribute.INCORRECT_MEDICINE_NAME);
         }
-        if(!PharmacyValidator.medicineDosageIsCorrect(dosage)){
+        if(!MedicineValidator.medicineDosageIsCorrect(dosage)){
             errors.add(JspAttribute.INCORRECT_MEDICINE_DOSAGE);
         }
-        if(!PharmacyValidator.medicineGroupIsCorrect(medicineGroup)){
+        if(!MedicineValidator.medicineGroupIsCorrect(medicineGroup)){
             errors.add(JspAttribute.INCORRECT_MEDICINE_GROUP);
         }
-        if(!PharmacyValidator.packageTypeIsCorrect(packageType)){
+        if(!MedicineValidator.packageTypeIsCorrect(packageType)){
             errors.add(JspAttribute.INCORRECT_PACKAGE_TYPE);
         }
-        if(!PharmacyValidator.packageAmountIsCorrect(packageAmount)){
+        if(!MedicineValidator.packageAmountIsCorrect(packageAmount)){
             errors.add(JspAttribute.INCORRECT_PACKAGE_AMOUNT);
         }
-        if(!PharmacyValidator.priceIsCorrect(price)){
+        if(!MedicineValidator.priceIsCorrect(price)){
             errors.add(JspAttribute.INCORRECT_PRICE);
         }
-        if(!PharmacyValidator.storageAmountIsCorrect(storageAmount)){
+        if(!MedicineValidator.storageAmountIsCorrect(storageAmount)){
             errors.add(JspAttribute.INCORRECT_STORAGE_AMOUNT);
         }
         return errors;
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#updateMedicine(int, java.lang.String, int, java.lang.String, java.lang.String, int, double, boolean, int)
+     */
     @Override
     public void updateMedicine(int medicineId, String medicineName, int dosage, String medicineGroup, String packageType, int packageAmount, double price, boolean prescriptionNeed, int storageAmount) throws ServiceException {
         Medicine medicine = new Medicine(medicineId, medicineName, dosage, medicineGroup, packageType, packageAmount, price, prescriptionNeed, storageAmount);
@@ -207,6 +250,9 @@ public class MedicineServiceImpl implements MedicineService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.MedicineService#deleteMedicine(int)
+     */
     @Override
     public void deleteMedicine(int medicineId) throws ServiceException {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();

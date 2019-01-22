@@ -12,7 +12,12 @@ import com.bandarovich.pharmacy.command.impl.user.RegistrationCommand;
 
 import java.util.EnumMap;
 
+/**
+ * The Class CommandMap.
+ */
 public class CommandMap {
+    
+    /** The command map. */
     private static EnumMap<CommandType, PharmacyCommand> commandMap = new EnumMap<CommandType, PharmacyCommand>(CommandType.class){
         {
             put(CommandType.START_PAGE, new StartPageCommand());
@@ -41,8 +46,17 @@ public class CommandMap {
         }
     };
 
+    /**
+     * Instantiates a new command map.
+     */
     private CommandMap(){}
 
+    /**
+     * Gets the.
+     *
+     * @param commandName the command name
+     * @return the pharmacy command
+     */
     public static PharmacyCommand get(String commandName){
         CommandType key = CommandType.valueOf(commandName.replace('-','_').toUpperCase());
         return commandMap.get(key);

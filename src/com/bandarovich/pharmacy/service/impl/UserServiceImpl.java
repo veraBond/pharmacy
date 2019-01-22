@@ -8,7 +8,7 @@ import com.bandarovich.pharmacy.entity.PharmacyUser;
 import com.bandarovich.pharmacy.service.ServiceException;
 import com.bandarovich.pharmacy.service.UserService;
 import com.bandarovich.pharmacy.util.PasswordCoding;
-import com.bandarovich.pharmacy.util.PharmacyValidator;
+import com.bandarovich.pharmacy.util.UserValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,11 +16,25 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The Class UserServiceImpl.
+ */
 public class UserServiceImpl implements UserService {
+    
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger();
+    
+    /** The Constant INSTANCE. */
     public static final UserService INSTANCE = new UserServiceImpl();
+    
+    /**
+     * Instantiates a new user service impl.
+     */
     private UserServiceImpl(){}
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.UserService#findUser(java.lang.String, java.lang.String)
+     */
     @Override
     public Optional<PharmacyUser> findUser(String mail, String password) throws ServiceException{
         UserDaoImpl userDao = new UserDaoImpl();
@@ -34,6 +48,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.UserService#register(com.bandarovich.pharmacy.entity.PharmacyUser)
+     */
     @Override
     public List<String> register(PharmacyUser user) throws ServiceException{
         List<String> errors = new LinkedList<>();
@@ -68,6 +85,9 @@ public class UserServiceImpl implements UserService {
         return errors;
     }
 
+    /* (non-Javadoc)
+     * @see com.bandarovich.pharmacy.service.UserService#findUser(java.lang.String)
+     */
     public boolean findUser(String mail) throws ServiceException{
         UserDaoImpl userDao = new UserDaoImpl();
         try{
@@ -81,11 +101,17 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Form error list.
+     *
+     * @param user the user
+     * @return the list
+     */
     private List<String> formErrorList(PharmacyUser user){
         List<String> errors = new LinkedList<>();
-        boolean nameIsCorrect = PharmacyValidator.userNameIsCorrect(user.getName());
-        boolean mailIsCorrect = PharmacyValidator.mailIsCorrect(user.getMail());
-        boolean passwordIsCorrect = PharmacyValidator.passwordIsCorrect(user.getPassword());
+        boolean nameIsCorrect = UserValidator.userNameIsCorrect(user.getName());
+        boolean mailIsCorrect = UserValidator.mailIsCorrect(user.getMail());
+        boolean passwordIsCorrect = UserValidator.passwordIsCorrect(user.getPassword());
         if (!nameIsCorrect) {
             errors.add(JspAttribute.INCORRECT_NAME_REGISTRATION);
         }
