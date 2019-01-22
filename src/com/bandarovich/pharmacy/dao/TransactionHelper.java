@@ -9,7 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class TransactionHelper {
-    private final static Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private TransactionHelper(){}
 

@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public abstract class PharmacyDao <K, T extends Pharmacy> {
     protected Connection connection;
+
     public abstract Optional<T> findEntity(K id) throws DaoException;
     public abstract List<T> findAll() throws DaoException;
     public abstract int create(T entity) throws DaoException;

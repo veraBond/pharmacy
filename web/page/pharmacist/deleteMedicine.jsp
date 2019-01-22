@@ -1,12 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib prefix="ctg" uri="/WEB-INF/InformationTag" %>
 <%@ page contentType="text/html; charset=UTF8" pageEncoding="UTF-8"%>
 <%request.setCharacterEncoding("UTF-8");%>
 <html>
 <head>
     <meta charset="UTF-8">
     <fmt:setBundle basename="language.locale"></fmt:setBundle>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <title><fmt:message key="deleteMedicine"></fmt:message></title>
 </head>
 
@@ -16,7 +17,7 @@
     <header>
         <div class="header-logo">
             <span class="header-logo-helper"></span>
-            <img src="/./logo.png" alt="Pharmacy" height="52" width="52">
+            <img src="/img/logo.png" alt="Pharmacy" height="52" width="52">
         </div>
         <div class="header-info">
             <h3>${userName}, ${position}</h3>
@@ -50,14 +51,12 @@
                 <form method="post" action="/pharmacy">
                     <input type="hidden" name="command" value="complete-delete-medicine">
                     <input type="hidden" name="medicineId" value="${medicine.medicineId}">
-                    <fmt:message key="medicine.Name"></fmt:message> ${medicine.name} <br>
-                    <fmt:message key="medicine.Dosage"></fmt:message> ${medicine.dosage}<br>
-                    <fmt:message key="medicine.Group"></fmt:message> <c:forEach var="group" items="${medicine.medicineGroup}">
-                    <c:out value="${group}"></c:out>
-                </c:forEach><br>
-                    <fmt:message key="medicine.PackageType"></fmt:message> ${medicine.packageType}<br>
-                    <fmt:message key="medicine.Amount"></fmt:message> ${medicine.packageAmount}<br>
-                    <fmt:message key="medicine.Price"></fmt:message> ${medicine.price}<br>
+                    <fmt:message key="medicine.Name"></fmt:message><c:out value=" ${medicine.name}"></c:out><br>
+                    <fmt:message key="medicine.Dosage"></fmt:message><c:out value=" ${medicine.dosage}"></c:out><br>
+                    <fmt:message key="medicine.Group"></fmt:message><c:out value=" ${medicine.group}"></c:out><br>
+                    <fmt:message key="medicine.PackageType"></fmt:message><c:out value=" ${medicine.packageType}"></c:out><br>
+                    <fmt:message key="medicine.Amount"></fmt:message><c:out value=" ${medicine.packageAmount}"></c:out><br>
+                    <fmt:message key="medicine.Price"></fmt:message><c:out value=" ${medicine.price}"></c:out><br>
                     <div class="submit-button">
                         <button type="submit"><fmt:message key="complete"></fmt:message></button>
                     </div>
@@ -69,7 +68,9 @@
 </div>
 
 <footer>
-    <p>verabond © 2019</p>
+    <p>
+        <ctg:projectInformation/>
+    </p>
 </footer>
 
 </body>

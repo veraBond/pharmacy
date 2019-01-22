@@ -2,7 +2,6 @@ package com.bandarovich.pharmacy.controller;
 
 import com.bandarovich.pharmacy.command.*;
 import com.bandarovich.pharmacy.pool.ConnectionPool;
-import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,13 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class PharmacyServlet extends HttpServlet {
-    private final static String COMMAND_PARAMETER = "command";
-    private final static String COMMAND_ERROR_MESSAGE = "Command error.";
+    private static final String COMMAND_PARAMETER = "command";
+    private static final String COMMAND_ERROR_MESSAGE = "Command error.";
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String commandName = request.getParameter(COMMAND_PARAMETER);
-        PharmacyCommand command = CommandMap.getInstance().get(commandName);
+        PharmacyCommand command = CommandMap.get(commandName);
         Router router = command.execute(request);
         String nextPage = router.getPage();
         switch (router.getType()) {

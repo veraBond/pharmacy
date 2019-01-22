@@ -12,8 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 public class WritePrescriptionCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String WRITE_PRESCRIPTION_ERROR_MESSAGE = "Write prescription error. ";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String WRITE_PRESCRIPTION_ERROR_MESSAGE = "Write prescription error. ";
 
     @Override
     public Router execute(HttpServletRequest request) {

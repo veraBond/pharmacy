@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class CompleteModifyMedicineCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String NEED = "yes";
-    private final static String COMPLETE_MODIFY_MEDICINE_ERROR_MESSAGE = "Could not modify medicine. ";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String NEED = "yes";
+    private static final String COMPLETE_MODIFY_MEDICINE_ERROR_MESSAGE = "Could not modify medicine. ";
 
     @Override
     public Router execute(HttpServletRequest request) {
@@ -44,7 +44,7 @@ public class CompleteModifyMedicineCommand implements PharmacyCommand {
                 request.setAttribute(JspAttribute.STORAGE_AMOUNT, storageAmount);
                 request.setAttribute(JspAttribute.MEDICINE_GROUP_LIST, request.getParameter(JspAttribute.MEDICINE_GROUP_LIST));
                 request.setAttribute(JspAttribute.PACKAGE_TYPE_LIST, request.getParameter(JspAttribute.PACKAGE_TYPE_LIST));
-                errors.forEach(error -> {request.setAttribute(error, Boolean.TRUE);});
+                errors.forEach(error -> request.setAttribute(error, Boolean.TRUE));
                 router.setForward(JspPath.PHARMACIST_ADD_MEDICINE_PAGE);
             }
         } catch (ServiceException e){

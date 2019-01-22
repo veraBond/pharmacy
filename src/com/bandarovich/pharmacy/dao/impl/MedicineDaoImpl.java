@@ -8,72 +8,80 @@ import com.bandarovich.pharmacy.entity.Medicine;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements MedicineDao {
-    private final static String FIND_ENTITY =
-            "SELECT medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
+    private static final String FIND_ENTITY =
+            "SELECT medicineId, medicineName, dosage, medicine_group.groupName, package_type.typeName, " +
                     "packageAmount, price, prescriptionNeed, storageAmount "+
                     "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
+                    "INNER JOIN medicine_group ON medicines.medicineGroup = medicine_group.groupId " +
                     "WHERE medicineId = ? AND isDeleted = FALSE";
-    private final static String FIND_ALL =
-            "SELECT medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
+    private static final String FIND_ALL =
+            "SELECT medicineId, medicineName, dosage, medicine_group.groupName, package_type.typeName, " +
                     "packageAmount, price, prescriptionNeed, storageAmount "+
                     "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
-                    "WHERE isDeleted = FALSE";
-    private final static String CREATE =
+                    "INNER JOIN medicine_group ON medicines.medicineGroup = medicine_group.groupId " +
+                    "WHERE isDeleted = FALSE ORDER BY medicineName";
+    private static final String CREATE =
             "INSERT INTO medicines " +
                     "SET medicineId = ?, " +
                     "medicineName = ?, " +
                     "dosage = ?, " +
-                    "medicineGroup = ?, " +
+                    "medicineGroup = (SELECT groupId FROM medicine_group WHERE groupName = ?), " +
                     "packageType = (SELECT packageTypeId FROM package_type WHERE typeName = ?), " +
                     "packageAmount = ?, price = ?, prescriptionNeed = ?, storageAmount = ?";
-    private final static String UPDATE =
+    private static final String UPDATE =
             "UPDATE medicines " +
-                    "SET medicineName = ?, dosage = ?, medicineGroup = ?, " +
+                    "SET medicineName = ?, dosage = ?, " +
+                    "medicineGroup = (SELECT groupId FROM medicine_group WHERE groupName = ?), " +
                     "packageType = (SELECT packageTypeId FROM package_type where typeName = ?), " +
                     "packageAmount = ?, price = ?, prescriptionNeed = ?, storageAmount = ? " +
                     "WHERE medicineId = ?";
-    private final static String DELETE =
+    private static final String DELETE =
             "UPDATE medicines SET isDeleted = TRUE WHERE medicineId = ?";
-    private final static String FIND_MAX_ID =
+    private static final String FIND_MAX_ID =
             "SELECT MAX(medicineId) FROM medicines";
-    private final static String FIND_ALL_CLIENT_MEDICINES =
-            "SELECT medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
+    private static final String FIND_ALL_CLIENT_MEDICINES =
+            "SELECT medicineId, medicineName, dosage, medicine_group.groupName, package_type.typeName, " +
                     "packageAmount, price, prescriptionNeed, storageAmount " +
                     "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
-                    "WHERE prescriptionNeed = 0 AND isDeleted = FALSE AND storageAmount > 0";
-    private final static String FIND_CLIENT_MEDICINES =
-            "SELECT medicines.medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
+                    "INNER JOIN medicine_group ON medicines.medicineGroup = medicine_group.groupId " +
+                    "WHERE prescriptionNeed = 0 AND isDeleted = FALSE AND storageAmount > 0 ORDER BY medicineName";
+    private static final String FIND_CLIENT_MEDICINES =
+            "SELECT medicines.medicineId, medicineName, dosage, medicine_group.groupName, package_type.typeName, " +
                     "packageAmount, price, prescriptionNeed, storageAmount " +
                     "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
+                    "INNER JOIN medicine_group ON medicines.medicineGroup = medicine_group.groupId " +
                     "INNER JOIN prescriptions USING (medicineId) " +
                     "INNER JOIN users ON prescriptions.clientId = users.userId " +
                     "WHERE users.mail = ? AND medicines.isDeleted = FALSE AND storageAmount > 0 " +
-                    "AND prescriptions.amount > 0";
-    private final static String FIND_DOCTOR_MEDICINES =
-            "SELECT medicineId, medicineName, dosage, medicineGroup, package_type.typeName, " +
+                    "AND prescriptions.amount > 0 ORDER BY medicineName";
+    private static final String FIND_DOCTOR_MEDICINES =
+            "SELECT medicineId, medicineName, dosage, medicine_group.groupName, package_type.typeName, " +
                     "packageAmount, price, prescriptionNeed, storageAmount " +
                     "FROM medicines INNER JOIN package_type ON medicines.packageType = package_type.packageTypeId " +
-                    "WHERE prescriptionNeed = 1 AND isDeleted = FALSE AND storageAmount > 0";
-    private final static String FIND_MEDICINE_GROUPS =
-            "SHOW COLUMNS FROM medicines LIKE 'medicineGroup'";
-    private final static String FIND_PACKAGE_TYPES =
+                    "INNER JOIN medicine_group ON medicines.medicineGroup = medicine_group.groupId " +
+                    "WHERE prescriptionNeed = 1 AND isDeleted = FALSE AND storageAmount > 0 ORDER BY medicineName";
+    private static final String FIND_MEDICINE_GROUPS =
+            "SELECT medicine_group.groupName FROM medicine_group";
+    private static final String FIND_PACKAGE_TYPES =
             "SELECT package_type.typeName FROM package_type";
-    private final static String FIND_MEDICINE_STORAGE_AMOUNT =
+    private static final String FIND_MEDICINE_STORAGE_AMOUNT =
             "SELECT storageAmount FROM medicines WHERE medicineId = ? AND isDeleted = FALSE";
 
-    private final static String MEDICINE_ID_MAX = "MAX(medicineId)";
-    private final static String MEDICINE_ID = "medicineId";
-    private final static String MEDICINE_NAME = "medicineName";
-    private final static String DOSAGE = "dosage";
-    private final static String MEDICINE_GROUP = "medicineGroup";
-    private final static String PACKAGE_TYPE = "package_type.typeName";
-    private final static String PACKAGE_AMOUNT = "packageAmount";
-    private final static String PRICE = "price";
-    private final static String PRESCRIPTION_NEED = "prescriptionNeed";
-    private final static String STORAGE_AMOUNT = "storageAmount";
+    private static final String MEDICINE_ID_MAX = "MAX(medicineId)";
+    private static final String MEDICINE_ID = "medicineId";
+    private static final String MEDICINE_NAME = "medicineName";
+    private static final String DOSAGE = "dosage";
+    private static final String MEDICINE_GROUP = "medicine_group.groupName";
+    private static final String PACKAGE_TYPE = "package_type.typeName";
+    private static final String PACKAGE_AMOUNT = "packageAmount";
+    private static final String PRICE = "price";
+    private static final String PRESCRIPTION_NEED = "prescriptionNeed";
+    private static final String STORAGE_AMOUNT = "storageAmount";
 
     @Override
     public Optional<Medicine> findEntity(Integer medicineId) throws DaoException {
@@ -107,7 +115,7 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
             preparedStatement.setInt(1, medicine.getMedicineId());
             preparedStatement.setString(2, medicine.getName());
             preparedStatement.setInt(3, medicine.getDosage());
-            preparedStatement.setString(4, medicine.getMedicineGroup());
+            preparedStatement.setString(4, medicine.getGroup());
             preparedStatement.setString(5, medicine.getPackageType());
             preparedStatement.setInt(6, medicine.getPackageAmount());
             preparedStatement.setDouble(7, medicine.getPrice());
@@ -124,7 +132,7 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
         try(PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)){
             preparedStatement.setString(1, medicine.getName());
             preparedStatement.setInt(2, medicine.getDosage());
-            preparedStatement.setString(3, medicine.getMedicineGroup());
+            preparedStatement.setString(3, medicine.getGroup());
             preparedStatement.setString(4, medicine.getPackageType());
             preparedStatement.setInt(5, medicine.getPackageAmount());
             preparedStatement.setDouble(6, medicine.getPrice());
@@ -186,31 +194,13 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
     }
 
     @Override
-    public String findMedicineGroupSet() throws DaoException {
-        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_MEDICINE_GROUPS)){
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()){
-                return resultSet.getString(2);
-            } else {
-                throw new DaoException("Empty medicine group set. ");
-            }
-        } catch (SQLException e){
-            throw new DaoException(e);
-        }
+    public List<String> findMedicineGroupList() throws DaoException {
+        return findTypes(FIND_MEDICINE_GROUPS);
     }
 
     @Override
     public List<String> findPackageTypeList() throws DaoException {
-        try(PreparedStatement preparedStatement = connection.prepareStatement(FIND_PACKAGE_TYPES)){
-            ResultSet resultSet = preparedStatement.executeQuery();
-            List<String> types = new LinkedList<>();
-            while(resultSet.next()){
-                types.add(resultSet.getString(1));
-            }
-            return types;
-        } catch (SQLException e){
-            throw new DaoException(e);
-        }
+        return findTypes(FIND_PACKAGE_TYPES);
     }
 
     public int findMedicineStorageAmount(int medicineId) throws DaoException{
@@ -218,6 +208,19 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
             preparedStatement.setInt(1, medicineId);
             ResultSet resultSet = preparedStatement.executeQuery();
             return (resultSet.next() ? resultSet.getInt(STORAGE_AMOUNT) : 0);
+        } catch (SQLException e){
+            throw new DaoException(e);
+        }
+    }
+
+    private List<String> findTypes(String sql) throws DaoException{
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<String> types = new LinkedList<>();
+            while(resultSet.next()){
+                types.add(resultSet.getString(1));
+            }
+            return types;
         } catch (SQLException e){
             throw new DaoException(e);
         }
@@ -235,12 +238,12 @@ public class MedicineDaoImpl extends PharmacyDao <Integer, Medicine> implements 
         int medicineId = resultSet.getInt(MEDICINE_ID);
         String medicineName = resultSet.getString(MEDICINE_NAME);
         int dosage = resultSet.getInt(DOSAGE);
-        String groups = resultSet.getString(MEDICINE_GROUP);
+        String group = resultSet.getString(MEDICINE_GROUP);
         String packageType = resultSet.getString(PACKAGE_TYPE);
         int packageAmount = resultSet.getInt(PACKAGE_AMOUNT);
         double price = resultSet.getDouble(PRICE);
         boolean prescriptionNeed = resultSet.getBoolean(PRESCRIPTION_NEED);
         int storageAmount = resultSet.getInt(STORAGE_AMOUNT);
-        return new Medicine(medicineId, medicineName, dosage, groups, packageType, packageAmount, price, prescriptionNeed, storageAmount);
+        return new Medicine(medicineId, medicineName, dosage, group, packageType, packageAmount, price, prescriptionNeed, storageAmount);
     }
 }

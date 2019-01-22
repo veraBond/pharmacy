@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <fmt:setBundle basename="language.locale"></fmt:setBundle>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <title><fmt:message key="error"></fmt:message></title>
 </head>
 <body>

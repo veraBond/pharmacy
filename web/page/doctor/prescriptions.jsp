@@ -1,12 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib prefix="ctg" uri="/WEB-INF/InformationTag" %>
 <%@ page contentType="text/html; charset=UTF8" pageEncoding="UTF-8"%>
 <%request.setCharacterEncoding("UTF-8");%>
 <html>
 <head>
     <meta charset="UTF-8">
     <fmt:setBundle basename="language.locale"></fmt:setBundle>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <title><fmt:message key="Prescriptions"></fmt:message></title>
 </head>
 <body>
@@ -16,7 +17,7 @@
     <header>
         <div class="header-logo">
             <span class="header-logo-helper"></span>
-            <img src="/./logo.png" alt="Pharmacy" height="52" width="52">
+            <img src="/img/logo.png" alt="Pharmacy" height="52" width="52">
         </div>
         <div class="header-info">
             <h3>${userName}, ${position}</h3>
@@ -81,7 +82,7 @@
                                     </c:otherwise>
                                 </c:choose>
                                 </td>
-                                <td><form method="get" action="/pharmacy">
+                                <td><form method="get" action="/pharmacy"  class="cell-form">
                                     <input type="hidden" name="prescriptionId" value="${prescription.getKey().prescriptionId}">
                                     <input type="hidden" name="medicineId" value="${prescription.getValue().medicineId}">
                                     <input type="hidden" name="clientMail" value="${prescription.getKey().clientMail}">
@@ -101,7 +102,9 @@
 </div>
 
 <footer>
-    <p>verabond © 2019</p>
+    <p>
+        <ctg:projectInformation/>
+    </p>
 </footer>
 
 </body>

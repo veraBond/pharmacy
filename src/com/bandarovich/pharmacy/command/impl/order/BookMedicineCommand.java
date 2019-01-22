@@ -13,17 +13,17 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 public class BookMedicineCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String BOOK_MEDICINE_ERROR_MESSAGE = "Could not book medicine. ";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String BOOK_MEDICINE_ERROR_MESSAGE = "Could not book medicine. ";
 
     @Override
     public Router execute(HttpServletRequest request) {
-        int bookMedicineNumber = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_ID));
+        int bookMedicineId = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_ID));
         String clientMail = (String)request.getSession().getAttribute(JspAttribute.MAIL);
         Router router = new Router();
         try{
-            Medicine medicine = MedicineServiceImpl.INSTANCE.findMedicine(bookMedicineNumber);
-            int availableMedicineQuantity = MedicineServiceImpl.INSTANCE.findAvailableClientMedicineAmount(bookMedicineNumber, clientMail);
+            Medicine medicine = MedicineServiceImpl.INSTANCE.findMedicine(bookMedicineId);
+            int availableMedicineQuantity = MedicineServiceImpl.INSTANCE.findAvailableClientMedicineAmount(bookMedicineId, clientMail);
             request.setAttribute(JspAttribute.AVAILABLE_MEDICINE_QUANTITY, availableMedicineQuantity);
             request.setAttribute(JspAttribute.MEDICINE, medicine);
             router.setForward(JspPath.CLIENT_ORDER_PAGE);

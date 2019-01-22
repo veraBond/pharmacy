@@ -1,7 +1,7 @@
 package com.bandarovich.pharmacy.command.impl.medicine;
 
-import com.bandarovich.pharmacy.command.JspPath;
 import com.bandarovich.pharmacy.command.JspAttribute;
+import com.bandarovich.pharmacy.command.JspPath;
 import com.bandarovich.pharmacy.command.PharmacyCommand;
 import com.bandarovich.pharmacy.command.Router;
 import com.bandarovich.pharmacy.entity.Medicine;
@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class ClientMedicineListCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String CLIENT_MEDICINE_LIST_ERROR_MESSAGE = "Error while loading medicine list.";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String CLIENT_MEDICINE_LIST_ERROR_MESSAGE = "Error while loading medicine list.";
 
     @Override
     public Router execute(HttpServletRequest request){

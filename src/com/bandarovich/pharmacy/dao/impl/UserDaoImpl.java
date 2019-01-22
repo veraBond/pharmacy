@@ -6,34 +6,36 @@ import com.bandarovich.pharmacy.dao.UserDao;
 import com.bandarovich.pharmacy.entity.PharmacyPosition;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 public class UserDaoImpl extends PharmacyDao<String, PharmacyUser> implements UserDao {
-    private final static String FIND_ENTITY =
+    private static final String FIND_ENTITY =
             "SELECT position, userName, mail, password FROM users WHERE mail = ?";
-    private final static String FIND_ALL =
+    private static final String FIND_ALL =
             "SELECT position, userName, mail, password FROM users";
-    private final static String CREATE =
+    private static final String CREATE =
             "INSERT INTO users(position, userName, mail, password) VALUES (?, ?, ?, ?)";
-    private final static String UPDATE =
+    private static final String UPDATE =
             "UPDATE users SET position = ?, userName = ?, password = ? WHERE mail = ?";
-    private final static String DELETE =
+    private static final String DELETE =
             "UPDATE users SET isDeleted = TRUE WHERE mail = ?";
-    private final static String FIND_MAX_ID =
+    private static final String FIND_MAX_ID =
             "SELECT MAX(userId) FROM users";
-    private final static String FIND_USER_BY_MAIL_PASSWORD =
+    private static final String FIND_USER_BY_MAIL_PASSWORD =
             "SELECT position, userName FROM users WHERE mail = ? AND password = ?";
-    private final static String FIND_USER_ID =
+    private static final String FIND_USER_ID =
             "SELECT userId FROM users WHERE mail = ?";
 
-    private final static String USER_ID = "userId";
-    private final static String POSITION = "position";
-    private final static String USER_NAME = "userName";
-    private final static String MAIL = "mail";
-    private final static String PASSWORD = "password";
+    private static final String USER_ID = "userId";
+    private static final String POSITION = "position";
+    private static final String USER_NAME = "userName";
+    private static final String MAIL = "mail";
+    private static final String PASSWORD = "password";
 
     @Override
     public Optional<PharmacyUser> findEntity(String mail) throws DaoException{

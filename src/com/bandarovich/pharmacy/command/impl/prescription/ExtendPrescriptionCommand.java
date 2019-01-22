@@ -13,8 +13,8 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 public class ExtendPrescriptionCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String EXTEND_PRESCRIPTION_ERROR_MESSAGE = "Could not extend prescription. ";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String EXTEND_PRESCRIPTION_ERROR_MESSAGE = "Could not extend prescription. ";
 
     @Override
     public Router execute(HttpServletRequest request) {

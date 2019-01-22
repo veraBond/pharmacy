@@ -77,8 +77,7 @@ public class Prescription extends Pharmacy {
         if (availableMedicineAmount != that.availableMedicineAmount) return false;
         if (requestedForExtension != that.requestedForExtension) return false;
         if (clientMail != null ? !clientMail.equals(that.clientMail) : that.clientMail != null) return false;
-        if (doctorMail != null ? !doctorMail.equals(that.doctorMail) : that.doctorMail != null) return false;
-        return true;
+        return doctorMail != null ? doctorMail.equals(that.doctorMail) : that.doctorMail == null;
     }
 
     @Override

@@ -13,34 +13,34 @@ import java.util.List;
 import java.util.Optional;
 
 public class OrderDaoImpl extends PharmacyDao<Integer, PharmacyOrder> implements OrderDao {
-    private final static String FIND_ENTITY =
+    private static final String FIND_ENTITY =
             "SELECT orderId, mail, medicineId, amount, totalCost " +
                     "FROM orders INNER JOIN users ON (clientId = userId) " +
                     "WHERE orderId = ?";
-    private final static String FIND_ALL =
+    private static final String FIND_ALL =
             "SELECT orderId, mail, medicineId, amount, totalCost " +
-                    "FROM orders INNER JOIN users ON (clientId = userId)";
-    private final static String CREATE =
+                    "FROM orders INNER JOIN users ON (clientId = userId) ORDER BY orderId";
+    private static final String CREATE =
             "INSERT INTO orders " +
                     "SET orderId = ?, " +
                     "clientId = (SELECT clients.userId FROM users AS clients WHERE clients.mail = ?), " +
                     "medicineId = ?, amount = ?, totalCost = ?";
-    private final static String UPDATE =
+    private static final String UPDATE =
             "UPDATE orders " +
                     "SET clientId = (SELECT clients.userId FROM users AS clients WHERE clients.mail = ?), " +
                     "medicineId = ?, amount = ?, totalCost = ? " +
                     "WHERE orderId = ?";
-    private final static String DELETE =
+    private static final String DELETE =
             "DELETE FROM orders WHERE orderId = ?";
-    private final static String FIND_MAX_ID =
+    private static final String FIND_MAX_ID =
             "SELECT MAX(orderId) FROM orders";
 
-    private final static String MAX_ORDER_ID = "MAX(orderId)";
-    private final static String ORDER_ID = "orderId";
-    private final static String MAIL = "mail";
-    private final static String MEDICINE_ID = "medicineId";
-    private final static String AMOUNT = "amount";
-    private final static String TOTAL_COST = "totalCost";
+    private static final String MAX_ORDER_ID = "MAX(orderId)";
+    private static final String ORDER_ID = "orderId";
+    private static final String MAIL = "mail";
+    private static final String MEDICINE_ID = "medicineId";
+    private static final String AMOUNT = "amount";
+    private static final String TOTAL_COST = "totalCost";
 
     @Override
     public Optional<PharmacyOrder> findEntity(Integer id) throws DaoException {

@@ -1,12 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib prefix="ctg" uri="/WEB-INF/InformationTag" %>
 <%@ page contentType="text/html; charset=UTF8" pageEncoding="UTF-8"%>
 <%request.setCharacterEncoding("UTF-8");%>
 <html>
 <head>
     <meta charset="UTF-8">
     <fmt:setBundle basename="language.locale"></fmt:setBundle>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <title><fmt:message key="medicines"></fmt:message></title>
 </head>
 <body>
@@ -16,7 +17,7 @@
     <header>
         <div class="header-logo">
             <span class="header-logo-helper"></span>
-            <img src="/./logo.png" alt="Pharmacy" height="52" width="52">
+            <img src="/img/logo.png" alt="Pharmacy" height="52" width="52">
         </div>
         <div class="header-info">
             <h3>${userName}, ${position}</h3>
@@ -72,13 +73,18 @@
                             <tr>
                                 <td><c:out value="${medicines.name}"></c:out></td>
                                 <td><c:out value="${medicines.dosage}"></c:out></td>
-                                <td><c:out value="${medicines.medicineGroup}"></c:out></td>
+                                <td><c:out value="${medicines.group}"></c:out></td>
                                 <td><c:out value="${medicines.packageType}"></c:out></td>
                                 <td><c:out value="${medicines.packageAmount}"></c:out></td>
                                 <td><c:out value="${medicines.price}"></c:out></td>
-                                <td><c:out value="${medicines.needPrescription}"></c:out></td>
+                                <td><c:choose>
+                                        <c:when test="${medicines.needPrescription}">
+                                            <fmt:message key="need"></fmt:message></c:when>
+                                        <c:otherwise><fmt:message key="no"></fmt:message></c:otherwise>
+                                    </c:choose>
+                                </td>
                                 <td><c:out value="${medicines.storageAmount}"></c:out></td>
-                                <form method="get" action="/pharmacy">
+                                <form method="get" action="/pharmacy" class="cell-form">
                                     <input type="hidden" name="medicineId" value="${medicines.medicineId}">
                                     <td><button name="command" value="modify-medicine" type="submit">
                                         <fmt:message key="modifyMedicine"></fmt:message></button>
@@ -98,7 +104,9 @@
 </div>
 
 <footer>
-    <p>verabond © 2019</p>
+    <p>
+        <ctg:projectInformation/>
+    </p>
 </footer>
 
 </body>

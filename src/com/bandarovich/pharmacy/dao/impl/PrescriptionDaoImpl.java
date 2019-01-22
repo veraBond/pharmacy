@@ -15,75 +15,79 @@ import java.util.List;
 import java.util.Optional;
 
 public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> implements PrescriptionDao {
-    private final static String FIND_ENTITY =
+    private static final String FIND_ENTITY =
             "SELECT prescriptionId, medicineId, clients.mail, doctors.mail, amount, isRequestedForExtension " +
                     "FROM prescriptions INNER JOIN users clients ON(clients.userId = clientId) " +
                     "INNER JOIN users doctors ON(doctors.userId = doctorId) " +
                     "WHERE prescriptionId = ?";
-    private final static String FIND_ALL =
+    private static final String FIND_ALL =
             "SELECT prescriptionId, medicineId, clients.mail, doctors.mail, amount, isRequestedForExtension " +
                     "FROM prescriptions INNER JOIN users clients ON(clients.userId = clientId) " +
-                    "INNER JOIN users doctors ON(doctors.userId = doctorId) ";
-    private final static String CREATE =
+                    "INNER JOIN users doctors ON(doctors.userId = doctorId) ORDER BY prescriptionId";
+    private static final String CREATE =
             "INSERT INTO prescriptions " +
                     "SET prescriptionId = ?, " +
                     "medicineId = ?, " +
                     "clientId = (SELECT userId FROM users WHERE mail = ?), " +
                     "doctorId = (SELECT userId FROM users WHERE mail = ?), " +
                     "amount = ?, isRequestedForExtension = ? ";
-    private final static String UPDATE =
+    private static final String UPDATE =
             "UPDATE prescriptions " +
                     "SET medicineId = ?, " +
                     "clientId = (SELECT clients.userId FROM users AS clients where clients.mail = ?), " +
                     "doctorId = (SELECT doctors.userId FROM users AS doctors where doctors.mail = ?), " +
                     "amount = ?, isRequestedForExtension = ? " +
                     "WHERE prescriptionId = ?";
-    private final static String DELETE =
+    private static final String DELETE =
             "DELETE FROM prescriptions WHERE prescriptionId = ?";
-    private final static String FIND_MAX_ID =
+    private static final String FIND_MAX_ID =
             "SELECT MAX(prescriptionId) FROM prescriptions";
-    private final static String FIND_PRESCRIPTION_BY_MEDICINE_ID_CLIENT_MAIL =
+    private static final String FIND_PRESCRIPTION_BY_MEDICINE_ID_CLIENT_MAIL =
             "SELECT prescriptionId FROM prescriptions " +
                     "WHERE medicineId = ? AND clientId = (SELECT userId FROM users WHERE mail = ?)";
-    private final static String FIND_CLIENT_PRESCRIPTIONS =
+    private static final String FIND_CLIENT_PRESCRIPTIONS =
             "SELECT prescriptionId, medicineId, clients.mail, doctors.mail, amount, isRequestedForExtension, " +
-                    "medicineName, dosage, medicineGroup, package_type.typeName, packageAmount, price, prescriptionNeed, storageAmount " +
+                    "medicineName, dosage, medicine_group.groupName, package_type.typeName, packageAmount, price, prescriptionNeed, storageAmount " +
                     "FROM prescriptions INNER JOIN medicines USING (medicineId) " +
                     "INNER JOIN users AS clients ON prescriptions.clientId = clients.userId, " +
-                    "users AS doctors, package_type WHERE doctors.userId = prescriptions.doctorId " +
-                    "AND clients.mail = ? AND packageTypeId = packageType";
-    private final static String FIND_DOCTOR_PRESCRIPTIONS =
+                    "users AS doctors, package_type, medicine_group " +
+                    "WHERE doctors.userId = prescriptions.doctorId AND clients.mail = ? AND prescriptionNeed = TRUE " +
+                    "AND packageTypeId = packageType AND medicineGroup = groupId AND medicines.isDeleted = FALSE " +
+                    "ORDER BY prescriptionId";
+    private static final String FIND_DOCTOR_PRESCRIPTIONS =
             "SELECT prescriptionId, medicineId, clients.mail, doctors.mail, amount, isRequestedForExtension, " +
-                    "medicineName, dosage, medicineGroup, package_type.typeName, packageAmount, price, prescriptionNeed, storageAmount " +
+                    "medicineName, dosage, medicine_group.groupName, package_type.typeName, packageAmount, price, prescriptionNeed, storageAmount " +
                     "FROM prescriptions INNER JOIN medicines USING (medicineId) " +
                     "INNER JOIN users AS doctors ON prescriptions.doctorId = doctors.userId, " +
-                    "users AS clients, package_type WHERE clients.userId = prescriptions.clientId " +
-                    "AND doctors.mail = ? AND packageTypeId = packageType";
-    private final static String FIND_CLIENT_AVAILABLE_AMOUNT =
+                    "users AS clients, package_type, medicine_group " +
+                    "WHERE clients.userId = prescriptions.clientId AND doctors.mail = ?  AND prescriptionNeed = TRUE " +
+                    "AND packageTypeId = packageType AND medicineGroup = groupId  AND medicines.isDeleted = FALSE " +
+                    "ORDER BY isRequestedForExtension DESC, prescriptionId";
+    private static final String FIND_CLIENT_AVAILABLE_AMOUNT =
             "SELECT amount FROM prescriptions " +
                     "WHERE medicineId = ? AND clientId = ?";
-    private final static String REQUEST_PRESCRIPTION_FOR_EXTENSION =
+    private static final String REQUEST_PRESCRIPTION_FOR_EXTENSION =
             "UPDATE prescriptions SET isRequestedForExtension = TRUE WHERE prescriptionId = ?";
-    private final static String EXTEND_PRESCRIPTION =
-            "UPDATE prescriptions SET isRequestedForExtension = FALSE, amount = ? WHERE prescriptionId = ?";
-    private final static String UPDATE_PRESCRIPTION_AMOUNT =
+    private static final String EXTEND_PRESCRIPTION =
+            "UPDATE prescriptions SET isRequestedForExtension = FALSE, amount = (amount + ?) WHERE prescriptionId = ?";
+    private static final String UPDATE_PRESCRIPTION_AMOUNT =
             "UPDATE prescriptions SET amount = (amount - ?) WHERE prescriptionId = ?";
-    private final static String MAX_PRESCRIPTION_ID = "MAX(prescriptionId)";
-    private final static String PRESCRIPTION_ID = "prescriptionId";
-    private final static String MEDICINE_ID = "medicineId";
-    private final static String CLIENT_MAIL = "clients.mail";
-    private final static String DOCTOR_MAIL = "doctors.mail";
-    private final static String AMOUNT = "amount";
-    private final static String IS_REQUESTED_FOR_EXTENSION = "isRequestedForExtension";
+    private static final String MAX_PRESCRIPTION_ID = "MAX(prescriptionId)";
+    private static final String PRESCRIPTION_ID = "prescriptionId";
+    private static final String MEDICINE_ID = "medicineId";
+    private static final String CLIENT_MAIL = "clients.mail";
+    private static final String DOCTOR_MAIL = "doctors.mail";
+    private static final String AMOUNT = "amount";
+    private static final String IS_REQUESTED_FOR_EXTENSION = "isRequestedForExtension";
 
-    private final static String MEDICINE_NAME = "medicineName";
-    private final static String DOSAGE = "dosage";
-    private final static String MEDICINE_GROUP = "medicineGroup";
-    private final static String PACKAGE_TYPE = "package_type.typeName";
-    private final static String PACKAGE_AMOUNT = "packageAmount";
-    private final static String PRICE = "price";
-    private final static String PRESCRIPTION_NEED = "prescriptionNeed";
-    private final static String STORAGE_AMOUNT = "storageAmount";
+    private static final String MEDICINE_NAME = "medicineName";
+    private static final String DOSAGE = "dosage";
+    private static final String MEDICINE_GROUP = "medicine_group.groupName";
+    private static final String PACKAGE_TYPE = "package_type.typeName";
+    private static final String PACKAGE_AMOUNT = "packageAmount";
+    private static final String PRICE = "price";
+    private static final String PRESCRIPTION_NEED = "prescriptionNeed";
+    private static final String STORAGE_AMOUNT = "storageAmount";
 
     @Override
     public Optional<Prescription> findEntity(Integer id) throws DaoException {
@@ -221,17 +225,6 @@ public class PrescriptionDaoImpl extends PharmacyDao<Integer, Prescription> impl
     public int extendPrescription(int prescriptionId, int amount) throws DaoException {
         try(PreparedStatement preparedStatement = connection.prepareStatement(EXTEND_PRESCRIPTION)){
             preparedStatement.setInt(1, amount);
-            preparedStatement.setInt(2, prescriptionId);
-            return preparedStatement.executeUpdate();
-        } catch (SQLException e){
-            throw new DaoException(e);
-        }
-    }
-
-    @Override
-    public int updatePrescriptionAmount(int prescriptionId, int orderAmount) throws DaoException {
-        try(PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PRESCRIPTION_AMOUNT)){
-            preparedStatement.setInt(1, orderAmount);
             preparedStatement.setInt(2, prescriptionId);
             return preparedStatement.executeUpdate();
         } catch (SQLException e){

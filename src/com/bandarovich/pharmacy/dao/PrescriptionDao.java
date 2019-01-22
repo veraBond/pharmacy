@@ -14,5 +14,4 @@ public interface PrescriptionDao {
     List<Pair<Prescription, Medicine>> findDoctorPrescriptionList(String mail) throws DaoException;
     int requestPrescriptionForExtension(int prescriptionId) throws DaoException;
     int extendPrescription(int prescriptionId, int amount) throws DaoException;
-    int updatePrescriptionAmount(int prescriptionId, int orderAmount) throws DaoException;
 }

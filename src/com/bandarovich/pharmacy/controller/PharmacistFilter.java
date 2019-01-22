@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class PharmacistFilter implements Filter {
-    private final static String FORBIDDEN_ACCESS_MESSAGE = "Forbidden. Access denied.";
+    private static final String FORBIDDEN_ACCESS_MESSAGE = "Forbidden. Access denied.";
 
     public void init(FilterConfig fConfig) throws ServletException {
     }

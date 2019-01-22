@@ -11,12 +11,12 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Properties;
 
-public class PoolManager {
-    private final static Logger logger = LogManager.getLogger(PoolManager.class);
-    private final static String PROPERTY_PATH = "/property/dataBase.properties";
+class PoolManager {
+    private static final Logger logger = LogManager.getLogger(PoolManager.class);
+    private static final String PROPERTY_PATH = "/dao/dataBase.properties";
+    private static final String POOL_SIZE = "poolSize";
+    private static final String URL = "url";
     private Properties properties;
-    private final static String POOL_SIZE = "poolSize";
-    private final static String URL = "url";
 
     PoolManager(){
         properties = new Properties();
@@ -25,7 +25,6 @@ public class PoolManager {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
             logger.info("MySQL Driver has been registered.");
         } catch ( IOException | SQLException e){
-            logger.error("Pool Manager init error", e);
             throw new RuntimeException(e);
         }
     }

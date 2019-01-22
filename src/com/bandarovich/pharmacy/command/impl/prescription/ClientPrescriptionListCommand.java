@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class ClientPrescriptionListCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String CLIENT_PRESCRIPTION_LIST_ERROR_MESSAGE = "Error while loading prescription list";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String CLIENT_PRESCRIPTION_LIST_ERROR_MESSAGE = "Error while loading prescription list";
 
     @Override
     public Router execute(HttpServletRequest request) {

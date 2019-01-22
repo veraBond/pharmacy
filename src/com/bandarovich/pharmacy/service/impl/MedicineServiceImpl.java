@@ -2,7 +2,6 @@ package com.bandarovich.pharmacy.service.impl;
 
 import com.bandarovich.pharmacy.command.JspAttribute;
 import com.bandarovich.pharmacy.dao.DaoException;
-import com.bandarovich.pharmacy.dao.MedicineDao;
 import com.bandarovich.pharmacy.dao.TransactionHelper;
 import com.bandarovich.pharmacy.dao.impl.MedicineDaoImpl;
 import com.bandarovich.pharmacy.dao.impl.PrescriptionDaoImpl;
@@ -14,19 +13,12 @@ import com.bandarovich.pharmacy.util.PharmacyValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.print.DocFlavor;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 public class MedicineServiceImpl implements MedicineService {
-    private final static Logger logger = LogManager.getLogger();
-    private final static int AVAILABLE_BOOK_MEDICINE_AMOUNT = 5;
-    public final static MedicineService INSTANCE = new MedicineServiceImpl();
-    private final static String MEDICINE_GROUP_FIRST_SPLIT = "set\\('";
-    private final static String MEDICINE_GROUP_SPLIT = "','";
-    private final static String MEDICINE_GROUP_LAST_SPLIT = "',\\)";
+    private static final Logger logger = LogManager.getLogger();
+    public static final MedicineService INSTANCE = new MedicineServiceImpl();
 
     private MedicineServiceImpl(){}
 
@@ -89,9 +81,7 @@ public class MedicineServiceImpl implements MedicineService {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
         try{
             TransactionHelper.beginTransaction(medicineDao);
-            String groupSet = medicineDao.findMedicineGroupSet();
-            List<String> groups = Arrays.asList(groupSet.split(MEDICINE_GROUP_SPLIT));
-            return groups;
+            return medicineDao.findMedicineGroupList();
         } catch (DaoException e){
             throw new ServiceException(e);
         } finally {
@@ -121,10 +111,8 @@ public class MedicineServiceImpl implements MedicineService {
             TransactionHelper.beginTransaction(medicineDao, prescriptionDao, userDao);
             Medicine medicine = medicineDao.findEntity(medicineId).orElseThrow(ServiceException::new);
             int clientId = userDao.findUserId(mail).orElseThrow(ServiceException::new);
-            int storageAmount = medicineDao.findMedicineStorageAmount(medicineId);
-            int availableClientMedicineAmount = (AVAILABLE_BOOK_MEDICINE_AMOUNT < storageAmount) ? AVAILABLE_BOOK_MEDICINE_AMOUNT : storageAmount;
-            boolean needPrescription = medicine.isNeedPrescription();
-            if(needPrescription){
+            int availableClientMedicineAmount = medicineDao.findMedicineStorageAmount(medicineId);
+            if(medicine.isNeedPrescription()){
                 int prescriptionAvailableAmount = prescriptionDao.findClientAvailableAmount(clientId, medicineId);
                 if(prescriptionAvailableAmount < availableClientMedicineAmount){
                     availableClientMedicineAmount = prescriptionAvailableAmount;
@@ -143,16 +131,13 @@ public class MedicineServiceImpl implements MedicineService {
         MedicineDaoImpl medicineDao = new MedicineDaoImpl();
         try{
             TransactionHelper.beginTransaction(medicineDao);
-            int storageAmount = medicineDao.findMedicineStorageAmount(medicineId);
-            return (AVAILABLE_BOOK_MEDICINE_AMOUNT < storageAmount ? AVAILABLE_BOOK_MEDICINE_AMOUNT : storageAmount);
+            return medicineDao.findMedicineStorageAmount(medicineId);
         } catch (DaoException e){
             throw new ServiceException(e);
         } finally {
             TransactionHelper.endTransaction(medicineDao);
         }
     }
-
-
 
     @Override
     public void formMedicine(String medicineName, int dosage, String medicineGroup, String packageType, int packageAmount, double price, boolean prescriptionNeed, int storageAmount)throws ServiceException {
@@ -174,6 +159,7 @@ public class MedicineServiceImpl implements MedicineService {
         }
     }
 
+    @Override
     public List<String> validateMedicine(String medicineName, int dosage, String medicineGroup, String packageType,
                                        int packageAmount, double price, int storageAmount){
         List<String> errors = new LinkedList<>();

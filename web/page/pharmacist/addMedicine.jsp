@@ -1,12 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib prefix="ctg" uri="/WEB-INF/InformationTag" %>
 <%@ page contentType="text/html; charset=UTF8" pageEncoding="UTF-8"%>
 <%request.setCharacterEncoding("UTF-8");%>
 <html>
 <head>
     <meta charset="UTF-8">
     <fmt:setBundle basename="language.locale"></fmt:setBundle>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <title><fmt:message key="addMedicine"></fmt:message></title>
 </head>
 
@@ -16,7 +17,7 @@
     <header>
         <div class="header-logo">
             <span class="header-logo-helper"></span>
-            <img src="/./logo.png" alt="Pharmacy" height="52" width="52">
+            <img src="/img/logo.png" alt="Pharmacy" height="52" width="52">
         </div>
         <div class="header-info">
             <h3>${userName}, ${position}</h3>
@@ -65,8 +66,9 @@
                     <div class="form-item">
                         <label><fmt:message key="medicine.Group"></fmt:message>
                             <select name="medicineGroup" required>
+                                <option selected value="${medicineGroup}"><c:out value="${medicineGroup}"></c:out></option>
                                 <c:forEach var="group" items="${medicineGroupList}">
-                                    <option value="${group}">${group}</option>
+                                    <option value="${group}"><c:out value="${group}"></c:out></option>
                                 </c:forEach>
                             </select>
                         </label>
@@ -74,8 +76,9 @@
                     <div class="form-item">
                         <label><fmt:message key="medicine.PackageType"></fmt:message>
                             <select name="packageType" required>
+                                <option selected value="${packageType}"><c:out value="${packageType}"></c:out></option>
                                 <c:forEach var="type" items="${packageTypeList}">
-                                    <option value="${type}">${type}</option>
+                                    <option value="${type}"><c:out value="${type}"></c:out></option>
                                 </c:forEach>
                             </select>
                         </label>
@@ -95,6 +98,13 @@
                     <div class="form-item">
                         <label><fmt:message key="medicine.PrescriptionNeed"></fmt:message>
                             <select name="prescriptionNeed">
+                                <option selected value="${prescriptionNeed}">
+                                    <c:choose>
+                                        <c:when test="${prescriptionNeed}">
+                                            <fmt:message key="need"></fmt:message></c:when>
+                                        <c:otherwise><fmt:message key="no"></fmt:message></c:otherwise>
+                                    </c:choose>
+                                </option>
                                 <option value="yes"><fmt:message key="need"></fmt:message></option>
                                 <option value="no"><fmt:message key="no"></fmt:message></option>
                             </select>
@@ -143,7 +153,9 @@
 </div>
 
 <footer>
-    <p>verabond © 2019</p>
+    <p>
+        <ctg:projectInformation/>
+    </p>
 </footer>
 
 </body>

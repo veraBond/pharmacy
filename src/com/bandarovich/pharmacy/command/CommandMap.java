@@ -13,7 +13,7 @@ import com.bandarovich.pharmacy.command.impl.user.RegistrationCommand;
 import java.util.EnumMap;
 
 public class CommandMap {
-    private EnumMap<CommandType, PharmacyCommand> commandMap = new EnumMap<CommandType, PharmacyCommand>(CommandType.class){
+    private static EnumMap<CommandType, PharmacyCommand> commandMap = new EnumMap<CommandType, PharmacyCommand>(CommandType.class){
         {
             put(CommandType.START_PAGE, new StartPageCommand());
             put(CommandType.SET_LOCALE, new SetLocaleCommand());
@@ -31,6 +31,7 @@ public class CommandMap {
             put(CommandType.DOCTOR_PRESCRIPTION_LIST, new DoctorPrescriptionListCommand());
             put(CommandType.EXTEND_PRESCRIPTION, new ExtendPrescriptionCommand());
             put(CommandType.COMPLETE_EXTEND_PRESCRIPTION, new CompleteExtendPrescriptionCommand());
+            put(CommandType.PHARMACIST_MEDICINE_LIST, new PharmacistMedicineListCommand());
             put(CommandType.ADD_MEDICINE, new AddMedicineCommand());
             put(CommandType.COMPLETE_ADD_MEDICINE, new CompleteAddMedicineCommand());
             put(CommandType.MODIFY_MEDICINE, new ModifyMedicineCommand());
@@ -42,15 +43,7 @@ public class CommandMap {
 
     private CommandMap(){}
 
-    private static class CommandMapHolder{
-        private final static CommandMap INSTANCE = new CommandMap();
-    }
-
-    public static CommandMap getInstance(){
-        return CommandMapHolder.INSTANCE;
-    }
-
-    public PharmacyCommand get(String commandName){
+    public static PharmacyCommand get(String commandName){
         CommandType key = CommandType.valueOf(commandName.replace('-','_').toUpperCase());
         return commandMap.get(key);
     }

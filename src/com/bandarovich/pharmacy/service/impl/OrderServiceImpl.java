@@ -17,8 +17,8 @@ import java.util.Optional;
 
 
 public class OrderServiceImpl implements OrderService {
-    private final static Logger logger = LogManager.getLogger();
-    public final static OrderService INSTANCE = new OrderServiceImpl();
+    private static final Logger logger = LogManager.getLogger();
+    public static final OrderService INSTANCE = new OrderServiceImpl();
 
     private OrderServiceImpl(){}
 

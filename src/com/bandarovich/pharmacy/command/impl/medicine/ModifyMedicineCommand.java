@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class ModifyMedicineCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String MODIFY_MEDICINE_ERROR_MESSAGE = "Could not modify medicine. ";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String MODIFY_MEDICINE_ERROR_MESSAGE = "Could not modify medicine. ";
 
     @Override
     public Router execute(HttpServletRequest request) {
@@ -26,7 +26,7 @@ public class ModifyMedicineCommand implements PharmacyCommand {
             request.setAttribute(JspAttribute.MEDICINE_ID, medicine.getMedicineId());
             request.setAttribute(JspAttribute.MEDICINE_NAME, medicine.getName());
             request.setAttribute(JspAttribute.MEDICINE_DOSAGE, medicine.getDosage());
-            request.setAttribute(JspAttribute.MEDICINE_GROUP, medicine.getMedicineGroup());
+            request.setAttribute(JspAttribute.MEDICINE_GROUP, medicine.getGroup());
             request.setAttribute(JspAttribute.PACKAGE_TYPE, medicine.getPackageType());
             request.setAttribute(JspAttribute.PACKAGE_AMOUNT, medicine.getPackageAmount());
             request.setAttribute(JspAttribute.MEDICINE_PRICE, medicine.getPrice());

@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class DoctorFilter implements Filter {
-    private final static String FORBIDDEN_ACCESS_MESSAGE = "Forbidden. Access denied.";
+    private static final String FORBIDDEN_ACCESS_MESSAGE = "Forbidden. Access denied.";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
     }
-//TODO refactor code
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;

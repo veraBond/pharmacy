@@ -1,8 +1,8 @@
 package com.bandarovich.pharmacy.command.impl.user;
 
-import com.bandarovich.pharmacy.command.PharmacyCommand;
 import com.bandarovich.pharmacy.command.JspAttribute;
 import com.bandarovich.pharmacy.command.JspPath;
+import com.bandarovich.pharmacy.command.PharmacyCommand;
 import com.bandarovich.pharmacy.command.Router;
 import com.bandarovich.pharmacy.entity.Medicine;
 import com.bandarovich.pharmacy.entity.PharmacyPosition;
@@ -17,10 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class RegistrationCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String POSITION_ERROR_MESSAGE = "Registration error: unexpected position.";
-    private final static String REGISTRATION_ERROR_MESSAGE = "Registration error.";
-    private final static String EMPTY_MEDICINE_LIST_MESSAGE = "You have no available medicines.";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String POSITION_ERROR_MESSAGE = "Registration error: unexpected position.";
+    private static final String REGISTRATION_ERROR_MESSAGE = "Registration error.";
+    private static final String EMPTY_MEDICINE_LIST_MESSAGE = "You have no available medicines.";
 
     @Override
     public Router execute(HttpServletRequest request)  {
@@ -37,6 +37,7 @@ public class RegistrationCommand implements PharmacyCommand {
                 request.getSession().setAttribute(JspAttribute.MAIL, user.getMail());
                 List<Medicine> clientMedicineList = MedicineServiceImpl.INSTANCE.findClientMedicineList(mail);
                 request.getSession().setAttribute( JspAttribute.CLIENT_MEDICINE_LIST, clientMedicineList);
+                request.getSession().setAttribute( JspAttribute.TOTAL_COST, 0.0);
                 switch (position) {
                     case CLIENT:
                         request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.CLIENT_PAGE);
@@ -67,7 +68,7 @@ public class RegistrationCommand implements PharmacyCommand {
                 request.setAttribute(JspAttribute.USER_NAME, user.getName());
                 request.setAttribute(JspAttribute.MAIL, user.getMail());
                 request.setAttribute(JspAttribute.POSITION, user.getPosition());
-                errors.forEach(error -> {request.setAttribute(error, Boolean.TRUE);});
+                errors.forEach(error -> request.setAttribute(error, Boolean.TRUE));
                 router.setForward(JspPath.REGISTRATION_PAGE);
             }
         } catch (ServiceException e){

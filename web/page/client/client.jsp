@@ -1,12 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib prefix="ctg" uri="/WEB-INF/InformationTag" %>
 <%@ page contentType="text/html; charset=UTF8" pageEncoding="UTF-8"%>
 <%request.setCharacterEncoding("UTF-8");%>
 <html>
 <head>
     <meta charset="UTF-8">
     <fmt:setBundle basename="language.locale"></fmt:setBundle>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <title><fmt:message key="AvailableMedicines"></fmt:message></title>
 </head>
 <body>
@@ -16,7 +17,7 @@
     <header>
         <div class="header-logo">
             <span class="header-logo-helper"></span>
-            <img src="/./logo.png" alt="Pharmacy" height="52" width="52">
+            <img src="/img/logo.png" alt="Pharmacy" height="52" width="52">
         </div>
         <div class="header-info">
             <h3>${userName}, ${position}</h3>
@@ -24,7 +25,6 @@
     </header>
 
     <section>
-
         <nav>
             <ul>
                 <li>
@@ -49,6 +49,8 @@
         </nav>
 
         <div class="content">
+            <h4 align="right"><fmt:message key="totalCost"></fmt:message>${totalCost}</h4>
+
             <div class="content-title">
                 <fmt:message key="AvailableMedicines"></fmt:message>
             </div>
@@ -69,15 +71,11 @@
                             <tr>
                                 <td><c:out value="${medicines.name}"></c:out></td>
                                 <td><c:out value="${medicines.dosage}"></c:out></td>
-                                <td>
-                                    <c:forEach var="group" items="${medicines.medicineGroup}">
-                                        <c:out value="${group}"></c:out>
-                                    </c:forEach>
-                                </td>
+                                <td><c:out value="${medicines.group}"></c:out></td>
                                 <td><c:out value="${medicines.packageType}"></c:out></td>
                                 <td><c:out value="${medicines.packageAmount}"></c:out></td>
                                 <td><c:out value="${medicines.price}"></c:out></td>
-                                <form method="get" action="/pharmacy">
+                                <form method="get" action="/pharmacy" class="cell-form">
                                     <td><input type="hidden" name="medicineId" value="${medicines.medicineId}">
                                         <button name="command" value="book-medicine" type="submit">
                                             <fmt:message key="book"></fmt:message></button>
@@ -94,7 +92,9 @@
 </div>
 
 <footer>
-    <p>verabond © 2019</p>
+    <p>
+        <ctg:projectInformation/>
+    </p>
 </footer>
 
 </body>

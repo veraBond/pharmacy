@@ -1,0 +1,7 @@
+<suite thread-count="1" verbose="5" name="Medicine Suite" annotations="JDK" parallel="tests" >
+
+    <test name="creation">
+        <classes>
+        </classes>
+    </test>
+</suite>

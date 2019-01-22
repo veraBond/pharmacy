@@ -4,18 +4,18 @@ public class Medicine extends Pharmacy{
     private int medicineId;
     private String name;
     private int dosage;
-    private String medicineGroup;
+    private String group;
     private String packageType;
     private int packageAmount;
     private double price;
     private boolean needPrescription;
     private int storageAmount;
 
-    public Medicine(int medicineId, String name, int dosage, String medicineGroup, String packageType, int packageAmount, double price, boolean needPrescription, int storageAmount) {
+    public Medicine(int medicineId, String name, int dosage, String group, String packageType, int packageAmount, double price, boolean needPrescription, int storageAmount) {
         this.medicineId = medicineId;
         this.name = name;
         this.dosage = dosage;
-        this.medicineGroup = medicineGroup;
+        this.group = group;
         this.packageType = packageType;
         this.packageAmount = packageAmount;
         this.price = price;
@@ -47,12 +47,12 @@ public class Medicine extends Pharmacy{
         this.dosage = dosage;
     }
 
-    public String getMedicineGroup() {
-        return medicineGroup;
+    public String getGroup() {
+        return group;
     }
 
-    public void setMedicineGroup(String medicineGroup) {
-        this.medicineGroup = medicineGroup;
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     public String getPackageType() {
@@ -109,7 +109,7 @@ public class Medicine extends Pharmacy{
         if (needPrescription != medicine.needPrescription) return false;
         if (storageAmount != medicine.storageAmount) return false;
         if (name != null ? !name.equals(medicine.name) : medicine.name != null) return false;
-        if (medicineGroup != null ? !medicineGroup.equals(medicine.medicineGroup) : medicine.medicineGroup != null)
+        if (group != null ? !group.equals(medicine.group) : medicine.group != null)
             return false;
         return packageType != null ? packageType.equals(medicine.packageType) : medicine.packageType == null;
     }
@@ -117,15 +117,13 @@ public class Medicine extends Pharmacy{
     @Override
     public int hashCode() {
         int result;
-        long temp;
         result = medicineId;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + dosage;
-        result = 31 * result + (medicineGroup != null ? medicineGroup.hashCode() : 0);
+        result = 31 * result + (group != null ? group.hashCode() : 0);
         result = 31 * result + (packageType != null ? packageType.hashCode() : 0);
         result = 31 * result + packageAmount;
-        temp = Double.doubleToLongBits(price);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (int) (price);
         result = 31 * result + (needPrescription ? 1 : 0);
         result = 31 * result + storageAmount;
         return result;
@@ -133,6 +131,6 @@ public class Medicine extends Pharmacy{
 
     @Override
     public String toString() {
-        return "Medicine{" + "medicineId=" + medicineId + ", name='" + name + '\'' + ", dosage=" + dosage + ", medicineGroup=" + medicineGroup + ", packageType='" + packageType + '\'' + ", packageAmount=" + packageAmount + ", price=" + price + ", needPrescription=" + needPrescription + ", storageAmount=" + storageAmount + '}';
+        return "Medicine{" + "medicineId=" + medicineId + ", name='" + name + '\'' + ", dosage=" + dosage + ", group=" + group + ", packageType='" + packageType + '\'' + ", packageAmount=" + packageAmount + ", price=" + price + ", needPrescription=" + needPrescription + ", storageAmount=" + storageAmount + '}';
     }
 }

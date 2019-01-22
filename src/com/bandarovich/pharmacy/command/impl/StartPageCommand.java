@@ -15,9 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class StartPageCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String POSITION_ERROR_MESSAGE = "Unexpected position.";
-    private final static String START_PAGE_ERROR_MESSAGE = "Could not load data fo start page. ";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String POSITION_ERROR_MESSAGE = "Unexpected position.";
+    private static final String START_PAGE_ERROR_MESSAGE = "Could not load data fo start page. ";
 
     @Override
     public Router execute(HttpServletRequest request) {

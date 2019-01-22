@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class CompleteAddMedicineCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String NEED = "yes";
-    private final static String COMPLETE_ADD_MEDICINE_ERROR_MESSAGE = "Could not add medicine. ";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String NEED = "yes";
+    private static final String COMPLETE_ADD_MEDICINE_ERROR_MESSAGE = "Could not add medicine. ";
 
     @Override
     public Router execute(HttpServletRequest request) {
@@ -23,11 +23,11 @@ public class CompleteAddMedicineCommand implements PharmacyCommand {
         String medicineName = request.getParameter(JspAttribute.MEDICINE_NAME);
         int dosage = Integer.parseInt(request.getParameter(JspAttribute.MEDICINE_DOSAGE));
         String medicineGroup = request.getParameter(JspAttribute.MEDICINE_GROUP);
-        String packageType = request.getParameter(JspAttribute.PACKAGE_TYPE);
         int packageAmount = Integer.parseInt(request.getParameter(JspAttribute.PACKAGE_AMOUNT));
+        String packageType = request.getParameter(JspAttribute.PACKAGE_TYPE);
         double price = Double.parseDouble(request.getParameter(JspAttribute.MEDICINE_PRICE));
-        boolean prescriptionNeed = request.getParameter(JspAttribute.PRESCRIPTION_NEED).equals(NEED);
         int storageAmount = Integer.parseInt(request.getParameter(JspAttribute.STORAGE_AMOUNT));
+        boolean prescriptionNeed = request.getParameter(JspAttribute.PRESCRIPTION_NEED).equals(NEED);
         try{
             List<String> errors = MedicineServiceImpl.INSTANCE.validateMedicine(
                     medicineName, dosage, medicineGroup, packageType, packageAmount, price, storageAmount);
@@ -37,17 +37,17 @@ public class CompleteAddMedicineCommand implements PharmacyCommand {
             } else {
                 request.setAttribute(JspAttribute.MEDICINE_NAME, medicineName);
                 request.setAttribute(JspAttribute.MEDICINE_DOSAGE, dosage);
-                request.setAttribute(JspAttribute.PACKAGE_AMOUNT, packageAmount);
                 request.setAttribute(JspAttribute.MEDICINE_PRICE, price);
+                request.setAttribute(JspAttribute.PACKAGE_AMOUNT, packageAmount);
                 request.setAttribute(JspAttribute.STORAGE_AMOUNT, storageAmount);
-                request.setAttribute(JspAttribute.MEDICINE_GROUP_LIST, request.getParameter(JspAttribute.MEDICINE_GROUP_LIST));
-                request.setAttribute(JspAttribute.PACKAGE_TYPE_LIST, request.getParameter(JspAttribute.PACKAGE_TYPE_LIST));
-                errors.forEach(error -> {request.setAttribute(error, Boolean.TRUE);});
                 router.setForward(JspPath.PHARMACIST_ADD_MEDICINE_PAGE);
+                request.setAttribute(JspAttribute.PACKAGE_TYPE_LIST, request.getParameter(JspAttribute.PACKAGE_TYPE_LIST));
+                request.setAttribute(JspAttribute.MEDICINE_GROUP_LIST, request.getParameter(JspAttribute.MEDICINE_GROUP_LIST));
+                errors.forEach(error -> request.setAttribute(error, Boolean.TRUE));
             }
         } catch (ServiceException e){
-            logger.error(COMPLETE_ADD_MEDICINE_ERROR_MESSAGE, e);
             router.setRedirect(JspPath.COMMAND_ERROR_PAGE);
+            logger.error(COMPLETE_ADD_MEDICINE_ERROR_MESSAGE, e);
             request.getSession().setAttribute(JspAttribute.ERROR, e);
             request.getSession().setAttribute(JspAttribute.ERROR_MESSAGE, COMPLETE_ADD_MEDICINE_ERROR_MESSAGE );
         }

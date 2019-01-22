@@ -5,20 +5,17 @@ import com.bandarovich.pharmacy.command.JspPath;
 import com.bandarovich.pharmacy.command.PharmacyCommand;
 import com.bandarovich.pharmacy.command.Router;
 import com.bandarovich.pharmacy.entity.Medicine;
-import com.bandarovich.pharmacy.entity.PharmacyOrder;
 import com.bandarovich.pharmacy.service.ServiceException;
 import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
 import com.bandarovich.pharmacy.service.impl.OrderServiceImpl;
-import com.bandarovich.pharmacy.service.impl.PrescriptionServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 public class CompleteOrderCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String COMPLETE_ERROR_MESSAGE = "Could not complete order with client ";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String COMPLETE_ERROR_MESSAGE = "Could not complete order with client ";
 
     @Override
     public Router execute(HttpServletRequest request) {
@@ -30,7 +27,8 @@ public class CompleteOrderCommand implements PharmacyCommand {
         try{
             Medicine medicine = MedicineServiceImpl.INSTANCE.findMedicine(medicineId);
             if(orderAmount <= availableAmount){
-                double totalCost = OrderServiceImpl.INSTANCE.completeOrder(clientMail, medicineId, orderAmount);
+                double cost = OrderServiceImpl.INSTANCE.completeOrder(clientMail, medicineId, orderAmount);
+                double totalCost = cost + (Double)request.getSession().getAttribute(JspAttribute.TOTAL_COST);
                 request.getSession().setAttribute(JspAttribute.TOTAL_COST, totalCost);
                 router.setRedirect(JspPath.SUCCESSFULLY_COMPLETE_PAGE);
             } else {

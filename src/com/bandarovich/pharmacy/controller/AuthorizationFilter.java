@@ -9,11 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class AuthorizationFilter implements Filter {
-    private final static String UNAUTHORIZED_ACCESS_MESSAGE = "Log in to have an access.";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
     }
 
     @Override
@@ -30,6 +28,5 @@ public class AuthorizationFilter implements Filter {
 
     @Override
     public void destroy() {
-
     }
 }

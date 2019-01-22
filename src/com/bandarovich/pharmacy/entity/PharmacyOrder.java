@@ -73,13 +73,11 @@ public class PharmacyOrder extends Pharmacy{
     @Override
     public int hashCode() {
         int result;
-        long temp;
         result = orderId;
         result = 31 * result + (clientMail != null ? clientMail.hashCode() : 0);
         result = 31 * result + medicineId;
         result = 31 * result + orderAmount;
-        temp = Double.doubleToLongBits(totalCost);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (int) (totalCost);
         return result;
     }
 

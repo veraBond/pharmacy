@@ -12,14 +12,17 @@ input {
 	font-size: 14px;
 }
 button {
-	background-color: #4CAF50;
-	border: none;
+	background-color: rgba(14, 175, 141, 1);
 	color: white;
 	padding: 10px;
 	text-align: center;
 	text-decoration: none;
 	display: inline-block;
 	font-size: 14px;
+	border: 1px solid #0eaf8d;
+	border-radius: 7px;
+	outline: none;
+	cursor: pointer;
 }
 table {
 	margin: 20px 0;
@@ -34,10 +37,19 @@ tr:nth-child(even){
 td,th {
 	padding: 0 10px;
 }
+td, th:last-child {
+	padding-right: 0;
+}
+td button {
+	margin: 3px 6px;
+}
+td .cell-form {
+	margin-bottom: 0;
+}
 caption {
 	font-style: italic;
 	text-align: right;
-	color: #547901;
+	color: #01795c;
 }
 
 .body-content {
@@ -73,6 +85,12 @@ img {
 	display: flex;
 	justify-content: flex-end;
 	margin-right: 20px;
+}
+.header-info h3 {
+	margin: 0.75em 0;
+}
+.header-info-actions {
+	margin: 5px 0 0 0;
 }
 
 footer {

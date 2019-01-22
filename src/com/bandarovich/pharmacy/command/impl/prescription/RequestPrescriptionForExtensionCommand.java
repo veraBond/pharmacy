@@ -12,8 +12,8 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 public class RequestPrescriptionForExtensionCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String REQUEST_PRESCRIPTION_ERROR_MESSAGE = "Could not request prescription for extension. ";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String REQUEST_PRESCRIPTION_ERROR_MESSAGE = "Could not request prescription for extension. ";
 
     @Override
     public Router execute(HttpServletRequest request) {

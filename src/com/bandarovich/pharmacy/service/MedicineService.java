@@ -1,7 +1,6 @@
 package com.bandarovich.pharmacy.service;
 
 import com.bandarovich.pharmacy.entity.Medicine;
-import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
 
 import java.util.List;
 

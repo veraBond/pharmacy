@@ -13,8 +13,8 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 public class DeleteMedicineCommand implements PharmacyCommand {
-    private final static Logger logger = LogManager.getLogger();
-    private final static String DELETE_MEDICINE_ERROR_MESSAGE = "Could not delete medicine. ";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String DELETE_MEDICINE_ERROR_MESSAGE = "Could not delete medicine. ";
 
     @Override
     public Router execute(HttpServletRequest request) {

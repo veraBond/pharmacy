@@ -14,8 +14,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 public class PrescriptionServiceImpl implements PrescriptionService {
-    private final static Logger logger = LogManager.getLogger();
-    public final static PrescriptionService INSTANCE = new PrescriptionServiceImpl();
+    private static final Logger logger = LogManager.getLogger();
+    public static final PrescriptionService INSTANCE = new PrescriptionServiceImpl();
 
     private PrescriptionServiceImpl(){}
 

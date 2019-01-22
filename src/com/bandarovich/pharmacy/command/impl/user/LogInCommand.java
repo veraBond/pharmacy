@@ -1,7 +1,7 @@
 package com.bandarovich.pharmacy.command.impl.user;
 
-import com.bandarovich.pharmacy.command.JspPath;
 import com.bandarovich.pharmacy.command.JspAttribute;
+import com.bandarovich.pharmacy.command.JspPath;
 import com.bandarovich.pharmacy.command.PharmacyCommand;
 import com.bandarovich.pharmacy.command.Router;
 import com.bandarovich.pharmacy.entity.Medicine;
@@ -9,7 +9,6 @@ import com.bandarovich.pharmacy.entity.PharmacyPosition;
 import com.bandarovich.pharmacy.entity.PharmacyUser;
 import com.bandarovich.pharmacy.service.impl.MedicineServiceImpl;
 import com.bandarovich.pharmacy.service.impl.UserServiceImpl;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,9 +17,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class LogInCommand implements PharmacyCommand{
-    private final static Logger logger = LogManager.getLogger();
-    private final static String POSITION_ERROR_MESSAGE = "Log in error: unexpected position.";
-    private final static String LOG_IN_ERROR_MESSAGE = "Log in error.";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String POSITION_ERROR_MESSAGE = "Log in error: unexpected position.";
+    private static final String LOG_IN_ERROR_MESSAGE = "Log in error.";
 
     @Override
     public Router execute(HttpServletRequest request) {
@@ -36,6 +35,7 @@ public class LogInCommand implements PharmacyCommand{
                 request.getSession().setAttribute(JspAttribute.MAIL, mail);
                 List<Medicine> clientMedicineList = MedicineServiceImpl.INSTANCE.findClientMedicineList(mail);
                 request.getSession().setAttribute(JspAttribute.CLIENT_MEDICINE_LIST, clientMedicineList);
+                request.getSession().setAttribute( JspAttribute.TOTAL_COST, 0.0);
                 switch (position) {
                     case CLIENT:
                         request.getSession().setAttribute(JspAttribute.START_PAGE, JspPath.CLIENT_PAGE);

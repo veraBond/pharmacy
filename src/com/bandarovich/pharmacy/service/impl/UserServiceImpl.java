@@ -12,11 +12,13 @@ import com.bandarovich.pharmacy.util.PharmacyValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
-    private final static Logger logger = LogManager.getLogger();
-    public final static UserService INSTANCE = new UserServiceImpl();
+    private static final Logger logger = LogManager.getLogger();
+    public static final UserService INSTANCE = new UserServiceImpl();
     private UserServiceImpl(){}
 
     @Override
@@ -37,7 +39,7 @@ public class UserServiceImpl implements UserService {
         List<String> errors = new LinkedList<>();
         boolean existUser = findUser(user.getMail());
         if(existUser){
-            errors.add("User with this e-mail already exists.");
+            errors.add(JspAttribute.REGISTRATION_USER_EXISTS);
         }
         errors.addAll(formErrorList(user));
         if(errors.isEmpty()){

@@ -12,15 +12,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ConnectionPool {
-    private BlockingQueue<ProxyConnection> availableConnections;
-    private BlockingQueue<ProxyConnection> usedConnections;
-    private int size;
-    private final static Logger logger = LogManager.getLogger();
-    private PoolManager poolManager;
-
+    private static final Logger logger = LogManager.getLogger();
     private static ConnectionPool instance;
     private static ReentrantLock lock = new ReentrantLock();
     private static AtomicBoolean isCreate = new AtomicBoolean(false);
+    private BlockingQueue<ProxyConnection> availableConnections;
+    private BlockingQueue<ProxyConnection> usedConnections;
+    private int size;
+    private PoolManager poolManager;
 
     public static ConnectionPool getInstance(){
         if(!isCreate.get()){
@@ -65,8 +64,6 @@ public class ConnectionPool {
         size = availableConnections.size();
     }
 
-//timer task - время от времени запускается и контролирует целостность пула.
-
     public Connection takeConnection() throws  PoolException{
         try{
             ProxyConnection connection = availableConnections.take();
@@ -78,7 +75,7 @@ public class ConnectionPool {
         }
     }
 
-    public void releaseConnection(Connection connection) throws SQLException {
+    void releaseConnection(Connection connection) throws SQLException {
         if (connection.getClass() != ProxyConnection.class){
             throw new SQLException("Not appropriate connection:" + connection.getClass());
         }
@@ -89,6 +86,7 @@ public class ConnectionPool {
             availableConnections.put(proxyConnection);
         } catch (SQLException e){
             logger.error("Could not release connection to the pool. ", e);
+            addNewConnection();
         } catch (InterruptedException e){
             logger.error("Could not put connection back to the pool - interrupted.", e);
             Thread.currentThread().interrupt();
@@ -100,11 +98,25 @@ public class ConnectionPool {
             try {
                 ProxyConnection connection = availableConnections.take();
                 connection.closeConnection();
-                logger.info("Connection " + i + " in connectionPool is closed.");
+                logger.info("Connection " + i + " is closed.");
             } catch (InterruptedException | SQLException e){
-                logger.error("Error in closing connection " + i + " in connectionPool.", e);
+                logger.error("Error in closing connection " + i, e);
             }
         }
         poolManager.deregisterDrivers();
+    }
+
+    private void addNewConnection(){
+        try{
+            Connection connection = poolManager.takeConnection();
+            ProxyConnection proxyConnection = new ProxyConnection(connection);
+            availableConnections.put(proxyConnection);
+            logger.info("Connection has been put to the pool.");
+        } catch (PoolException poolExc){
+            logger.error("Could not put new connection to the pool. ", poolExc);
+        } catch (InterruptedException intExc){
+            logger.error("Could not put connection back to the pool - interrupted.", intExc);
+            Thread.currentThread().interrupt();
+        }
     }
 }

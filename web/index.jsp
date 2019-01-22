@@ -1,11 +1,16 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page contentType="text/html;charset=UTF-8"%>
-<html>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="ctg" uri="/WEB-INF/InformationTag" %>
+<c:set var="language"
+       value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}"
+       scope="session"/>
+<fmt:setLocale value="${language}" scope="session"/>
+<fmt:bundle basename="language.locale">
+  <html lang="${language}">
 <head>
-  <fmt:setBundle basename="language.locale"></fmt:setBundle>
   <title><fmt:message key="pharmacy"></fmt:message></title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
 
 <body>
@@ -13,16 +18,15 @@
   <header>
     <div class="header-logo">
       <span class="header-logo-helper"></span>
-      <img src="/logo.png" alt="Pharmacy" height="52" width="52">
+      <img src="/img/logo.png" alt="Pharmacy" height="52" width="52">
     </div>
     <div class="header-info">
-      <fmt:setLocale value="${locale == null ? 'ru_RU' : locale}" scope="session"></fmt:setLocale>
-      <form method="get" action="/pharmacy">
+      <form method="get" action="/pharmacy" class="header-info-actions">
         <input type="hidden" name="command" value="set-locale">
         <button name="language" value="ru_RU" type="submit">
           <fmt:message key="ru"></fmt:message>
         </button>
-        <button name="language" value="en_EN" type="submit">
+        <button name="language" value="en_US" type="submit">
           <fmt:message key="en"></fmt:message>
         </button>
       </form>
@@ -40,7 +44,7 @@
           <fmt:message key="logIn"></fmt:message>
         </button>
         <button onclick="location.href='/page/registration.jsp'">
-          <fmt:message key="registration"></fmt:message></button>
+          <fmt:message key="registration"></fmt:message>
         </button>
       </div>
 
@@ -50,8 +54,10 @@
 </div>
 
 <footer>
-  <p>verabond © 2019</p>
+  <p>
+    <ctg:projectInformation/>
+  </p>
 </footer>
-
+</fmt:bundle>
 </body>
 </html>
