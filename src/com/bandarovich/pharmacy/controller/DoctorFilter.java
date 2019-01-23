@@ -17,7 +17,7 @@ public class DoctorFilter implements Filter {
     private static final String FORBIDDEN_ACCESS_MESSAGE = "Forbidden. Access denied.";
 
     /**
-     * Inits the.
+     * Inits the DoctorFilter.
      *
      * @param filterConfig the filter config
      * @throws ServletException the servlet exception
@@ -50,7 +50,7 @@ public class DoctorFilter implements Filter {
     }
 
     /**
-     * Destroy.
+     * Destroy DoctorFilter.
      */
     @Override
     public void destroy() {

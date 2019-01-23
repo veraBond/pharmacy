@@ -52,7 +52,7 @@ public class CommandMap {
     private CommandMap(){}
 
     /**
-     * Gets the.
+     * Gets the command by command name.
      *
      * @param commandName the command name
      * @return the pharmacy command

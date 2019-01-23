@@ -17,7 +17,7 @@ public class PharmacistFilter implements Filter {
     private static final String FORBIDDEN_ACCESS_MESSAGE = "Forbidden. Access denied.";
 
     /**
-     * Inits the.
+     * Inits the PharmacistFilter.
      *
      * @param fConfig the f config
      * @throws ServletException the servlet exception
@@ -47,7 +47,7 @@ public class PharmacistFilter implements Filter {
     }
 
     /**
-     * Destroy.
+     * Destroy PharmacistFilter.
      */
     public void destroy()  {
     }

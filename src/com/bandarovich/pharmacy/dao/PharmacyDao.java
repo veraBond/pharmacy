@@ -27,7 +27,7 @@ public abstract class PharmacyDao <K, T extends Pharmacy> {
     public abstract Optional<T> findEntity(K id) throws DaoException;
     
     /**
-     * Find all.
+     * Find all entities.
      *
      * @return the list
      * @throws DaoException the dao exception
@@ -35,7 +35,7 @@ public abstract class PharmacyDao <K, T extends Pharmacy> {
     public abstract List<T> findAll() throws DaoException;
     
     /**
-     * Creates the.
+     * Creates the entity.
      *
      * @param entity the entity
      * @return the int
@@ -44,7 +44,7 @@ public abstract class PharmacyDao <K, T extends Pharmacy> {
     public abstract int create(T entity) throws DaoException;
     
     /**
-     * Update.
+     * Update the entity.
      *
      * @param entity the entity
      * @return the int
@@ -53,7 +53,7 @@ public abstract class PharmacyDao <K, T extends Pharmacy> {
     public abstract int update(T entity) throws DaoException;
     
     /**
-     * Delete.
+     * Delete the entity.
      *
      * @param id the id
      * @return the int

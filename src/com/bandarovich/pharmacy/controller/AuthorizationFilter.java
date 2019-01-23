@@ -14,7 +14,7 @@ import java.io.IOException;
 public class AuthorizationFilter implements Filter {
 
     /**
-     * Inits the.
+     * Inits the AuthorizationFilter.
      *
      * @param filterConfig the filter config
      * @throws ServletException the servlet exception
@@ -45,7 +45,7 @@ public class AuthorizationFilter implements Filter {
     }
 
     /**
-     * Destroy.
+     * Destroy AuthorizationFilter.
      */
     @Override
     public void destroy() {

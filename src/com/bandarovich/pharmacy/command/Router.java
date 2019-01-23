@@ -15,8 +15,8 @@ public class Router {
         
         /** The forward. */
         FORWARD, 
- /** The redirect. */
- REDIRECT
+        /** The redirect. */
+        REDIRECT
     }
     
     /** The type. */
